@@ -1,0 +1,9 @@
+.multiple-claimants-waiting {
+  height: 100%;
+}
+
+.multiple-claimants-waiting .waiting-screen__title {
+  margin-top: 21px;
+  font-size: 24px;
+  line-height: 32px;
+}

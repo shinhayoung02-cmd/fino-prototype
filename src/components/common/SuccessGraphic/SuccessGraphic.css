@@ -1,0 +1,92 @@
+.success-graphic {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+}
+
+.success-graphic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #edfaf6;
+  animation: success-graphic-ring-pulse 0.7s ease-out 0.05s both;
+}
+
+.success-graphic__circle {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  animation: success-graphic-circle-pop 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.success-graphic__check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: auto;
+  animation: success-graphic-check-pop 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+@keyframes success-graphic-circle-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+  75% {
+    transform: scale(0.9);
+  }
+  90% {
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes success-graphic-check-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.35);
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  90% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes success-graphic-ring-pulse {
+  from {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .success-graphic::after,
+  .success-graphic__circle,
+  .success-graphic__check {
+    animation: none;
+  }
+}

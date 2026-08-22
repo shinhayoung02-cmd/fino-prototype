@@ -1,0 +1,143 @@
+.my-page {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0 32px;
+  box-sizing: border-box;
+}
+
+.my-page__profile {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 26px;
+}
+
+.my-page__profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.my-page__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.my-page__identity {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.my-page__name {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #1a1a1a;
+}
+
+.my-page__verified {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.my-page__handle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  color: #a3a3a3;
+}
+
+.my-page__badges {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.my-page__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 120px;
+  min-height: 20px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #fff2ec;
+  color: #e14d00;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 15px;
+  white-space: nowrap;
+}
+
+.my-page__divider {
+  height: 1px;
+  margin: 20px 0;
+  background: #f7f8f9;
+}
+
+.my-page__section {
+  display: flex;
+  flex-direction: column;
+}
+
+.my-page__section-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 30px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #212124;
+  box-sizing: border-box;
+}
+
+.my-page__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 52px;
+  padding: 12px 30px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.my-page__row-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.my-page__row-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: #212124;
+}
+
+.my-page__row-chevron {
+  width: 13.333px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}

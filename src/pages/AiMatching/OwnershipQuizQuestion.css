@@ -1,0 +1,230 @@
+.ownership-quiz-question {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  padding: 12px 16px 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ownership-quiz-question::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.ownership-quiz-question__badge-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.ownership-quiz-question__step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  max-width: 108px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--color-gray-200);
+  color: var(--color-fg-neutral-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ownership-quiz-question__intro {
+  margin-bottom: 20px;
+}
+
+.ownership-quiz-question__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+  color: var(--color-gray-1000);
+}
+
+.ownership-quiz-question__desc {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  color: #757b85;
+}
+
+.ownership-quiz-question__callout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 50px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--color-gray-200);
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
+
+.ownership-quiz-question__callout-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ownership-quiz-question__callout-text {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 19px;
+  color: var(--color-gray-1000);
+}
+
+.ownership-quiz-question__point-badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--color-brand);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 0 0 12px 2px;
+}
+
+.ownership-quiz-question__hint {
+  margin: 0 0 44px 2px;
+  font-size: 13px;
+  line-height: 14px;
+  letter-spacing: -0.5px;
+  color: var(--color-fg-neutral-muted);
+}
+
+.ownership-quiz-question__options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 4px;
+}
+
+.ownership-quiz-question__option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 80px;
+  padding: 16px 16px 16px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-md);
+  background: transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.ownership-quiz-question__option--selected {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.ownership-quiz-question__option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ownership-quiz-question__option-title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 22px;
+  color: var(--color-gray-1000);
+}
+
+.ownership-quiz-question__option-desc {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--color-fg-neutral-muted);
+}
+
+.ownership-quiz-question__option-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-stroke-weak);
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.ownership-quiz-question__option-check--selected {
+  border: none;
+  background: var(--color-gray-900);
+}
+
+.ownership-quiz-question__option-check img {
+  width: 10px;
+  height: auto;
+  object-fit: contain;
+}
+
+.ownership-quiz-question__next-wrap {
+  margin-top: 20px;
+}
+
+.ownership-quiz-question__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ownership-quiz-question__prev {
+  flex-shrink: 0;
+  width: 97px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-200);
+  color: var(--color-gray-1000);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ownership-quiz-question__next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-900);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ownership-quiz-question__next--full {
+  width: 100%;
+}
+
+.ownership-quiz-question__next:disabled {
+  background: var(--color-disabled, #f3f4f5);
+  color: #d1d3d8;
+  cursor: not-allowed;
+}

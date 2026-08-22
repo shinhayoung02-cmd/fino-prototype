@@ -1,0 +1,137 @@
+.ownership-confirmed {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  padding: 20px 16px 16px;
+  box-sizing: border-box;
+}
+
+.ownership-confirmed__badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 6px;
+  border: 1px solid var(--color-brand-weak);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-brand);
+}
+
+.ownership-confirmed__title {
+  margin: 16px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+  color: #171717;
+}
+
+.ownership-confirmed__subtitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 19px;
+  color: var(--color-fg-neutral-muted);
+}
+
+.ownership-confirmed__callout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  min-height: 50px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #edfaf6;
+}
+
+.ownership-confirmed__callout-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ownership-confirmed__callout-text {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: #075445;
+}
+
+.ownership-confirmed__status {
+  margin-top: auto;
+}
+
+.ownership-confirmed__status-label {
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: var(--color-gray-700);
+}
+
+.ownership-confirmed__status-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ownership-confirmed__status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ownership-confirmed__status-row:first-child {
+  border-top: none;
+}
+
+.ownership-confirmed__status-row-label {
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.ownership-confirmed__status-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.ownership-confirmed__status-badge--brand {
+  background: #fff2ec;
+  color: #e14d00;
+}
+
+.ownership-confirmed__status-badge--positive {
+  background: #edfaf6;
+  color: #075445;
+}
+
+.ownership-confirmed__actions {
+  margin-top: 24px;
+}
+
+.ownership-confirmed__action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-900);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}

@@ -1,0 +1,212 @@
+.parcel-delivery-complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  min-height: 100%;
+  padding: 105px 16px 16px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.parcel-delivery-complete__graphic {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: #edfaf6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.parcel-delivery-complete__graphic-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.parcel-delivery-complete__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-delivery-complete__desc {
+  margin: 12px 0 28px;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-fg-neutral-muted);
+}
+
+.parcel-delivery-complete__progress {
+  display: flex;
+  align-items: flex-start;
+  width: 275px;
+  padding: 11.935px;
+  box-sizing: border-box;
+}
+
+.parcel-delivery-complete__progress-step {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.parcel-delivery-complete__progress-step:first-child {
+  flex: 0 0 auto;
+}
+
+.parcel-delivery-complete__progress-connector {
+  flex: 1;
+  height: 1.492px;
+  margin-top: 14.17px;
+  background: var(--color-stroke-weak);
+}
+
+.parcel-delivery-complete__progress-connector--done {
+  background: var(--color-brand);
+}
+
+.parcel-delivery-complete__progress-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.parcel-delivery-complete__progress-circle {
+  display: block;
+  width: 29.837px;
+  height: 29.837px;
+}
+
+.parcel-delivery-complete__progress-label {
+  font-size: 11px;
+  color: var(--color-gray-1000);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.parcel-delivery-complete__item-card {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  width: 100%;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.parcel-delivery-complete__item-photo {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--color-gray-200);
+}
+
+.parcel-delivery-complete__item-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.parcel-delivery-complete__item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.parcel-delivery-complete__item-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.parcel-delivery-complete__item-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.parcel-delivery-complete__item-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 14px;
+  color: var(--color-fg-neutral-subtle, #868b94);
+}
+
+.parcel-delivery-complete__item-row img {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.parcel-delivery-complete__item-location {
+  margin: 0;
+  font-size: 12px;
+  color: #a3a3a3;
+}
+
+.parcel-delivery-complete__next-wrap {
+  margin-top: auto;
+  padding-top: 24px;
+  width: 100%;
+}
+
+.parcel-delivery-complete__confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-900);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.parcel-delivery-complete__dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.parcel-delivery-complete__dialog-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.parcel-delivery-complete__dialog-action--primary {
+  background: var(--color-brand);
+  color: #ffffff;
+}
+
+.parcel-delivery-complete__dialog-action--secondary {
+  background: var(--color-gray-200);
+  color: var(--color-gray-1000);
+}

@@ -1,0 +1,339 @@
+.lost-register {
+  position: relative;
+  height: 100%;
+}
+
+.lost-register__scroll {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: var(--space-6);
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.lost-register__scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.lost-register__section {
+  padding: 40px 16px 0;
+}
+
+.lost-register__section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.lost-register__section-title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-gray-1000);
+}
+
+.lost-register__photo-label {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #1a1c20 !important;
+}
+
+.lost-register__section .seed-field__header {
+  padding-left: 0;
+}
+
+.lost-register__photo-count {
+  font-size: 12px;
+  color: var(--color-gray-700);
+}
+
+.lost-register__photo-count strong {
+  color: var(--color-gray-1000);
+  font-weight: 400;
+}
+
+.seed-attachment-input-item__removeButton {
+  --seed-icon-color: #212124 !important;
+  background-color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px #dcdee3 !important;
+}
+
+/* The remove-button's wrapping <span> is an unstyled flex item that steals width from
+   the photo <img> next to it (80px trigger vs. a squeezed ~70px photo). Taking the
+   image out of flex flow keeps it pinned to the full 80x80 box regardless. */
+.seed-attachment-input-item__root--type_image {
+  flex-shrink: 0;
+}
+
+.seed-attachment-input-item__image--type_image {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.lost-register__section-head .lost-register__section-title {
+  margin: 0;
+}
+
+.lost-register__optional-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--color-gray-700);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.lost-register__photo-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lost-register__photo-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-stroke-weak);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  cursor: pointer;
+}
+
+.lost-register__photo-trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lost-register__photo-trigger img {
+  width: 24px;
+  height: 24px;
+}
+
+.lost-register__photo-count {
+  font-size: 12px;
+  color: var(--color-gray-700);
+}
+
+.lost-register__photo-count strong {
+  color: var(--color-gray-1000);
+  font-weight: 400;
+}
+
+.lost-register__photo-item {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-gray-100);
+}
+
+.lost-register__photo-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lost-register__photo-remove {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--color-stroke-weak);
+  border-radius: 9999px;
+  background: var(--color-bg);
+  cursor: pointer;
+}
+
+.lost-register__photo-remove img {
+  width: 10px;
+  height: 10px;
+}
+
+.lost-register__photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-100);
+}
+
+.lost-register__photo-placeholder img {
+  width: 24px;
+  height: 24px;
+  opacity: 0.5;
+}
+
+.lost-register__field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lost-register__ai-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.lost-register__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--color-stroke-weak);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.lost-register__field-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.lost-register__field-input::placeholder {
+  color: var(--color-gray-700);
+}
+
+.lost-register__field-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.lost-register__field-clear img {
+  width: 100%;
+  height: 100%;
+}
+
+.lost-register__field-prefix-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.lost-register__field-text {
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.lost-register__field-text--placeholder {
+  color: var(--color-gray-600);
+}
+
+.lost-register__hint {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--color-gray-700);
+}
+
+.lost-register__location-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.lost-register__location-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lost-register__location-title {
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.lost-register__location-desc {
+  font-size: 13px;
+  color: var(--color-gray-700);
+}
+
+.lost-register__location-chevron {
+  width: auto;
+  height: auto;
+  max-width: 10px;
+  max-height: 18px;
+  flex-shrink: 0;
+}
+
+.lost-register__next-wrap {
+  padding: 32px 16px 0;
+}
+
+.lost-register__next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-900);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.lost-register__next:disabled {
+  background: var(--color-gray-200);
+  color: #d1d3d8;
+  cursor: not-allowed;
+}

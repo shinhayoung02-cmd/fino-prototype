@@ -1,0 +1,93 @@
+.bottom-nav-area {
+  flex-shrink: 0;
+  background: var(--color-bg);
+  padding: 0 13px;
+}
+
+.bottom-nav {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  height: 56px;
+  border-radius: 9999px;
+  background: var(--color-gray-100);
+}
+
+.bottom-nav-area__indicator {
+  width: 139px;
+  height: 5px;
+  margin: 47px auto max(8px, env(safe-area-inset-bottom, 0px));
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Real phones already draw their own home-indicator/gesture bar — this one is only
+   a stand-in for the desktop phone-mockup preview and duplicates/overlaps it. */
+@media (max-width: 430px) {
+  .bottom-nav-area__indicator {
+    display: none;
+  }
+
+  .bottom-nav-area {
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.bottom-nav__divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0.5px;
+  background: var(--color-stroke-weak);
+}
+
+.bottom-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  padding-bottom: 6px;
+  text-decoration: none;
+  color: var(--color-gray-600);
+  font-size: 11px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.bottom-nav__item--active {
+  color: var(--color-gray-1000);
+}
+
+.bottom-nav__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.bottom-nav__icon-glyph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-gray-600);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  transition: background-color 0.15s ease;
+}
+
+.bottom-nav__item--active .bottom-nav__icon-glyph {
+  background-color: var(--color-gray-1000);
+}
+
+.bottom-nav__label {
+  line-height: 1.35;
+}

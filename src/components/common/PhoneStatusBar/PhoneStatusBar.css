@@ -1,0 +1,36 @@
+.phone-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 22px 0 30px;
+  flex-shrink: 0;
+  background: var(--color-bg);
+}
+
+.phone-status-bar__time {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-gray-1000, #16181c);
+}
+
+.phone-status-bar__icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.phone-status-bar__icon--signal {
+  width: 18px;
+  height: 10px;
+}
+
+.phone-status-bar__icon--wifi {
+  width: 15px;
+  height: 11px;
+}
+
+.phone-status-bar__icon--battery {
+  width: 27px;
+  height: 13px;
+}

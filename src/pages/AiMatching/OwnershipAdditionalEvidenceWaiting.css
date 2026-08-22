@@ -1,0 +1,14 @@
+.ownership-additional-evidence-waiting {
+  height: 100%;
+}
+
+.ownership-additional-evidence-waiting .waiting-screen__title {
+  margin-top: 20px;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.ownership-additional-evidence-waiting .waiting-screen__subtitle {
+  font-weight: 500;
+  color: #757b85;
+}

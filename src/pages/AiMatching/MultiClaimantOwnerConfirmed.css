@@ -1,0 +1,208 @@
+.multi-claimant-owner-confirmed {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  padding: 20px 16px 20px;
+  box-sizing: border-box;
+}
+
+.multi-claimant-owner-confirmed__badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 6px;
+  border: 1px solid var(--color-brand-weak);
+  border-radius: 4px;
+  color: var(--color-brand);
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.multi-claimant-owner-confirmed__intro {
+  margin-bottom: 20px;
+}
+
+.multi-claimant-owner-confirmed__title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  color: #171717;
+}
+
+.multi-claimant-owner-confirmed__desc {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  color: #757b85;
+}
+
+.multi-claimant-owner-confirmed__callout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 50px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #edfaf6;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+.multi-claimant-owner-confirmed__callout-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.multi-claimant-owner-confirmed__callout-text {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 19px;
+  color: #075445;
+}
+
+.multi-claimant-owner-confirmed__card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  box-sizing: border-box;
+}
+
+.multi-claimant-owner-confirmed__card-meta {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-semantic-fg-neutral-muted, #555d6d);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: Pretendard, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 12px;
+  letter-spacing: -0.5px;
+}
+
+.multi-claimant-owner-confirmed__card-title {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-semantic-fg-neutral, #1a1c20);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: Pretendard, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: var(--number-line-height-t4, 19px);
+}
+
+.multi-claimant-owner-confirmed__card-desc {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-semantic-fg-neutral-subtle, #868b94);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: Pretendard, sans-serif;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: -0.5px;
+}
+
+.multi-claimant-owner-confirmed__divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.multi-claimant-owner-confirmed__field {
+  margin-top: auto;
+  margin-bottom: 20px;
+}
+
+.multi-claimant-owner-confirmed__field-label {
+  margin: 0 0 16px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--color-fg-neutral-subtle, #868b94);
+}
+
+.multi-claimant-owner-confirmed__list {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.multi-claimant-owner-confirmed__item-divider {
+  height: 1px;
+  margin: 0 12px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.multi-claimant-owner-confirmed__item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.multi-claimant-owner-confirmed__item-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  color: var(--color-gray-1000);
+}
+
+.multi-claimant-owner-confirmed__item-pill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  max-width: 120px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.multi-claimant-owner-confirmed__item-pill--brand {
+  background: #fff2ec;
+  color: #e14d00;
+}
+
+.multi-claimant-owner-confirmed__item-pill--positive {
+  background: #edfaf6;
+  color: #075445;
+}
+
+.multi-claimant-owner-confirmed__next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-900);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}

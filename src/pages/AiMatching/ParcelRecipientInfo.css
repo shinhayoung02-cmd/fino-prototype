@@ -1,0 +1,134 @@
+.parcel-recipient-info {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  height: 100%;
+  min-height: 100%;
+  padding: 20px 16px 16px;
+  box-sizing: border-box;
+}
+
+.parcel-recipient-info__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 27px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-recipient-info__field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.parcel-recipient-info__label {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-recipient-info__input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--color-stroke-weak);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  outline: none;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--color-gray-1000);
+  box-sizing: border-box;
+}
+
+.parcel-recipient-info__input::placeholder {
+  color: var(--color-fg-placeholder, #b0b3ba);
+}
+
+.parcel-recipient-info__address-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.parcel-recipient-info__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--color-stroke-weak);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  box-sizing: border-box;
+}
+
+.parcel-recipient-info__field-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-recipient-info__field-input::placeholder {
+  color: var(--color-fg-placeholder, #b0b3ba);
+}
+
+.parcel-recipient-info__field-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.parcel-recipient-info__field-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.parcel-recipient-info__field-clear img {
+  width: 100%;
+  height: 100%;
+}
+
+.parcel-recipient-info__next-wrap {
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.parcel-recipient-info__next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-900);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.parcel-recipient-info__next:disabled {
+  background: var(--color-gray-200);
+  color: #d1d3d8;
+  cursor: not-allowed;
+}

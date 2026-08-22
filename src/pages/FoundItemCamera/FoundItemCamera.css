@@ -1,0 +1,324 @@
+.found-camera {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #2a3038;
+}
+
+.found-camera__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+}
+
+.found-camera__top-scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 81px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.found-camera__bottom-scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 575px;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.found-camera__chip {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.found-camera__chip-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.found-camera__chip-glyph {
+  position: relative;
+  object-fit: contain;
+}
+
+.found-camera__ai-pill {
+  position: absolute;
+  top: 105px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  box-sizing: border-box;
+}
+
+.found-camera__ai-pill-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.found-camera__ai-pill-text {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  color: #e5e5e5;
+  white-space: nowrap;
+}
+
+.found-camera__corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+}
+
+.found-camera__zoom-pill {
+  position: absolute;
+  left: calc(40% - 1.8px);
+  top: 535px;
+  width: 81.3px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  border-radius: 75px;
+  background: rgba(217, 217, 217, 0.15);
+  box-sizing: border-box;
+}
+
+.found-camera__zoom-dot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+}
+
+.found-camera__zoom-dot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.found-camera__zoom-dot em {
+  position: relative;
+  font-style: normal;
+  font-size: 8px;
+  color: #ffffff;
+}
+
+.found-camera__zoom-dot--active {
+  width: 25px;
+  height: 25px;
+}
+
+.found-camera__zoom-dot--active em {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffd50b;
+}
+
+.found-camera__mode-row {
+  position: absolute;
+  left: 4%;
+  right: 3%;
+  top: 589px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.found-camera__mode {
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #ffffff;
+}
+
+.found-camera__mode--active {
+  color: #f8cb58;
+}
+
+.found-camera__mode--fade-in {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.3), #ffffff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.found-camera__mode--fade-out {
+  background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0.3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.found-camera__controls-row {
+  position: absolute;
+  left: 3.98%;
+  right: 6.97%;
+  top: 616px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.found-camera__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background: rgba(217, 217, 217, 0.15);
+}
+
+.found-camera__thumb img {
+  width: 22.4px;
+  height: 22.4px;
+}
+
+.found-camera__shutter-btn {
+  display: flex;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.found-camera__shutter {
+  width: 72px;
+  height: 72px;
+}
+
+.found-camera__flip {
+  width: 48px;
+  height: 48px;
+}
+
+.found-camera__verify-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.found-camera__verify-dialog {
+  position: absolute;
+  left: 48px;
+  top: 252px;
+  width: 303px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.87);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.found-camera__verify-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 16px;
+  animation: verify-icon-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes verify-icon-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .found-camera__verify-icon {
+    animation: none;
+  }
+}
+
+.found-camera__verify-title {
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+  color: #1a1c20;
+}
+
+.found-camera__verify-desc {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  color: #555d6d;
+}
+
+.found-camera-shell {
+  background: #2a3038;
+}
+
+.found-camera-shell .phone-status-bar {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.found-camera-shell .phone-status-bar__time {
+  color: #ffffff;
+}
+
+.found-camera-shell .phone-status-bar__icon {
+  filter: brightness(0) invert(1);
+}
+
+.found-camera-shell .bottom-nav-area {
+  background: transparent;
+}
+
+.found-camera-shell .bottom-nav {
+  background: transparent;
+}
+
+.found-camera-shell .bottom-nav__divider {
+  display: none;
+}
+
+.found-camera-shell .bottom-nav__item {
+  color: #868b94;
+}
+
+.found-camera-shell .bottom-nav__item--active {
+  color: #f3f4f5;
+}
+
+.found-camera-shell .bottom-nav__icon-glyph {
+  background-color: #868b94;
+}
+
+.found-camera-shell .bottom-nav__item--active .bottom-nav__icon-glyph {
+  background-color: #f3f4f5;
+}

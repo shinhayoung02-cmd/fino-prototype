@@ -1,0 +1,29 @@
+.flow-change-modal__actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.flow-change-modal__action {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border: none;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.flow-change-modal__action--secondary {
+  background: var(--color-gray-200);
+  color: var(--color-gray-1000);
+}
+
+.flow-change-modal__action--critical {
+  background: #fa342c;
+  color: #ffffff;
+}

@@ -1,0 +1,17 @@
+.multiple-claimants-return-prep {
+  height: 100%;
+}
+
+.multiple-claimants-return-prep .waiting-screen__title {
+  margin-top: 21px;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.multiple-claimants-return-prep .waiting-screen__callout {
+  background: #eff6ff;
+}
+
+.multiple-claimants-return-prep .waiting-screen__callout-text {
+  color: #0b4596;
+}

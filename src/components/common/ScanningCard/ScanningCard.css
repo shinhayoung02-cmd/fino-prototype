@@ -1,0 +1,129 @@
+.scanning-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 16px;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.scanning-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.scanning-card__status {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: -0.46px;
+  color: var(--color-gray-700);
+}
+
+.scanning-card__more {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.scanning-card__head-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.scanning-card__head-btn img {
+  width: 100%;
+  height: 100%;
+}
+
+.scanning-card__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.scanning-card__item-title {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-semantic-fg-neutral, #1a1c20);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: var(--number-line-height-t4, 19px);
+}
+
+.scanning-card__item-meta {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-semantic-fg-neutral-muted, #555d6d);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: Pretendard, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 12px;
+  letter-spacing: -0.5px;
+}
+
+.scanning-card__item-note {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-semantic-fg-neutral-subtle, #868b94);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: Pretendard, sans-serif;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: -0.5px;
+}
+
+.scanning-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.scanning-card__action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.scanning-card__action--edit {
+  background: var(--color-gray-100);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  color: var(--color-gray-1000);
+}
+
+.scanning-card__action--pause {
+  background: var(--color-gray-900);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}

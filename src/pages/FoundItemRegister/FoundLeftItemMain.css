@@ -1,0 +1,253 @@
+.found-left {
+  position: relative;
+  height: 100%;
+}
+
+.found-left__scroll {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: var(--space-6);
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.found-left__scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.found-left__section {
+  padding: 40px 16px 0;
+}
+
+.found-left__section:first-child {
+  padding-top: 20px;
+}
+
+.found-left__section-title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-gray-1000);
+}
+
+.found-left__photo-label {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #1a1c20 !important;
+}
+
+.found-left__section .seed-field__header {
+  padding-left: 0;
+}
+
+.found-left__photo-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-stroke-weak);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  cursor: pointer;
+}
+
+.found-left__photo-trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.found-left__photo-trigger img {
+  width: 24px;
+  height: 24px;
+}
+
+.found-left__photo-count {
+  font-size: 12px;
+  color: var(--color-gray-700);
+}
+
+.found-left__photo-count strong {
+  color: var(--color-gray-1000);
+  font-weight: 400;
+}
+
+.found-left__field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.found-left__ai-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.found-left__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--color-stroke-weak);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.found-left__field-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.found-left__field-input::placeholder {
+  color: var(--color-gray-700);
+}
+
+.found-left__field-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.found-left__field-clear img {
+  width: 100%;
+  height: 100%;
+}
+
+.found-left__field-prefix-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.found-left__field-text {
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.found-left__field-text--placeholder {
+  color: #b0b3ba;
+}
+
+.found-left__hint {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 15px;
+  color: var(--color-fg-neutral-muted);
+}
+
+.found-left__location-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.found-left__location-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.found-left__location-title {
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.found-left__location-desc {
+  font-size: 13px;
+  color: #868b94;
+}
+
+.found-left__location-chevron {
+  width: auto;
+  height: auto;
+  max-width: 10px;
+  max-height: 18px;
+  flex-shrink: 0;
+}
+
+.found-left__next-wrap {
+  padding: 32px 16px 0;
+}
+
+.found-left__next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-900);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.found-left__next:disabled {
+  background: var(--color-disabled, #f3f4f5);
+  color: #d1d3d8;
+  cursor: not-allowed;
+}
+
+.found-left__review-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.found-left__edit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-gray-1000);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}

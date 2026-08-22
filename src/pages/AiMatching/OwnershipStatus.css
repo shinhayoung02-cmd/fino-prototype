@@ -1,0 +1,148 @@
+.ownership-status {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  padding: 20px 16px 16px;
+  box-sizing: border-box;
+}
+
+.ownership-status__badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 6px;
+  border: 1px solid var(--color-brand-weak);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-brand);
+}
+
+.ownership-status__title {
+  margin: 16px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+  color: #171717;
+}
+
+.ownership-status__subtitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 19px;
+  color: var(--color-fg-neutral-muted);
+}
+
+.ownership-status__callout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  min-height: 50px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--color-gray-200);
+}
+
+.ownership-status__callout-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ownership-status__callout-text {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--color-gray-1000);
+}
+
+.ownership-status__status {
+  margin-top: auto;
+}
+
+.ownership-status__status-label {
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: var(--color-gray-700);
+}
+
+.ownership-status__status-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ownership-status__status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ownership-status__status-row:first-child {
+  border-top: none;
+}
+
+.ownership-status__status-row-label {
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.ownership-status__status-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ownership-status__status-badge--done {
+  background: var(--color-brand);
+}
+
+.ownership-status__status-badge--pending {
+  background: var(--color-gray-700);
+}
+
+.ownership-status__actions {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ownership-status__action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ownership-status__action--secondary {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: transparent;
+  color: var(--color-gray-1000);
+}
+
+.ownership-status__action--primary {
+  border: none;
+  background: var(--color-gray-900);
+  color: #ffffff;
+}

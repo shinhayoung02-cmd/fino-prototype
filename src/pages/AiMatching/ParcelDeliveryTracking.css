@@ -1,0 +1,299 @@
+.parcel-delivery-tracking {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  padding: 20px 16px 16px;
+  box-sizing: border-box;
+}
+
+.parcel-delivery-tracking__progress {
+  display: flex;
+  align-items: flex-start;
+  align-self: center;
+  width: 275px;
+  padding: 11.935px;
+  box-sizing: border-box;
+}
+
+.parcel-delivery-tracking__progress-step {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.parcel-delivery-tracking__progress-step:first-child {
+  flex: 0 0 auto;
+}
+
+.parcel-delivery-tracking__progress-connector {
+  flex: 1;
+  height: 1.492px;
+  margin-top: 14.17px;
+  background: var(--color-stroke-weak);
+}
+
+.parcel-delivery-tracking__progress-connector--active {
+  background: #ffb999;
+}
+
+.parcel-delivery-tracking__progress-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.parcel-delivery-tracking__progress-circle {
+  display: block;
+  width: 29.837px;
+  height: 29.837px;
+  border-radius: 9999px;
+}
+
+.parcel-delivery-tracking__progress-circle--empty {
+  border: 0.75px solid var(--color-stroke-weak);
+  background: var(--color-gray-200);
+}
+
+.parcel-delivery-tracking__progress-label {
+  font-size: 11px;
+  color: var(--color-fg-neutral-subtle, #868b94);
+  white-space: nowrap;
+}
+
+.parcel-delivery-tracking__progress-label--active {
+  color: var(--color-gray-1000);
+  font-weight: 500;
+}
+
+.parcel-delivery-tracking__intro {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.parcel-delivery-tracking__title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.parcel-delivery-tracking__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 27px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-delivery-tracking__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 120px;
+  min-height: 20px;
+  padding: 2px 6px;
+  border: 1px solid var(--color-brand-weak);
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 15px;
+  font-weight: 700;
+  color: var(--color-brand);
+  white-space: nowrap;
+}
+
+.parcel-delivery-tracking__subtitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  color: #757b85;
+}
+
+.parcel-delivery-tracking__item-card {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.parcel-delivery-tracking__item-photo {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--color-gray-200);
+}
+
+.parcel-delivery-tracking__item-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.parcel-delivery-tracking__item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.parcel-delivery-tracking__item-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.parcel-delivery-tracking__item-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.parcel-delivery-tracking__item-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 14px;
+  color: var(--color-fg-neutral-subtle, #868b94);
+}
+
+.parcel-delivery-tracking__item-row img {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.parcel-delivery-tracking__item-location {
+  margin: 0;
+  font-size: 12px;
+  color: #a3a3a3;
+}
+
+.parcel-delivery-tracking__help-list {
+  margin-top: auto;
+}
+
+.parcel-delivery-tracking__help-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.parcel-delivery-tracking__help-item span {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-delivery-tracking__help-item img {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.parcel-delivery-tracking__help-divider {
+  height: 1px;
+  margin: 0 12px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.parcel-delivery-tracking__next-wrap {
+  padding-top: 12px;
+}
+
+.parcel-delivery-tracking__next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-900);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.parcel-delivery-tracking .bottom-sheet__title {
+  font-size: 22px;
+  line-height: 30px;
+}
+
+.parcel-delivery-tracking__faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.parcel-delivery-tracking__faq-item {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.parcel-delivery-tracking__faq-item-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.parcel-delivery-tracking__faq-item-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  color: #171717;
+}
+
+.parcel-delivery-tracking__faq-item-chevron {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.parcel-delivery-tracking__faq-item-chevron--open {
+  transform: rotate(180deg);
+}
+
+.parcel-delivery-tracking__faq-item-body {
+  padding: 0 16px 16px;
+}
+
+.parcel-delivery-tracking__faq-item-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-gray-1000);
+}
