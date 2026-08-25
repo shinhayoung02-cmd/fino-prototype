@@ -39,7 +39,7 @@
 .nearby-map__map {
   position: relative;
   flex: 1;
-  min-height: 0;
+  min-height: 380px;
   overflow: hidden;
   background: #e5e5e5;
 }
