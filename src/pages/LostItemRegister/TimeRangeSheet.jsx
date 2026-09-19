@@ -1,57 +1,36 @@
-import { useEffect, useRef, useState } from 'react'
-import { TimePicker } from '@seed-design/react'
+import { useState } from 'react'
+import { DatePicker, TimePicker } from '@seed-design/react'
+import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import './TimeRangeSheet.css'
-
-const ITEM_HEIGHT = 40
-const MONTHS = Array.from({ length: 12 }, (_, i) => `${i + 1}월`)
-const DAYS = Array.from({ length: 31 }, (_, i) => `${i + 1}일`)
 
 function pad2(value) {
   return String(value).padStart(2, '0')
 }
 
-function WheelColumn({ options, value, onChange }) {
-  const scrollRef = useRef(null)
-  const settleTimer = useRef(null)
+function getToday() {
+  const now = new Date()
+  return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() }
+}
 
-  useEffect(() => {
-    const index = options.indexOf(value)
-    if (scrollRef.current && index >= 0) {
-      scrollRef.current.scrollTop = index * ITEM_HEIGHT
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+const TODAY = getToday()
+const NOW = new Date()
+const TODAY_HOUR = NOW.getHours()
+const TODAY_MINUTE = NOW.getMinutes()
 
-  const settleToIndex = (index, notify) => {
-    const clamped = Math.max(0, Math.min(options.length - 1, index))
-    scrollRef.current?.scrollTo({ top: clamped * ITEM_HEIGHT, behavior: 'smooth' })
-    if (notify) onChange(options[clamped])
-  }
+function toTime({ year, month, day }) {
+  return new Date(year, month - 1, day).getTime()
+}
 
-  const handleScroll = () => {
-    if (settleTimer.current) clearTimeout(settleTimer.current)
-    settleTimer.current = setTimeout(() => {
-      if (!scrollRef.current) return
-      const index = Math.round(scrollRef.current.scrollTop / ITEM_HEIGHT)
-      settleToIndex(index, true)
-    }, 120)
-  }
+const MIN_SELECTABLE_TIME = (() => {
+  const d = new Date(TODAY.year, TODAY.month - 1, TODAY.day)
+  d.setDate(d.getDate() - 7)
+  return d.getTime()
+})()
+const MAX_SELECTABLE_TIME = toTime(TODAY)
 
-  return (
-    <div className="wheel-column">
-      <div className="wheel-column__scroll" ref={scrollRef} onScroll={handleScroll}>
-        {options.map((option, index) => (
-          <div
-            key={option}
-            className={`wheel-column__item${option === value ? ' wheel-column__item--selected' : ''}`}
-            onClick={() => settleToIndex(index, true)}
-          >
-            {option}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+const isWithinSelectableRange = (candidate) => {
+  const time = toTime(candidate)
+  return time >= MIN_SELECTABLE_TIME && time <= MAX_SELECTABLE_TIME
 }
 
 function WheelPickerPopup({ title, onConfirm, onBackdrop, closing, children }) {
@@ -125,15 +104,15 @@ export default function TimeRangeSheet({
   dayRowLabel = '분실 날짜',
   timeRowLabel = '분실 시간',
 }) {
-  const now = useRef(new Date()).current
   const [step, setStep] = useState('range')
   const [closing, setClosing] = useState(false)
 
-  const [month, setMonth] = useState(`${now.getMonth() + 1}월`)
-  const [day, setDay] = useState(`${now.getDate()}일`)
-  const [time, setTime] = useState({ hour: now.getHours(), minute: now.getMinutes() })
+  const [dateValue, setDateValue] = useState(TODAY)
+  const [time, setTime] = useState({ hour: TODAY_HOUR, minute: TODAY_MINUTE })
   const [dayFilled, setDayFilled] = useState(false)
   const [timeFilled, setTimeFilled] = useState(false)
+  const month = `${dateValue.month}월`
+  const day = `${dateValue.day}일`
 
   if (!isOpen) return null
 
@@ -183,21 +162,33 @@ export default function TimeRangeSheet({
 
   if (step === 'day') {
     return (
-      <WheelPickerPopup
-        closing={closing}
+      <BottomSheet
+        isOpen
+        onClose={() => swapTo('range')}
         title="요일을 선택하세요"
-        onBackdrop={() => swapTo('range')}
-        onConfirm={() => {
-          setDayFilled(true)
-          swapTo('range')
-        }}
+        footer={
+          <button
+            type="button"
+            className="range-sheet__calendar-confirm"
+            onClick={() => {
+              setDayFilled(true)
+              swapTo('range')
+            }}
+          >
+            선택 완료
+          </button>
+        }
       >
-        <div className="wheel-popup__wheels">
-          <div className="wheel-popup__highlight" />
-          <WheelColumn options={MONTHS} value={month} onChange={setMonth} />
-          <WheelColumn options={DAYS} value={day} onChange={setDay} />
+        <div className="range-sheet__calendar">
+          <DatePicker
+            selectionMode="single"
+            today={TODAY}
+            value={dateValue}
+            onValueChange={setDateValue}
+            constraints={[isWithinSelectableRange]}
+          />
         </div>
-      </WheelPickerPopup>
+      </BottomSheet>
     )
   }
 

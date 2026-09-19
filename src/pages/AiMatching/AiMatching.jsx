@@ -92,17 +92,19 @@ export default function AiMatching({
           <button type="button" className="ai-matching__retry" aria-label="다시 탐색">
             <img src={iconRetry} alt="" />
           </button>
-          {chips.map((chip) => (
-            <button
-              key={chip.id}
-              type="button"
-              className={`ai-matching__chip${chip.selected ? ' ai-matching__chip--selected' : ''}`}
-              aria-pressed={chip.selected}
-              onClick={() => toggleChip(chip.id)}
-            >
-              {chip.label}
-            </button>
-          ))}
+          <div className="ai-matching__chip-group">
+            {chips.map((chip) => (
+              <button
+                key={chip.id}
+                type="button"
+                className={`ai-matching__chip${chip.selected ? ' ai-matching__chip--selected' : ''}`}
+                aria-pressed={chip.selected}
+                onClick={() => toggleChip(chip.id)}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="ai-matching__excluded">

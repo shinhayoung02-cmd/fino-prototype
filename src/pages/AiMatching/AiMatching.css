@@ -42,9 +42,15 @@
 .ai-matching__chip-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   margin-bottom: 12px;
   overflow-x: auto;
+}
+
+.ai-matching__chip-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .ai-matching__retry {

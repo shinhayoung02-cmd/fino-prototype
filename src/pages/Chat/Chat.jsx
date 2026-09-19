@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import itemWallet from '../../assets/home/item-wallet.png'
 import itemEarphone from '../../assets/home/item-buzz-earphone.jpg'
 import itemCarKey from '../../assets/chat/item-car-key.jpg'
+import finoAvatarIllustration from '../../assets/chat/fino-avatar-layer2.png'
 import './Chat.css'
 
 function InfoIcon() {
@@ -104,7 +105,7 @@ export default function Chat({ readRoomIds, isFlowActive }) {
                 {room.image ? (
                   <img src={room.image} alt="" className="chat__room-avatar-photo" />
                 ) : (
-                  <span className="chat__room-avatar-fino" aria-hidden="true">FINO</span>
+                  <img src={finoAvatarIllustration} alt="" className="chat__room-avatar-fino" />
                 )}
               </span>
               <span className="chat__room-body">

@@ -208,7 +208,9 @@ button.home-quick-card:active {
 
 .home-nearby-card {
   display: block;
+  position: relative;
   width: 100%;
+  height: 219px;
   border: none;
   background: none;
   padding: 0;
@@ -230,9 +232,12 @@ button.home-quick-card:active {
 }
 
 .home-map__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  position: absolute;
+  left: -10.45%;
+  top: -66.29%;
+  width: 115.91%;
+  height: 227.42%;
+  max-width: none;
 }
 
 .home-map__pin {
@@ -242,46 +247,45 @@ button.home-quick-card:active {
   transform: translate(-50%, -50%);
 }
 
-.home-map__pin-halo {
-  position: absolute;
-  inset: 0;
+.home-map__pin-img {
+  display: block;
   width: 100%;
   height: 100%;
-  animation: home-pin-halo-pulse 2.2s ease-out infinite;
+  animation: home-map-pin-pulse 1.8s ease-in-out infinite;
 }
 
-.home-map__pin--delayed .home-map__pin-halo {
-  animation-delay: 0.7s;
+.home-map__pin:nth-of-type(2) .home-map__pin-img {
+  animation-delay: 0.5s;
 }
 
-@keyframes home-pin-halo-pulse {
-  0% {
-    transform: scale(0.85);
-    opacity: 1;
-  }
-  70% {
-    opacity: 0.35;
-  }
+@keyframes home-map-pin-pulse {
+  0%,
   100% {
-    transform: scale(1.35);
-    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
   }
 }
 
-.home-map__pin-body {
-  position: absolute;
-  left: 4px;
-  top: 6px;
-  width: 48px;
-  height: 48px;
+@media (prefers-reduced-motion: reduce) {
+  .home-map__pin-img {
+    animation: none;
+  }
 }
 
 .home-nearby-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 124px;
+  height: 95px;
   display: flex;
   gap: 12px;
   padding: 8px;
   background: var(--color-bg);
   border: 1px solid var(--color-gray-100);
+  box-sizing: border-box;
 }
 
 .home-nearby-info__photo {
@@ -389,6 +393,44 @@ button.home-quick-card:active {
   font-size: 13px;
   letter-spacing: -0.5px;
   color: var(--color-gray-700);
+}
+
+.home-scroll-hint {
+  position: sticky;
+  bottom: 0;
+  height: 0;
+  z-index: 5;
+}
+
+.home-scroll-hint__fog {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 35px;
+  background: linear-gradient(to top, #ffffff, rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.home-scroll-hint__button {
+  position: absolute;
+  left: 50%;
+  bottom: 11px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.home-scroll-hint__icon {
+  width: 100%;
+  height: 100%;
 }
 
 .home .bottom-sheet {

@@ -1,17 +1,17 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import heroIllustration from '../../assets/home/hero-illustration.png'
 import iconSearch from '../../assets/home/icon-search.svg'
 import iconChevronRight from '../../assets/home/icon-chevron-right.svg'
 import mapPreview from '../../assets/home/map-preview.png'
-import pinHalo from '../../assets/home/pin-halo.svg'
-import pinBody from '../../assets/home/pin-body.svg'
+import mapPin from '../../assets/home/map-pin-figma.svg'
 import itemWallet from '../../assets/home/item-wallet.png'
 import iconPayment from '../../assets/home/icon-payment.svg'
 import iconClock from '../../assets/home/icon-clock.svg'
 import ScanningCard from '../../components/common/ScanningCard/ScanningCard'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import iconCheck from '../../assets/ai-matching/icon-parcel-check.svg'
+import scrollHintButton from '../../assets/home/scroll-hint-button.png'
 import './Home.css'
 
 const RECENT_ACTIVITY = [
@@ -60,7 +60,21 @@ export default function Home({
   const [foundOption, setFoundOption] = useState('has-it')
   const [isLeftItemSheetOpen, setLeftItemSheetOpen] = useState(false)
   const [leftItemOption, setLeftItemOption] = useState('street')
+  const [isScrolledToEnd, setIsScrolledToEnd] = useState(false)
+  const rootRef = useRef(null)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const scrollEl = rootRef.current?.closest('.app-shell__content')
+    if (!scrollEl) return
+    const handleScroll = () => {
+      const atEnd = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 2
+      setIsScrolledToEnd(atEnd)
+    }
+    handleScroll()
+    scrollEl.addEventListener('scroll', handleScroll)
+    return () => scrollEl.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleSearchSubmit = (event) => {
     event.preventDefault()
@@ -79,7 +93,7 @@ export default function Home({
   const NearbyCardTag = isNearbyCardLinked ? 'button' : 'div'
 
   return (
-    <div className="home">
+    <div className="home" ref={rootRef}>
       <section className="home-hero">
         <img src={heroIllustration} alt="" className="home-hero__illustration" />
         <h2 className="home-hero__title">
@@ -172,15 +186,13 @@ export default function Home({
           <div className="home-map">
             <img src={mapPreview} alt="지도 미리보기" className="home-map__image" />
             <div className="home-map__pin" style={{ left: '50%', top: '50%' }}>
-              <img src={pinHalo} alt="" className="home-map__pin-halo" />
-              <img src={pinBody} alt="" className="home-map__pin-body" />
+              <img src={mapPin} alt="" className="home-map__pin-img" />
             </div>
             <div
-              className="home-map__pin home-map__pin--delayed"
+              className="home-map__pin"
               style={{ left: 'calc(50% + 90.5px)', top: 'calc(50% - 51px)' }}
             >
-              <img src={pinHalo} alt="" className="home-map__pin-halo" />
-              <img src={pinBody} alt="" className="home-map__pin-body" />
+              <img src={mapPin} alt="" className="home-map__pin-img" />
             </div>
           </div>
           <div className="home-nearby-info">
@@ -217,6 +229,20 @@ export default function Home({
           ))}
         </div>
       </div>
+
+      {!isScrolledToEnd && (
+        <div className="home-scroll-hint">
+          <div className="home-scroll-hint__fog" />
+          <button
+            type="button"
+            className="home-scroll-hint__button"
+            aria-label="아래로 스크롤"
+            onClick={() => rootRef.current?.closest('.app-shell__content')?.scrollBy({ top: 300, behavior: 'smooth' })}
+          >
+            <img src={scrollHintButton} alt="" className="home-scroll-hint__icon" />
+          </button>
+        </div>
+      )}
 
       <BottomSheet isOpen={isFoundSheetOpen} onClose={() => setFoundSheetOpen(false)}>
         <div className="found-report-sheet__header">
@@ -258,7 +284,7 @@ export default function Home({
               }
             }}
           >
-            시작하기
+            선택 완료
           </button>
         </div>
       </BottomSheet>

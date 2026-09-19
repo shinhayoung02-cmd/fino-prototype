@@ -152,6 +152,17 @@
   height: 48px;
 }
 
+.location-picker__pin-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translate(-50%, -50%);
+}
+
 @keyframes location-fade-in {
   from {
     opacity: 0;
@@ -223,6 +234,16 @@
 .location-picker__search-area-btn img {
   width: 12px;
   height: 10.5px;
+}
+
+.location-picker__area-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.55);
 }
 
 .location-picker__controls {

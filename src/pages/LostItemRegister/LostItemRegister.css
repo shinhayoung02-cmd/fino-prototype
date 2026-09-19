@@ -270,8 +270,10 @@
 
 .lost-register__hint {
   margin: 8px 0 0;
+  padding-left: 4px;
   font-size: 14px;
-  color: var(--color-gray-700);
+  line-height: 15px;
+  color: var(--color-fg-neutral-muted);
 }
 
 .lost-register__location-row {
@@ -279,7 +281,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px 16px 12px 8px;
   border: none;
   border-radius: var(--radius-md);
   background: var(--color-bg);
@@ -296,7 +298,8 @@
 
 .lost-register__location-title {
   font-size: 16px;
-  color: var(--color-gray-1000);
+  font-weight: 500;
+  color: #585e66;
 }
 
 .lost-register__location-desc {

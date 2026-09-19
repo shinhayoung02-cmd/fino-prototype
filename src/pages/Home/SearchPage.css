@@ -77,11 +77,9 @@
 .search-page__suggestions-title {
   margin: 0;
   padding: 0 16px;
-  height: 44px;
-  display: flex;
-  align-items: center;
   font-size: 16px;
   font-weight: 700;
+  line-height: 1.35;
   color: #212124;
 }
 
@@ -113,19 +111,32 @@
   color: #212124;
 }
 
+.search-page__suggestion-chevron {
+  width: 13.333px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
 .search-page__empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
   padding: 16px 48px;
-  margin-top: 60px;
+  margin-top: 204px;
   text-align: center;
 }
 
 .search-page__empty-icon {
   width: 40px;
   height: 40px;
+}
+
+.search-page__empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .search-page__empty-title {

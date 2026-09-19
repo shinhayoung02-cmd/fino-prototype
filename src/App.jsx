@@ -8,6 +8,7 @@ import BottomNav from './components/common/BottomNav/BottomNav'
 import Home from './pages/Home/Home'
 import NearbyMapView from './pages/Home/NearbyMapView'
 import SearchPage from './pages/Home/SearchPage'
+import iconSettingsGear from './assets/my-page/icon-settings-gear.svg'
 import AiMatching from './pages/AiMatching/AiMatching'
 import MatchDetail from './pages/AiMatching/MatchDetail'
 import OwnershipRequested from './pages/AiMatching/OwnershipRequested'
@@ -263,6 +264,17 @@ function SearchScreen({ activeTab, onSelectTab }) {
   return (
     <AppShell
       key={location.pathname}
+      header={
+        <Header
+          title="검색어를 입력해주세요"
+          showBack
+          rightSlot={
+            <button type="button" className="header__icon-btn" aria-label="설정">
+              <img src={iconSettingsGear} alt="" style={{ width: 19.2, height: 19.2 }} />
+            </button>
+          }
+        />
+      }
       bottomNav={<BottomNav items={NAV_ITEMS} activeTab={activeTab} onSelect={onSelectTab} />}
     >
       <SearchPage />
@@ -1435,7 +1447,7 @@ function App() {
           path="/found/new/left"
           element={
             <SubStepScreen
-              title="발견물 등록"
+              title="습득물 등록"
               backTo="/"
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
               activeTab="/"

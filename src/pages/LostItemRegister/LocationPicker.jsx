@@ -7,6 +7,7 @@ import iconToggleSearch from '../../assets/location-picker/icon-toggle-search.sv
 import iconLocate from '../../assets/location-picker/icon-locate.svg'
 import pinHalo from '../../assets/home/pin-halo.svg'
 import pinBody from '../../assets/home/pin-body.svg'
+import { ProgressCircle } from '../../../seed-design/ui/progress-circle'
 import './LocationPicker.css'
 
 const RADIUS_OPTIONS = ['500m', '100m', '동네 전체']
@@ -37,6 +38,8 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
   const [searchMode, setSearchMode] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [radius, setRadius] = useState(value?.radius ?? '500m')
+  const [isAreaSearching, setIsAreaSearching] = useState(false)
+  const [confirmedQuery, setConfirmedQuery] = useState(null)
 
   const radiusLabel = type === 'lost' ? '분실 반경' : type === 'discovered' ? '발견 반경' : '습득 반경'
   const radiusHint =
@@ -52,6 +55,17 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
   }
 
   const showSearchAreaBtn = searchMode && searchQuery.trim().length > 0
+
+  const handleSearchThisArea = () => {
+    const query = searchQuery.trim()
+    setIsAreaSearching(true)
+    setTimeout(() => {
+      setIsAreaSearching(false)
+      setSearchMode(false)
+      setSearchQuery('')
+      setConfirmedQuery(query)
+    }, 2000)
+  }
 
   return (
     <div className="location-picker">
@@ -95,7 +109,15 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
           <div className="location-picker__callout">
             <LocationPinIcon />
             <p className="location-picker__callout-text">
-              현재 위치가 내 동네로 설정한 <strong>&lsquo;서교동&rsquo;</strong>에 있어요
+              {confirmedQuery ? (
+                <>
+                  지도에서 선택한 위치가 <strong>&lsquo;{confirmedQuery}&rsquo;</strong>에 있어요
+                </>
+              ) : (
+                <>
+                  현재 위치가 내 동네로 설정한 <strong>&lsquo;서교동&rsquo;</strong>에 있어요
+                </>
+              )}
             </p>
           </div>
         )}
@@ -109,22 +131,22 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
         <div className="location-picker__pin">
           <img src={pinHalo} alt="" className="location-picker__pin-halo" />
           <img src={pinBody} alt="" className="location-picker__pin-body" />
+          <span className="location-picker__pin-center" />
         </div>
 
         {showSearchAreaBtn && (
-          <button type="button" className="location-picker__search-area-btn">
+          <button type="button" className="location-picker__search-area-btn" onClick={handleSearchThisArea}>
             <img src={iconToggleSearch} alt="" />이 지역 검색하기
           </button>
         )}
 
+        {isAreaSearching && (
+          <div className="location-picker__area-loading">
+            <ProgressCircle size="40" tone="brand" />
+          </div>
+        )}
+
         <div className="location-picker__controls">
-          <button
-            type="button"
-            className="location-picker__control-btn"
-            aria-label="내 위치로 이동"
-          >
-            <img src={iconLocate} alt="" />
-          </button>
           <button
             type="button"
             className="location-picker__control-btn"
@@ -132,6 +154,13 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
             onClick={() => setSearchMode(true)}
           >
             <SearchIcon />
+          </button>
+          <button
+            type="button"
+            className="location-picker__control-btn"
+            aria-label="내 위치로 이동"
+          >
+            <img src={iconLocate} alt="" />
           </button>
         </div>
       </div>

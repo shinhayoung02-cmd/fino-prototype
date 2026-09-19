@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import mapBg from '../../assets/location-picker/map-bg.png'
 import iconLocate from '../../assets/location-picker/icon-locate.svg'
-import pinHalo from '../../assets/home/pin-halo.svg'
-import pinBody from '../../assets/home/pin-body.svg'
+import iconRemoveCircle from '../../assets/location-picker/icon-remove-circle.svg'
+import mapPin from '../../assets/home/map-pin-figma.svg'
 import itemWallet from '../../assets/home/item-wallet.png'
 import itemBuzzEarphone from '../../assets/home/item-buzz-earphone.jpg?inline'
 import itemAirpods from '../../assets/home/item-airpods.jpg?inline'
@@ -18,6 +19,10 @@ const NEARBY_ITEMS = [
     feature: '검정색 Matin Kim 가죽 반지갑',
     time: '오늘 오전 9~12시',
     location: '서울 마포구 홍대입구역',
+    // 지도 위 핀 위치 (지도 중심 기준 px 오프셋)
+    pin: { left: '50%', top: '50%' },
+    // Figma 사진 크롭 위치 (80x80 박스 기준 실측치)
+    photoCrop: { left: -14, top: 0, width: 108, height: 81 },
   },
   {
     id: 'earphone-1',
@@ -26,6 +31,8 @@ const NEARBY_ITEMS = [
     feature: '흰색 BUZZ 이어폰',
     time: '오늘 오전 12~14시',
     location: '서울 마포구 AK몰',
+    pin: { left: 'calc(50% + 98.5px)', top: 'calc(50% - 51px)' },
+    photoCrop: { left: -6, top: -1, width: 86, height: 86 },
   },
   {
     id: 'earphone-2',
@@ -34,6 +41,9 @@ const NEARBY_ITEMS = [
     feature: '흰색 에어팟 이어폰',
     time: '오늘 오전 12시',
     location: '서울 성산동',
+    // Figma에 세번째 핀 좌표가 없어 기존 두 핀 패턴을 따라 임의 배치함
+    pin: { left: 'calc(50% - 90px)', top: 'calc(50% + 40px)' },
+    photoCrop: { left: -5, top: 0, width: 89, height: 89 },
   },
 ]
 
@@ -57,41 +67,128 @@ function SearchIcon() {
   )
 }
 
+function RefreshIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" className="nearby-map__refresh-icon" aria-hidden="true">
+      <path
+        d="M12.25 7A5.25 5.25 0 1 1 10.5 3.06M12.25 1.75v3.06h-3.06"
+        stroke="#1a1c20"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function ItemCard({ item, onClick }) {
+  return (
+    <div
+      className={`nearby-map__item${onClick ? ' nearby-map__item--clickable' : ''}`}
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+    >
+      <div className="nearby-map__item-photo">
+        {item.photo && (
+          <img
+            src={item.photo}
+            alt=""
+            style={{
+              left: item.photoCrop.left,
+              top: item.photoCrop.top,
+              width: item.photoCrop.width,
+              height: item.photoCrop.height,
+            }}
+          />
+        )}
+      </div>
+      <div className="nearby-map__item-body">
+        <p className="nearby-map__item-title">{item.title}</p>
+        <p className="nearby-map__item-row">
+          <img src={iconPayment} alt="" />
+          {item.feature}
+        </p>
+        <p className="nearby-map__item-row">
+          <img src={iconClock} alt="" />
+          {item.time}
+        </p>
+        <p className="nearby-map__item-location">{item.location}</p>
+      </div>
+    </div>
+  )
+}
+
 export default function NearbyMapView() {
   const navigate = useNavigate()
+  const [selectedId, setSelectedId] = useState(null)
+  const selectedItem = NEARBY_ITEMS.find((item) => item.id === selectedId) ?? null
 
   return (
     <div className="nearby-map">
-      <div className="nearby-map__map">
+      {selectedItem ? (
+        <div className="nearby-map__search-header">
+          <div className="nearby-map__search-field">
+            <span className="nearby-map__search-field-text">{selectedItem.location}</span>
+            <button
+              type="button"
+              className="nearby-map__search-field-clear"
+              aria-label="지우기"
+              onClick={() => setSelectedId(null)}
+            >
+              <img src={iconRemoveCircle} alt="" />
+            </button>
+          </div>
+          <button type="button" className="nearby-map__search-cancel" onClick={() => setSelectedId(null)}>
+            취소
+          </button>
+        </div>
+      ) : (
         <div className="nearby-map__callout">
           <LocationPinIcon />
           <p className="nearby-map__callout-text">
             현재 위치가 내 동네로 설정한 <strong>&lsquo;서교동&rsquo;</strong>에 있어요
           </p>
         </div>
+      )}
 
+      <div className={`nearby-map__map${selectedItem ? ' nearby-map__map--tall' : ''}`}>
         <img src={mapBg} alt="지도" className="nearby-map__map-img" />
 
-        <div className="nearby-map__pin">
-          <img src={pinHalo} alt="" className="nearby-map__pin-halo" />
-          <img src={pinBody} alt="" className="nearby-map__pin-body" />
-        </div>
-        <div className="nearby-map__pin nearby-map__pin--secondary">
-          <img src={pinHalo} alt="" className="nearby-map__pin-halo" />
-          <img src={pinBody} alt="" className="nearby-map__pin-body" />
-        </div>
+        {NEARBY_ITEMS.map((item) => {
+          const isSelected = selectedItem?.id === item.id
+          if (selectedItem && !isSelected) return null
+          return (
+            <button
+              type="button"
+              key={item.id}
+              className="nearby-map__pin"
+              style={{ left: item.pin.left, top: item.pin.top }}
+              aria-label={item.title}
+              onClick={() => setSelectedId(item.id)}
+            >
+              <img src={mapPin} alt="" className="nearby-map__pin-img" />
+            </button>
+          )
+        })}
+
+        {selectedItem && (
+          <button type="button" className="nearby-map__area-search">
+            <RefreshIcon />이 지역 검색하기
+          </button>
+        )}
 
         <div className="nearby-map__controls">
-          <button type="button" className="nearby-map__control-btn" aria-label="내 위치로 이동">
-            <img src={iconLocate} alt="" />
-          </button>
           <button type="button" className="nearby-map__control-btn" aria-label="장소 검색">
             <SearchIcon />
+          </button>
+          <button type="button" className="nearby-map__control-btn" aria-label="내 위치로 이동">
+            <img src={iconLocate} alt="" />
           </button>
         </div>
       </div>
 
-      <div className="nearby-map__sheet">
+      <div className={`nearby-map__sheet${selectedItem ? ' nearby-map__sheet--confirm' : ''}`}>
         <div className="nearby-map__address">
           <LocationPinIcon />
           <div className="nearby-map__address-text">
@@ -101,23 +198,13 @@ export default function NearbyMapView() {
         </div>
 
         <div className="nearby-map__list">
-          {NEARBY_ITEMS.map((item) => (
-            <div className="nearby-map__item" key={item.id}>
-              <div className="nearby-map__item-photo">{item.photo && <img src={item.photo} alt="" />}</div>
-              <div className="nearby-map__item-body">
-                <p className="nearby-map__item-title">{item.title}</p>
-                <p className="nearby-map__item-row">
-                  <img src={iconPayment} alt="" />
-                  {item.feature}
-                </p>
-                <p className="nearby-map__item-row">
-                  <img src={iconClock} alt="" />
-                  {item.time}
-                </p>
-                <p className="nearby-map__item-location">{item.location}</p>
-              </div>
-            </div>
-          ))}
+          {selectedItem ? (
+            <ItemCard item={selectedItem} />
+          ) : (
+            NEARBY_ITEMS.map((item) => (
+              <ItemCard key={item.id} item={item} onClick={() => setSelectedId(item.id)} />
+            ))
+          )}
         </div>
 
         <button type="button" className="nearby-map__confirm" onClick={() => navigate('/')}>

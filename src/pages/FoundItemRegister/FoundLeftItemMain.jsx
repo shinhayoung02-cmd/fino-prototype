@@ -4,20 +4,22 @@ import iconClose from '../../assets/lost-register/icon-close.svg'
 import iconClock from '../../assets/lost-register/icon-clock.svg'
 import iconChevronRight from '../../assets/lost-register/icon-chevron-right.svg'
 import leftItemSample1 from '../../assets/found-report/samples/left-item-1.png'
-import leftItemSample2 from '../../assets/found-report/samples/left-item-2.png'
+import earphoneSample from '../../assets/home/item-buzz-earphone.jpg'
+import watchSample from '../../assets/found-report/samples/watch-placeholder.svg'
+import bagSample from '../../assets/found-report/samples/bag-placeholder.svg'
 import { AttachmentField, AttachmentInputPreset } from '../../../seed-design/ui/attachment-field'
 import { ProgressCircle } from '../../../seed-design/ui/progress-circle'
 import TimeRangeSheet from '../LostItemRegister/TimeRangeSheet'
 import './FoundLeftItemMain.css'
 
-const SAMPLE_PHOTOS = [
-  { url: leftItemSample1, name: 'left-item-1.png' },
-  { url: leftItemSample2, name: 'left-item-2.png' },
+const PHOTO_OPTIONS = [
+  { label: '지갑', url: leftItemSample1, name: 'wallet.png', aiName: '지갑/카드', aiDesc: '검정색 Matin Kim 가죽 반지갑' },
+  { label: '이어폰', url: earphoneSample, name: 'earphone.jpg', aiName: '무선 이어폰', aiDesc: '흰색 무선 이어폰 케이스' },
+  { label: '시계', url: watchSample, name: 'watch.svg', aiName: '손목시계', aiDesc: '은색 메탈 밴드 손목시계' },
+  { label: '가방', url: bagSample, name: 'bag.svg', aiName: '가방', aiDesc: '검정색 캔버스 숄더백' },
 ]
 
 const MAX_PHOTOS = 10
-const AI_RECOGNITION_NAME = '지갑/카드'
-const AI_RECOGNITION_DESCRIPTION = '검정색 Matin Kim 가죽 반지갑'
 const AI_RECOGNITION_DELAY = 1200
 
 export default function FoundLeftItemMain({
@@ -43,6 +45,8 @@ export default function FoundLeftItemMain({
 
   const [isTimeSheetOpen, setTimeSheetOpen] = useState(false)
   const [isRecognizing, setIsRecognizing] = useState(false)
+  const [pickedPhotoOption, setPickedPhotoOption] = useState(null)
+  const [showErrors, setShowErrors] = useState(false)
 
   const setName = (value) => onDraftChange({ ...draft, name: value })
   const setDescription = (value) => onDraftChange({ ...draft, description: value })
@@ -52,30 +56,30 @@ export default function FoundLeftItemMain({
   }
 
   useEffect(() => {
-    if (photos.length === 0 || name !== '' || description !== '') return
+    if (!pickedPhotoOption) return
 
     setIsRecognizing(true)
     const timer = setTimeout(() => {
-      onDraftChange((prev) =>
-        prev.name === '' && prev.description === ''
-          ? { ...prev, name: AI_RECOGNITION_NAME, description: AI_RECOGNITION_DESCRIPTION }
-          : prev,
-      )
+      onDraftChange((prev) => ({ ...prev, name: pickedPhotoOption.aiName, description: pickedPhotoOption.aiDesc }))
       setIsRecognizing(false)
     }, AI_RECOGNITION_DELAY)
 
     return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [photos.length])
+  }, [pickedPhotoOption])
 
   const handleConfirmTime = (range) => {
     onDraftChange({ ...draft, timeRange: range })
   }
 
-  const isNextEnabled = name.trim().length > 0 && description.trim().length > 0 && timeRange !== null
+  const isNextEnabled =
+    name.trim().length > 0 && description.trim().length > 0 && timeRange !== null && location !== null
 
   const handleNext = () => {
-    if (!isNextEnabled) return
+    if (!isNextEnabled) {
+      setShowErrors(true)
+      return
+    }
     onRegister?.()
   }
 
@@ -93,7 +97,8 @@ export default function FoundLeftItemMain({
             onAcceptedFileEntriesChange={handlePhotosChange}
           >
             <AttachmentInputPreset
-              samples={SAMPLE_PHOTOS}
+              pickerOptions={PHOTO_OPTIONS}
+              onPick={setPickedPhotoOption}
               triggerClassName="found-left__photo-trigger"
               countClassName="found-left__photo-count"
             />
@@ -103,7 +108,7 @@ export default function FoundLeftItemMain({
         <section className="found-left__section">
           <h2 className="found-left__section-title">물건 정보를 입력해주세요</h2>
           <div className="found-left__field-group">
-            <div className="found-left__field">
+            <div className={`found-left__field${showErrors && !name.trim() ? ' found-left__field--error' : ''}`}>
               <input
                 type="text"
                 className="found-left__field-input"
@@ -122,7 +127,7 @@ export default function FoundLeftItemMain({
                 </button>
               )}
             </div>
-            <div className="found-left__field">
+            <div className={`found-left__field${showErrors && !description.trim() ? ' found-left__field--error' : ''}`}>
               <input
                 type="text"
                 className="found-left__field-input"
@@ -147,7 +152,11 @@ export default function FoundLeftItemMain({
 
         <section className="found-left__section">
           <h2 className="found-left__section-title">{timeSectionTitle}</h2>
-          <button type="button" className="found-left__field" onClick={() => setTimeSheetOpen(true)}>
+          <button
+            type="button"
+            className={`found-left__field${showErrors && !timeRange ? ' found-left__field--error' : ''}`}
+            onClick={() => setTimeSheetOpen(true)}
+          >
             <img src={iconClock} alt="" className="found-left__field-prefix-icon" />
             <span className={`found-left__field-text${timeRange ? '' : ' found-left__field-text--placeholder'}`}>
               {timeRange
@@ -162,7 +171,7 @@ export default function FoundLeftItemMain({
           <h2 className="found-left__section-title">{locationSectionTitle}</h2>
           <button
             type="button"
-            className="found-left__location-row"
+            className={`found-left__location-row${showErrors && !location ? ' found-left__location-row--error' : ''}`}
             onClick={() => navigate(locationRoute)}
           >
             <span className="found-left__location-text">
@@ -188,7 +197,7 @@ export default function FoundLeftItemMain({
               </button>
             </div>
           ) : (
-            <button type="button" className="found-left__next" disabled={!isNextEnabled} onClick={handleNext}>
+            <button type="button" className="found-left__next" onClick={handleNext}>
               다음
             </button>
           )}
