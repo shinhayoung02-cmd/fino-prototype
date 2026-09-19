@@ -1,0 +1,105 @@
+.ownership-approved {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  padding: 24px 16px 16px;
+  box-sizing: border-box;
+}
+
+.ownership-approved__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px 20px;
+}
+
+.ownership-approved__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+  color: var(--color-gray-1000);
+}
+
+.ownership-approved__subtitle {
+  margin: 12px 0 0;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-fg-neutral-muted);
+}
+
+.ownership-approved__card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--color-stroke-weak);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.ownership-approved__card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ownership-approved__card-meta-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  color: var(--color-fg-neutral-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ownership-approved__card-pill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--color-gray-200);
+  color: var(--color-fg-neutral-muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.ownership-approved__card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-gray-1000);
+}
+
+.ownership-approved__card-desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-gray-700);
+}
+
+.ownership-approved__actions {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.ownership-approved__action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-900);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}

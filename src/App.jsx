@@ -1247,7 +1247,7 @@ function App() {
           path="/matching/result/ownership/approved"
           element={
             <SubStepScreen
-              title="소유권 확인"
+              title="AI 매칭 결과"
               backTo="/"
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
               activeTab="/matching"

@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import iconCheckPositive from '../../assets/ai-matching/icon-check-positive.svg'
+import SuccessGraphic from '../../components/common/SuccessGraphic/SuccessGraphic'
 import iconChevronDown from '../../assets/ai-matching/icon-chevron-down.svg'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import './OwnershipVerified.css'
+import './OwnershipApproved.css'
 
-const SUBMISSION_SUMMARY = [
-  { label: '접수된 소유권 증빙', value: '완료', tone: 'brand' },
-  { label: '현재 상태', value: '분실물 전달 가능', tone: 'positive-weak' },
-]
+const LOST_ITEM_SUMMARY = {
+  meta: '역삼1동 · 반경 500m · 오늘 오전 9~12시',
+  status: '접수 완료',
+  title: '검정 반지갑 잃어버렸어요',
+  desc: '어제 저녁 뚝섬역 근처에서...',
+}
 
 const PROCESS_STEPS = [
   {
@@ -41,44 +44,29 @@ export default function OwnershipApproved() {
   }
 
   return (
-    <div className="ownership-verified">
-      <span className="ownership-verified__badge">소유권 확인 완료</span>
-
-      <h2 className="ownership-verified__title">
-        소유권 승인 권한이
-        <br />
-        부여 됐어요
-      </h2>
-      <p className="ownership-verified__subtitle">검증이 완료되어 반환 절차를 진행할 수 있어요</p>
-
-      <div className="ownership-verified__callout">
-        <img src={iconCheckPositive} alt="" className="ownership-verified__callout-icon" />
-        <p className="ownership-verified__callout-text">
-          이제 확인된 습득자와 감사 및 전달 방식 절차로
+    <div className="ownership-approved">
+      <div className="ownership-approved__hero">
+        <SuccessGraphic />
+        <h2 className="ownership-approved__title">
+          소유권 승인 권한이
           <br />
-          이어집니다.
-        </p>
+          부여 됐어요
+        </h2>
+        <p className="ownership-approved__subtitle">정상 반환 절차 진입에 들어갈께요.</p>
       </div>
 
-      <div className="ownership-verified__summary">
-        <p className="ownership-verified__summary-label">제출 현황</p>
-        <div className="ownership-verified__summary-list">
-          {SUBMISSION_SUMMARY.map((row) => (
-            <div className="ownership-verified__summary-row" key={row.label}>
-              <span className="ownership-verified__summary-row-label">{row.label}</span>
-              <span
-                className={`ownership-verified__summary-row-value ownership-verified__summary-row-value--${row.tone}`}
-              >
-                {row.value}
-              </span>
-            </div>
-          ))}
+      <div className="ownership-approved__card">
+        <div className="ownership-approved__card-meta">
+          <span className="ownership-approved__card-meta-text">{LOST_ITEM_SUMMARY.meta}</span>
+          <span className="ownership-approved__card-pill">{LOST_ITEM_SUMMARY.status}</span>
         </div>
+        <p className="ownership-approved__card-title">{LOST_ITEM_SUMMARY.title}</p>
+        <p className="ownership-approved__card-desc">{LOST_ITEM_SUMMARY.desc}</p>
       </div>
 
-      <div className="ownership-verified__actions">
-        <button type="button" className="ownership-verified__action" onClick={() => setSheetOpen(true)}>
-          확인
+      <div className="ownership-approved__actions">
+        <button type="button" className="ownership-approved__action" onClick={() => setSheetOpen(true)}>
+          인계 방법 확인
         </button>
       </div>
 
