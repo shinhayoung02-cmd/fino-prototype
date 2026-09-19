@@ -16,6 +16,7 @@ import OwnershipStatus from './pages/AiMatching/OwnershipStatus'
 import OwnershipConfirmed from './pages/AiMatching/OwnershipConfirmed'
 import OwnershipVerified from './pages/AiMatching/OwnershipVerified'
 import OwnershipApproved from './pages/AiMatching/OwnershipApproved'
+import PoliceBoxPickupGuide from './pages/AiMatching/PoliceBoxPickupGuide'
 import QuizVerificationFailed from './pages/AiMatching/QuizVerificationFailed'
 import ThanksMethodSelect from './pages/AiMatching/ThanksMethodSelect'
 import DeliveryMethodSelect from './pages/AiMatching/DeliveryMethodSelect'
@@ -1254,6 +1255,20 @@ function App() {
               onSelectTab={setActiveTab}
             >
               <OwnershipApproved />
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/matching/result/ownership/police-pickup"
+          element={
+            <SubStepScreen
+              title="지구대 수령 안내"
+              backTo="/matching/result/ownership/approved"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+              activeTab="/matching"
+              onSelectTab={setActiveTab}
+            >
+              <PoliceBoxPickupGuide />
             </SubStepScreen>
           }
         />
