@@ -33,8 +33,6 @@ export default function MatchDetail({
         <p className="match-detail__callout-text">사진과 발견 정보 확인 후 다음 단계를 선택해주세요</p>
       </div>
 
-      <div className="match-detail__divider" />
-
       <div className="match-detail__info">
         <span className="match-detail__info-badge">유사도 {candidate.similarity}%</span>
         {metaParts.length > 0 && <p className="match-detail__info-meta">{metaParts.join(' · ')}</p>}
@@ -57,7 +55,9 @@ export default function MatchDetail({
         <ul className="match-detail__reasons-list">
           {candidate.matchReasons.map((reason) => (
             <li className="match-detail__reasons-item" key={reason}>
-              <img src={iconCheckBrand} alt="" />
+              <span className="match-detail__reasons-item-icon">
+                <img src={iconCheckBrand} alt="" />
+              </span>
               {reason}
             </li>
           ))}
@@ -104,7 +104,11 @@ export default function MatchDetail({
         title="이 습득물을 후보에서 제외할까요?"
         footer={
           <div className="match-exclude-sheet__actions">
-            <button type="button" className="match-exclude-sheet__action match-exclude-sheet__action--primary" disabled>
+            <button
+              type="button"
+              className="match-exclude-sheet__action match-exclude-sheet__action--primary"
+              onClick={() => setExcludeSheetOpen(false)}
+            >
               확인
             </button>
             <button

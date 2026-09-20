@@ -13,9 +13,9 @@ export default function EvidenceUpload({ filesByStep, onFilesByStepChange, steps
 
   const step = steps[stepIndex]
   const isLastStep = stepIndex === steps.length - 1
-  const galleryOptions = steps
-    .filter((entry) => entry.sample)
-    .map((entry) => ({ label: entry.reviewTitle, url: entry.sample.url, name: entry.sample.name }))
+  const galleryOptions = step.sample
+    ? [{ label: step.reviewTitle, url: step.sample.url, name: step.sample.name }]
+    : []
 
   const setStepFiles = (files) => {
     onFilesByStepChange(filesByStep.map((entry, index) => (index === stepIndex ? files : entry)))

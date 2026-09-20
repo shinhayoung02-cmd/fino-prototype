@@ -405,13 +405,13 @@ function PresetTrigger({ samples = [], className, countClassName, pickerOptions,
         <>
           <div
             onClick={closePicker}
-            style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0, 0, 0, 0.45)" }}
+            style={{ position: "absolute", inset: 0, zIndex: 200, background: "rgba(0, 0, 0, 0.45)" }}
           />
           <div
             role="dialog"
             aria-label="사진 선택"
             style={{
-              position: "fixed",
+              position: "absolute",
               left: 0,
               right: 0,
               bottom: 0,
@@ -485,7 +485,7 @@ function PresetTrigger({ samples = [], className, countClassName, pickerOptions,
                   display: "grid",
                   gridTemplateColumns: "repeat(3, 1fr)",
                   gap: 2,
-                  padding: 2,
+                  padding: "2px 16px 20px",
                 }}
               >
                 {pickerOptions.map((option) => renderGridItem(option))}
@@ -552,13 +552,13 @@ export const AttachmentDropzonePreset = ({ samples = [], onPreview, pickerOption
         <>
           <div
             onClick={() => setGalleryOpen(false)}
-            style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0, 0, 0, 0.45)" }}
+            style={{ position: "absolute", inset: 0, zIndex: 200, background: "rgba(0, 0, 0, 0.45)" }}
           />
           <div
             role="dialog"
             aria-label="보관함"
             style={{
-              position: "fixed",
+              position: "absolute",
               left: 0,
               right: 0,
               bottom: 0,
@@ -603,37 +603,31 @@ export const AttachmentDropzonePreset = ({ samples = [], onPreview, pickerOption
                 취소
               </button>
             </div>
-            <div style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+            <div
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 2,
+                padding: "2px 16px 20px",
+              }}
+            >
               {pickerOptions.map((option) => (
                 <button
                   key={option.label}
                   type="button"
                   onClick={() => handlePick(option)}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    border: "1px solid #eeeff1",
-                    borderRadius: 12,
-                    padding: 8,
-                    background: "none",
+                    position: "relative",
+                    aspectRatio: "1 / 1",
+                    border: "none",
+                    padding: 0,
+                    overflow: "hidden",
                     cursor: "pointer",
-                    textAlign: "left",
-                    fontFamily: "inherit",
                   }}
                 >
-                  <span
-                    style={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 8,
-                      overflow: "hidden",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <img src={option.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                  </span>
-                  <span style={{ fontSize: 14, fontWeight: 500, color: "#1a1c20" }}>{option.label}</span>
+                  <img src={option.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 </button>
               ))}
             </div>

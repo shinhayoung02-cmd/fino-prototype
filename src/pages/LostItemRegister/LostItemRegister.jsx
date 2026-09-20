@@ -25,7 +25,7 @@ function buildPhotoOption(itemKey) {
 
 const PHOTO_OPTIONS = ['wallet-normal', 'airpods', 'car-key'].map(buildPhotoOption)
 
-const MAX_PHOTOS = 5
+const MAX_PHOTOS = 10
 const AI_RECOGNITION_DELAY = 1200
 
 export default function LostItemRegister({ draft, onDraftChange }) {

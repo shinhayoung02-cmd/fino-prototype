@@ -211,6 +211,12 @@ export const ITEM_PROFILES = {
         question: '이전에 사용한 사진이 있나요?',
       },
     ],
+    // 비공개 특징 퀴즈(FeatureQuiz) 3단계 유도 배너
+    featureHints: {
+      photo: '이어팁 사이즈나 배터리 잔량을 적어주세요',
+      accessory: '충전 케이블, 파우치 등 함께 있던 물건을 적어주세요',
+      mark: '케이스 표면 흠집 위치나 스티커 부착 위치를 적어주세요',
+    },
   },
   'wallet-normal': {
     id: 'wallet-normal',
@@ -266,7 +272,7 @@ export const ITEM_PROFILES = {
         subtitle: '온·오프라인 구매 내역을 올려주세요.',
         tip: '영수증에 상품명이나 구매 시점이 보이면 확인에 도움이 돼요.',
         accept: 'application/pdf',
-        sample: { url: '/samples/matin_kim_receipt.pdf', name: 'matin_kim_receipt.pdf' },
+        sample: { url: walletReceiptImage, name: 'matin_kim_receipt.jpg' },
         reviewLabel: '답변 1',
         reviewTitle: '구매 영수증',
         reviewDetail: '2026.07.15 구매',
@@ -367,6 +373,12 @@ export const ITEM_PROFILES = {
         question: '추가로 확인이 필요한 점이 있나요?',
       },
     ],
+    // 비공개 특징 퀴즈(FeatureQuiz) 3단계 유도 배너 — Figma 329:8079 그대로
+    featureHints: {
+      photo: '지갑 안쪽 카드 수납칸 개수나 배치를 적어주세요',
+      accessory: '지갑 안에 들어있던 카드, 영수증, 명함을 적어주세요',
+      mark: '로고 플레이트 문구나 가죽 긁힘 위치를 적어주세요',
+    },
   },
   'car-key': {
     id: 'car-key',
@@ -525,6 +537,11 @@ export const ITEM_PROFILES = {
         question: '이전에 사용한 사진이 있나요?',
       },
     ],
+    featureHints: {
+      photo: '버튼 배열이나 뒷면 각인을 적어주세요',
+      accessory: '차량 등록증, 다른 열쇠 등 함께 있던 물건을 적어주세요',
+      mark: '키링 장식 위치나 바디 긁힘 자국을 적어주세요',
+    },
   },
 }
 

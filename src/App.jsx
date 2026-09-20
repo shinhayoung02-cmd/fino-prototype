@@ -21,7 +21,6 @@ import OwnershipConfirmed from './pages/AiMatching/OwnershipConfirmed'
 import OwnershipVerified from './pages/AiMatching/OwnershipVerified'
 import OwnershipApproved from './pages/AiMatching/OwnershipApproved'
 import PoliceBoxPickupGuide from './pages/AiMatching/PoliceBoxPickupGuide'
-import QuizVerificationFailed from './pages/AiMatching/QuizVerificationFailed'
 import ThanksMethodSelect from './pages/AiMatching/ThanksMethodSelect'
 import DeliveryMethodSelect from './pages/AiMatching/DeliveryMethodSelect'
 import ParcelDeliveryInfo from './pages/AiMatching/ParcelDeliveryInfo'
@@ -126,8 +125,8 @@ import iconMenu from './assets/chat/icon-menu.svg'
 import './App.css'
 
 const MATCH_RESULT_DELAY = 1300
-const VERIFICATION_RESULT_DELAY = 3000
-const APPROVAL_RESULT_DELAY = 3000
+const VERIFICATION_RESULT_DELAY = 1300
+const APPROVAL_RESULT_DELAY = 1300
 const PARCEL_RESULT_DELAY = 3000
 const RETURN_PROPOSAL_DELAY = 2000
 const RETRY_RETURN_PROPOSAL_DELAY = 3000
@@ -136,6 +135,12 @@ const DELIVERY_METHOD_PICK_OPTIONS = [
   { id: 'in-person', label: '직접 만나서 전달' },
   { id: 'parcel', label: '일반 택배로 전달' },
   { id: 'parcel-store', label: '편의점 택배로 전달' },
+]
+
+const VERIFICATION_RESULT_PICK_OPTIONS = [
+  { id: 'single', label: '단독 소유자로 확인' },
+  { id: 'multiple', label: '여러 명이 소유권을 주장' },
+  { id: 'quiz-fail', label: '특징이 일치하지 않음' },
 ]
 
 const OWNERSHIP_QUIZ_FAQ_ITEMS = [
@@ -367,6 +372,8 @@ function App() {
   const [isAwaitingRetryReturnProposalNotification, setAwaitingRetryReturnProposalNotification] = useState(false)
   const [isOwnershipRequested, setOwnershipRequested] = useState(false)
   const [isVerificationDialogOpen, setVerificationDialogOpen] = useState(false)
+  const [isVerificationResultPickOpen, setVerificationResultPickOpen] = useState(false)
+  const [verificationResultPick, setVerificationResultPick] = useState('single')
   const [isVerificationReady, setVerificationReady] = useState(false)
   const [evidenceFiles, setEvidenceFiles] = useState(EMPTY_EVIDENCE_FILES)
   const [isApprovalDialogOpen, setApprovalDialogOpen] = useState(false)
@@ -796,12 +803,25 @@ function App() {
 
   const handleViewVerificationResult = () => {
     setVerificationDialogOpen(false)
-    navigate(verificationResultPath)
+    setVerificationResultPickOpen(true)
+  }
+
+  const handleConfirmVerificationResultPick = () => {
+    setMultipleClaimantsFlow(verificationResultPick === 'multiple')
+    setQuizFailFlow(verificationResultPick === 'quiz-fail')
+    setVerificationResultPickOpen(false)
+    navigate(
+      verificationResultPick === 'multiple'
+        ? '/matching/result/ownership/claimants'
+        : verificationResultPick === 'quiz-fail'
+          ? '/matching/result/ownership/quiz-failed'
+          : '/matching/result/ownership/verified',
+    )
   }
 
   const handleViewApprovalResult = () => {
     setApprovalDialogOpen(false)
-    navigate('/matching/result/ownership/approved')
+    navigate('/matching/result/ownership/verified')
   }
 
   const handleGoHomeAfterParcelSubmit = () => {
@@ -922,13 +942,28 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <WaitingScreen
-                onGoHome={
-                  location.state?.showApprovalOnHome
-                    ? handleGoHomeAfterEvidenceSubmit
-                    : handleGoHomeAfterSubmit
-                }
-              />
+              {location.state?.showApprovalOnHome ? (
+                <WaitingScreen
+                  title={
+                    <>
+                      습득자가 물건의
+                      <br />
+                      특징을 확인하고 있어요
+                    </>
+                  }
+                  subtitle="분실할 때 등록한 비공개 표시와 실제 물건을 비교해요"
+                  calloutText="비공개 정보는 소유권 검증 목적으로만 사용돼요."
+                  statusItems={[
+                    { label: '제출한 증빙 접수', value: '완료', tone: 'brand' },
+                    { label: '현재 상태', value: '대기 중', tone: 'neutral' },
+                  ]}
+                  secondaryCtaLabel="요청 취소하기"
+                  onSecondaryCta={() => navigate('/matching/result/ownership')}
+                  onGoHome={handleGoHomeAfterEvidenceSubmit}
+                />
+              ) : (
+                <WaitingScreen onGoHome={handleGoHomeAfterSubmit} />
+              )}
             </SubStepScreen>
           }
         />
@@ -992,13 +1027,26 @@ function App() {
           path="/matching/result/ownership/quiz-failed"
           element={
             <SubStepScreen
-              title="퀴즈 검증 결과"
+              title="소유권 증빙 제출"
               backTo="/matching/waiting"
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <QuizVerificationFailed />
+              <WaitingScreen
+                badge="2차 소유권 확인중"
+                title="소유권을 확인할 자료를 추가해주세요"
+                subtitle="습득자가 답변한 결과를 확인하고, 재검증을 요청할 수 있어요."
+                calloutText={
+                  <>
+                    제출 자료는 습득자에게만 공유되며, 검토 후
+                    <br />
+                    즉시 삭제돼요.
+                  </>
+                }
+                ctaLabel="다음"
+                onGoHome={() => navigate('/matching/result/ownership/evidence')}
+              />
             </SubStepScreen>
           }
         />
@@ -2517,6 +2565,7 @@ function App() {
                 onChangeAnswers={(featureAnswers) =>
                   setLostDraft((prev) => ({ ...prev, featureAnswers }))
                 }
+                featureHints={getItemProfile(lostDraft.itemKey).featureHints}
               />
             </SubStepScreen>
           }
@@ -2929,6 +2978,51 @@ function App() {
       >
         확인을 눌러 결과를 확인해주세요
       </Modal>
+
+      <BottomSheet
+        isOpen={isVerificationResultPickOpen}
+        onClose={() => setVerificationResultPickOpen(false)}
+        title={
+          <>
+            <h2 className="delivery-pick-sheet__title">
+              프로토타입에서 확인할
+              <br />
+              소유권 확인 결과를 선택해주세요.
+            </h2>
+            <p className="delivery-pick-sheet__subtitle">
+              실제 서비스에서는
+              <br />
+              AI가 판단한 결과로 자동 진행돼요.
+            </p>
+          </>
+        }
+      >
+        <div className="delivery-pick-sheet__options">
+          {VERIFICATION_RESULT_PICK_OPTIONS.map((option) => {
+            const isSelected = verificationResultPick === option.id
+            return (
+              <button
+                key={option.id}
+                type="button"
+                className={`delivery-pick-sheet__option${isSelected ? ' delivery-pick-sheet__option--selected' : ''}`}
+                onClick={() => setVerificationResultPick(option.id)}
+              >
+                <span className="delivery-pick-sheet__option-label">{option.label}</span>
+                {isSelected && (
+                  <img src={iconCheckNeutral} alt="" className="delivery-pick-sheet__option-check" />
+                )}
+              </button>
+            )
+          })}
+        </div>
+        <button
+          type="button"
+          className="delivery-pick-sheet__confirm"
+          onClick={handleConfirmVerificationResultPick}
+        >
+          이 결과로 체험하기
+        </button>
+      </BottomSheet>
 
       <Modal
         isOpen={isApprovalDialogOpen}

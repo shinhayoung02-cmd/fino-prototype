@@ -41,6 +41,9 @@ export default function WaitingScreen({
   faqItems = DEFAULT_FAQ_ITEMS,
   showList = true,
   showCallout = true,
+  statusItems,
+  secondaryCtaLabel,
+  onSecondaryCta,
 }) {
   const [isFaqOpen, setFaqOpen] = useState(false)
   const [openFaqId, setOpenFaqId] = useState(null)
@@ -71,21 +74,47 @@ export default function WaitingScreen({
         </div>
       )}
 
-      {showList && (
-        <div className="waiting-screen__list">
-          <button type="button" className="waiting-screen__list-row" onClick={() => setFaqOpen(true)}>
-            <span>자주 묻는 질문</span>
-            <img src={iconChevronRight} alt="" />
-          </button>
-          <div className="waiting-screen__list-divider" />
-          <div className="waiting-screen__list-row">
-            <span>고객센터 문의하기</span>
-            <img src={iconChevronRight} alt="" />
+      {statusItems ? (
+        <div className="waiting-screen__status">
+          <p className="waiting-screen__status-label">제출 현황</p>
+          <div className="waiting-screen__status-list">
+            {statusItems.map((item, index) => (
+              <div key={item.label}>
+                <div className="waiting-screen__status-row">
+                  <span className="waiting-screen__status-row-label">{item.label}</span>
+                  <span
+                    className={`waiting-screen__status-row-badge waiting-screen__status-row-badge--${item.tone}`}
+                  >
+                    {item.value}
+                  </span>
+                </div>
+                {index < statusItems.length - 1 && <div className="waiting-screen__status-divider" />}
+              </div>
+            ))}
           </div>
         </div>
+      ) : (
+        showList && (
+          <div className="waiting-screen__list">
+            <button type="button" className="waiting-screen__list-row" onClick={() => setFaqOpen(true)}>
+              <span>자주 묻는 질문</span>
+              <img src={iconChevronRight} alt="" />
+            </button>
+            <div className="waiting-screen__list-divider" />
+            <div className="waiting-screen__list-row">
+              <span>고객센터 문의하기</span>
+              <img src={iconChevronRight} alt="" />
+            </div>
+          </div>
+        )
       )}
 
-      <div className={`waiting-screen__next-wrap${showList ? '' : ' waiting-screen__next-wrap--pinned'}`}>
+      <div className={`waiting-screen__next-wrap${showList || statusItems ? '' : ' waiting-screen__next-wrap--pinned'}`}>
+        {secondaryCtaLabel && (
+          <button type="button" className="waiting-screen__secondary" onClick={onSecondaryCta}>
+            {secondaryCtaLabel}
+          </button>
+        )}
         <button type="button" className="waiting-screen__home" onClick={onGoHome}>
           {ctaLabel}
         </button>

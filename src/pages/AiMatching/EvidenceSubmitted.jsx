@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import iconInfo from '../../assets/lost-register/icon-info.svg'
 import SuccessGraphic from '../../components/common/SuccessGraphic/SuccessGraphic'
+import { withObjectParticle } from '../../utils/korean'
 import './EvidenceSubmitted.css'
 
 const DEFAULT_ITEM = {
@@ -44,7 +45,7 @@ export default function EvidenceSubmitted({ item, onGoHome }) {
             <p className="evidence-submitted__card-meta">{metaParts.join(' · ')}</p>
             <span className="evidence-submitted__card-pill">접수 완료</span>
           </div>
-          <p className="evidence-submitted__card-title">{item.name} 잃어버렸어요</p>
+          <p className="evidence-submitted__card-title">{withObjectParticle(item.name)} 잃어버렸어요</p>
           {item.location?.detail && <p className="evidence-submitted__card-desc">{item.location.detail}</p>}
         </div>
       </div>

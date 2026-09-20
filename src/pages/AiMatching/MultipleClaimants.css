@@ -10,6 +10,11 @@
 .multi-claimants .bottom-sheet__title {
   font-size: 22px;
   line-height: 30px;
+  margin-bottom: 8px;
+}
+
+.multi-claimants .bottom-sheet__footer {
+  margin-top: 8px;
 }
 
 .multi-claimants__badge {
@@ -20,14 +25,14 @@
   min-height: 20px;
   padding: 2px 6px;
   border: 1px solid var(--color-brand-weak);
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
   color: var(--color-brand);
 }
 
 .multi-claimants__title {
-  margin: 16px 0 0;
+  margin: 20px 0 0;
   font-size: 22px;
   font-weight: 700;
   line-height: 30px;
@@ -38,7 +43,7 @@
   margin: 8px 0 0;
   font-size: 14px;
   line-height: 19px;
-  color: var(--color-fg-neutral-muted);
+  color: #757b85;
 }
 
 .multi-claimants__callout {
@@ -128,7 +133,7 @@ button.multi-claimants__list-row {
 }
 
 .claimants-sheet__label {
-  margin: 16px 0 8px;
+  margin: 28px 0 16px;
   font-size: 12px;
   font-weight: 700;
   color: #868b94;
@@ -208,6 +213,7 @@ button.multi-claimants__list-row {
   color: #ffffff;
   font-size: 16px;
   font-weight: 700;
+  line-height: 22px;
   cursor: pointer;
   font-family: inherit;
 }

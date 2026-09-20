@@ -124,6 +124,33 @@
   height: 100%;
 }
 
+.feature-quiz__callout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  min-height: 50px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #eff6ff;
+  box-sizing: border-box;
+}
+
+.feature-quiz__callout-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.feature-quiz__callout-text {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 19px;
+  color: #0b4596;
+}
+
 .feature-quiz__action-wrap {
   display: flex;
   gap: 8px;
