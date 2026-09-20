@@ -1,0 +1,244 @@
+.parcel-store-nearby {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 20px 16px 16px;
+  box-sizing: border-box;
+}
+
+.parcel-store-nearby__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.parcel-store-nearby__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 27px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-store-nearby__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 120px;
+  min-height: 20px;
+  padding: 2px 6px;
+  border: 1px solid var(--color-brand-weak);
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 15px;
+  font-weight: 700;
+  color: var(--color-brand);
+  white-space: nowrap;
+}
+
+.parcel-store-nearby__subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  color: #757b85;
+}
+
+.parcel-store-nearby__callout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  min-height: 50px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--color-gray-200);
+  box-sizing: border-box;
+}
+
+.parcel-store-nearby__callout-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.parcel-store-nearby__callout-text {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 19px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-store-nearby__field {
+  margin-top: 117px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.parcel-store-nearby__field-label {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-store-nearby__list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  height: 61px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.parcel-store-nearby__list-row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.parcel-store-nearby__list-row-title {
+  font-size: 16px;
+  color: var(--color-gray-1000);
+}
+
+.parcel-store-nearby__list-row-desc {
+  font-size: 13px;
+  color: var(--color-fg-neutral-subtle, #868b94);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.parcel-store-nearby__list-row img {
+  width: auto;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.parcel-store-nearby__map {
+  position: relative;
+  width: 100%;
+  height: 136px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.parcel-store-nearby__map-img,
+.parcel-store-nearby__map-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.parcel-store-nearby__pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 56px;
+  height: 56px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.parcel-store-nearby__pin-halo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: parcel-store-nearby-pin-halo-pulse 2.2s ease-out infinite;
+}
+
+.parcel-store-nearby__pin-body {
+  position: absolute;
+  left: 4px;
+  top: 6px;
+  width: 48px;
+  height: 48px;
+}
+
+@keyframes parcel-store-nearby-pin-halo-pulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.parcel-store-nearby__hint {
+  margin: 0;
+  font-size: 14px;
+  line-height: 15px;
+  color: var(--color-fg-neutral-muted, #555d6d);
+}
+
+.parcel-store-nearby__actions {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.parcel-store-nearby__confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-brand);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.parcel-store-nearby__confirm:disabled {
+  background: var(--color-brand-100);
+  color: #ffffff;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.parcel-store-nearby__edit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-gray-1000);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}

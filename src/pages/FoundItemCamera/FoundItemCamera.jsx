@@ -15,18 +15,8 @@ import iconMountainThumb from '../../assets/found-camera/icon-mountain-thumb.svg
 import iconShutter from '../../assets/found-camera/icon-shutter.svg'
 import iconCameraFlip from '../../assets/found-camera/icon-camera-flip.svg'
 import iconScanner from '../../assets/found-report/icon-scanner.svg'
-import leftItemSample1 from '../../assets/found-report/samples/left-item-1.png'
-import earphoneSample from '../../assets/home/item-buzz-earphone.jpg'
-import watchSample from '../../assets/found-report/samples/watch-placeholder.svg'
-import bagSample from '../../assets/found-report/samples/bag-placeholder.svg'
+import GalleryPickerSheet from './GalleryPickerSheet'
 import './FoundItemCamera.css'
-
-const GALLERY_OPTIONS = [
-  { label: '지갑', url: leftItemSample1 },
-  { label: '이어폰', url: earphoneSample },
-  { label: '시계', url: watchSample },
-  { label: '가방', url: bagSample },
-]
 
 const CORNERS = [
   { id: 'tl', src: cornerBracketA, style: { left: 1, top: 82, transform: 'rotate(180deg) scaleX(-1)' } },
@@ -45,7 +35,12 @@ const MODES = [
 
 const VERIFY_CLOSE_DELAY = 3000
 
-export default function FoundItemCamera({ nextPath = '/found/new/main' }) {
+export default function FoundItemCamera({
+  nextPath = '/found/new/main',
+  restrictedPath = '/found/new/restricted',
+  onRecognized,
+  onRestrictedRecognized,
+}) {
   const navigate = useNavigate()
   const [isVerifyingOpen, setVerifyingOpen] = useState(false)
   const [isGalleryOpen, setGalleryOpen] = useState(false)
@@ -56,10 +51,12 @@ export default function FoundItemCamera({ nextPath = '/found/new/main' }) {
 
     const timer = setTimeout(() => {
       setVerifyingOpen(false)
-      navigate(nextPath)
+      if (selectedThumb?.restricted) onRestrictedRecognized?.(selectedThumb)
+      else if (selectedThumb) onRecognized?.(selectedThumb)
+      navigate(selectedThumb?.restricted ? restrictedPath : nextPath)
     }, VERIFY_CLOSE_DELAY)
     return () => clearTimeout(timer)
-  }, [isVerifyingOpen, navigate, nextPath])
+  }, [isVerifyingOpen, navigate, nextPath, onRecognized, onRestrictedRecognized, restrictedPath, selectedThumb])
 
   return (
     <div className="found-camera">
@@ -160,38 +157,13 @@ export default function FoundItemCamera({ nextPath = '/found/new/main' }) {
       )}
 
       {isGalleryOpen && (
-        <>
-          <div className="found-camera__gallery-scrim" onClick={() => setGalleryOpen(false)} />
-          <div className="found-camera__gallery-sheet" role="dialog" aria-label="사진 선택">
-            <div className="found-camera__gallery-handle-row">
-              <span className="found-camera__gallery-handle" />
-            </div>
-            <div className="found-camera__gallery-header">
-              <span className="found-camera__gallery-title">최근 항목</span>
-              <button type="button" className="found-camera__gallery-cancel" onClick={() => setGalleryOpen(false)}>
-                취소
-              </button>
-            </div>
-            <div className="found-camera__gallery-body">
-              <p className="found-camera__gallery-date">오늘</p>
-              <div className="found-camera__gallery-grid">
-                {GALLERY_OPTIONS.map((option) => (
-                  <button
-                    key={option.label}
-                    type="button"
-                    className="found-camera__gallery-item"
-                    onClick={() => {
-                      setSelectedThumb(option)
-                      setGalleryOpen(false)
-                    }}
-                  >
-                    <img src={option.url} alt="" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
+        <GalleryPickerSheet
+          onClose={() => setGalleryOpen(false)}
+          onSelect={(option) => {
+            setSelectedThumb(option)
+            setGalleryOpen(false)
+          }}
+        />
       )}
     </div>
   )

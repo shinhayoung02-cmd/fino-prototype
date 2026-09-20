@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import iconInfo from '../../assets/lost-register/icon-info.svg'
 import iconCheckboxCheck from '../../assets/ai-matching/icon-checkbox-check.svg'
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import './OwnershipQuizQuestion.css'
 
 export const ANSWER_OPTIONS = [
@@ -9,33 +10,14 @@ export const ANSWER_OPTIONS = [
   { id: 'unsure', title: '잘 모르겠어요', desc: '현재 물건만으로는 판단하기 어려워요' },
 ]
 
-export const QUIZ_STEPS = [
-  {
-    badge: '1/3',
-    titleLines: ['지갑 안쪽이 갈색이고,', '뒷면 오른쪽 아래에 작은 흠집이 있나요?'],
-    question: '지갑 안쪽이 갈색이고, 뒷면 오른쪽 아래에 작은 흠집이 있나요?',
-    point: '실제 물건의 안쪽 색상과 뒷면의 흠집 위치를 확인해주세요.',
-  },
-  {
-    badge: '2/3',
-    titleLines: ['지갑 안에 신한카드와', '교통카드가 함께 들어있나요?'],
-    question: '지갑 안에 신한카드와 교통카드가 함께 들어있나요?',
-    point: '지갑 안에 해당 카드가 함께 들어있는지 확인해주세요.',
-  },
-  {
-    badge: '3/3',
-    titleLines: ['지갑 안쪽에 작은 별 모양 스티커가', '붙어있나요?'],
-    question: '지갑 안쪽에 작은 별 모양 스티커가 붙어있나요?',
-    point: '지갑 안쪽에 같은 모양의 스티커가 있는지 확인해주세요.',
-  },
-]
+export const QUIZ_STEPS = ITEM_PROFILES['wallet-normal'].verificationQuestions
 
-export default function OwnershipQuizQuestion({ answers, onChangeAnswers, onSubmit }) {
+export default function OwnershipQuizQuestion({ answers, onChangeAnswers, onSubmit, steps = QUIZ_STEPS }) {
   const [stepIndex, setStepIndex] = useState(0)
 
-  const step = QUIZ_STEPS[stepIndex]
+  const step = steps[stepIndex]
   const isFirstStep = stepIndex === 0
-  const isLastStep = stepIndex === QUIZ_STEPS.length - 1
+  const isLastStep = stepIndex === steps.length - 1
   const selectedId = answers[stepIndex]
   const isNextEnabled = selectedId !== null
 
@@ -77,7 +59,7 @@ export default function OwnershipQuizQuestion({ answers, onChangeAnswers, onSubm
       </div>
 
       <span className="ownership-quiz-question__point-badge">확인 포인트</span>
-      <p className="ownership-quiz-question__hint">{step.point}</p>
+      <p className="ownership-quiz-question__hint">{step.checkPoint}</p>
 
       <div className="ownership-quiz-question__options">
         {ANSWER_OPTIONS.map((option) => {

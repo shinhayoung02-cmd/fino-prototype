@@ -3,7 +3,15 @@
 }
 
 .multiple-claimants-waiting .waiting-screen__title {
-  margin-top: 21px;
+  margin-top: 20px;
   font-size: 24px;
   line-height: 32px;
+}
+
+.multiple-claimants-waiting .waiting-screen {
+  padding-bottom: 20px;
+}
+
+.multiple-claimants-waiting .waiting-screen__next-wrap {
+  padding-top: 12px;
 }

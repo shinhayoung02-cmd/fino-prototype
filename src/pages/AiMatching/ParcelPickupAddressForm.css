@@ -91,6 +91,11 @@
   box-sizing: border-box;
 }
 
+.parcel-pickup-address-form__input--error {
+  border: 2px solid #fa342c;
+  padding: 0 15px;
+}
+
 .parcel-pickup-address-form__input-field {
   flex: 1;
   min-width: 0;
@@ -124,6 +129,13 @@
   flex-direction: column;
   gap: 4px;
   width: 100%;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+}
+
+.parcel-pickup-address-form__radio-group--error {
+  border-color: #fa342c;
 }
 
 .parcel-pickup-address-form__radio-row {

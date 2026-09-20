@@ -120,6 +120,49 @@
   background: var(--color-stroke-weak);
 }
 
+.source-picker-sheet-overlay .bottom-sheet__title {
+  margin: 36px 16px 20px;
+  font-size: 20px;
+}
+
+.source-picker-sheet__grid {
+  display: flex;
+  gap: 24px;
+  padding: 0 16px 16px;
+}
+
+.source-picker-sheet__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.source-picker-sheet__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: var(--color-gray-200);
+}
+
+.source-picker-sheet__item-icon img {
+  width: 36px;
+  height: 36px;
+}
+
+.source-picker-sheet__item-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-gray-1000);
+}
+
 .camera-permission-sheet__header {
   display: flex;
   flex-direction: column;

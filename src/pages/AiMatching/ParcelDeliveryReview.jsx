@@ -1,9 +1,9 @@
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import { useNavigate } from 'react-router-dom'
 import iconInfo from '../../assets/lost-register/icon-info.svg'
 import iconPayment from '../../assets/ai-matching/icon-payment.svg'
 import iconClock from '../../assets/ai-matching/icon-clock.svg'
 import iconProgressStepDone from '../../assets/ai-matching/icon-progress-step-done.svg'
-import walletPhoto from '../../assets/ai-matching/samples/wallet-matin-kim-photo.jpg'
 import './ParcelDeliveryReview.css'
 
 const PROGRESS_STEPS = [
@@ -13,7 +13,9 @@ const PROGRESS_STEPS = [
   { label: '수령완료', done: false },
 ]
 
-export default function ParcelDeliveryReview() {
+const LAST_DONE_INDEX = PROGRESS_STEPS.reduce((acc, step, index) => (step.done ? index : acc), -1)
+
+export default function ParcelDeliveryReview({ itemProfile = ITEM_PROFILES['wallet-normal'] } = {}) {
   const navigate = useNavigate()
 
   return (
@@ -27,12 +29,18 @@ export default function ParcelDeliveryReview() {
                   step.done && PROGRESS_STEPS[index - 1].done
                     ? ' parcel-delivery-review__progress-connector--active'
                     : ''
-                }`}
+                }${index === LAST_DONE_INDEX ? ' parcel-delivery-review__progress-connector--latest' : ''}`}
               />
             )}
             <div className="parcel-delivery-review__progress-node">
               {step.done ? (
-                <img src={iconProgressStepDone} alt="" className="parcel-delivery-review__progress-circle" />
+                <img
+                  src={iconProgressStepDone}
+                  alt=""
+                  className={`parcel-delivery-review__progress-circle${
+                    index === LAST_DONE_INDEX ? ' parcel-delivery-review__progress-circle--latest' : ''
+                  }`}
+                />
               ) : (
                 <span className="parcel-delivery-review__progress-circle parcel-delivery-review__progress-circle--empty" />
               )}
@@ -67,14 +75,14 @@ export default function ParcelDeliveryReview() {
 
       <div className="parcel-delivery-review__item-card">
         <div className="parcel-delivery-review__item-photo">
-          <img src={walletPhoto} alt="" />
+          <img src={itemProfile.photo} alt="" />
         </div>
         <div className="parcel-delivery-review__item-info">
-          <p className="parcel-delivery-review__item-title">검정 반지갑 습득</p>
+          <p className="parcel-delivery-review__item-title">{itemProfile.category} 습득</p>
           <div className="parcel-delivery-review__item-rows">
             <p className="parcel-delivery-review__item-row">
               <img src={iconPayment} alt="" />
-              검정색 Matin Kim 가죽 반지갑
+              {itemProfile.shortDescription}
             </p>
             <p className="parcel-delivery-review__item-row">
               <img src={iconClock} alt="" />

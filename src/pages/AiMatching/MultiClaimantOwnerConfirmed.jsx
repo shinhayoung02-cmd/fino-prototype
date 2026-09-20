@@ -6,7 +6,12 @@ const STATUS_ITEMS = [
   { id: 'current-status', label: '현재 상태', status: '분실물 전달 가능', tone: 'positive' },
 ]
 
-export default function MultiClaimantOwnerConfirmed({ onConfirm }) {
+export default function MultiClaimantOwnerConfirmed({
+  onConfirm,
+  cardMeta = '서울 마포구 홍대입구역 근처 · 오늘 오전 9~12시',
+  cardTitle = '검정 반지갑 습득',
+  cardDesc = '검정색 Matin Kim 가죽 반지갑',
+}) {
   return (
     <div className="multi-claimant-owner-confirmed">
       <span className="multi-claimant-owner-confirmed__badge">소유권 확인중</span>
@@ -26,9 +31,9 @@ export default function MultiClaimantOwnerConfirmed({ onConfirm }) {
       </div>
 
       <div className="multi-claimant-owner-confirmed__card">
-        <p className="multi-claimant-owner-confirmed__card-meta">서울 마포구 홍대입구역 근처 · 오늘 오전 9~12시</p>
-        <p className="multi-claimant-owner-confirmed__card-title">검정 반지갑 습득</p>
-        <p className="multi-claimant-owner-confirmed__card-desc">검정색 Matin Kim 가죽 반지갑</p>
+        <p className="multi-claimant-owner-confirmed__card-meta">{cardMeta}</p>
+        <p className="multi-claimant-owner-confirmed__card-title">{cardTitle}</p>
+        <p className="multi-claimant-owner-confirmed__card-desc">{cardDesc}</p>
       </div>
 
       <div className="multi-claimant-owner-confirmed__divider" />

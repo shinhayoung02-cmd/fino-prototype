@@ -1,7 +1,7 @@
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import iconInfo from '../../assets/lost-register/icon-info.svg'
-import walletPhoto from '../../assets/ai-matching/samples/wallet-matin-kim-photo.jpg'
 import iconPayment from '../../assets/ai-matching/icon-payment.svg'
 import iconClock from '../../assets/ai-matching/icon-clock.svg'
 import iconChevronRight from '../../assets/ai-matching/icon-chevron-right-list.svg'
@@ -51,7 +51,7 @@ const DELIVERY_PROPOSAL_ITEM = {
   'parcel-store': { id: 'parcel-store', label: '편의점 택배', answer: '가까운 편의점에서 택배로 접수해 보내요' },
 }
 
-export default function ReturnProposalReview({ deliveryMethod = 'in-person' }) {
+export default function ReturnProposalReview({ deliveryMethod = 'in-person', itemProfile = ITEM_PROFILES['wallet-normal'] }) {
   const navigate = useNavigate()
   const proposalItems = [
     { id: 'coffee', label: '커피 1잔', answer: '물건 전달이 끝나면 감사로 받을 수 있어요' },
@@ -81,13 +81,13 @@ export default function ReturnProposalReview({ deliveryMethod = 'in-person' }) {
       <div className="return-proposal-review__card">
         <div className="return-proposal-review__card-row">
           <div className="return-proposal-review__card-image">
-            <img src={walletPhoto} alt="" />
+            <img src={itemProfile.photo} alt="" />
           </div>
           <div className="return-proposal-review__card-info">
-            <p className="return-proposal-review__card-title">검정 반지갑 습득</p>
+            <p className="return-proposal-review__card-title">{itemProfile.category} 습득</p>
             <div className="return-proposal-review__card-meta-row">
               <img src={iconPayment} alt="" />
-              <span>검정색 Matin Kim 가죽 반지갑</span>
+              <span>{itemProfile.shortDescription}</span>
             </div>
             <div className="return-proposal-review__card-meta-row">
               <img src={iconClock} alt="" />

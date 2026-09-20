@@ -1,23 +1,33 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import iconClose from '../../assets/lost-register/icon-close.svg'
 import iconClock from '../../assets/lost-register/icon-clock.svg'
 import iconChevronRight from '../../assets/lost-register/icon-chevron-right.svg'
-import leftItemSample1 from '../../assets/found-report/samples/left-item-1.png'
-import earphoneSample from '../../assets/home/item-buzz-earphone.jpg'
-import watchSample from '../../assets/found-report/samples/watch-placeholder.svg'
-import bagSample from '../../assets/found-report/samples/bag-placeholder.svg'
+import iconRetry from '../../assets/ai-matching/icon-retry.svg'
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import { AttachmentField, AttachmentInputPreset } from '../../../seed-design/ui/attachment-field'
 import { ProgressCircle } from '../../../seed-design/ui/progress-circle'
 import TimeRangeSheet from '../LostItemRegister/TimeRangeSheet'
 import './FoundLeftItemMain.css'
 
-const PHOTO_OPTIONS = [
-  { label: '지갑', url: leftItemSample1, name: 'wallet.png', aiName: '지갑/카드', aiDesc: '검정색 Matin Kim 가죽 반지갑' },
-  { label: '이어폰', url: earphoneSample, name: 'earphone.jpg', aiName: '무선 이어폰', aiDesc: '흰색 무선 이어폰 케이스' },
-  { label: '시계', url: watchSample, name: 'watch.svg', aiName: '손목시계', aiDesc: '은색 메탈 밴드 손목시계' },
-  { label: '가방', url: bagSample, name: 'bag.svg', aiName: '가방', aiDesc: '검정색 캔버스 숄더백' },
-]
+function buildPhotoOption(itemKey) {
+  const profile = ITEM_PROFILES[itemKey]
+  return {
+    label: profile.shortDescription,
+    url: profile.photo,
+    urls: [profile.photo, profile.photoBack],
+    name: `${itemKey}.jpg`,
+    aiName: profile.category,
+    aiDesc: profile.description,
+    itemKey,
+  }
+}
+
+export const STREET_PHOTO_OPTIONS = ['airpods', 'wallet-normal', 'car-key'].map(buildPhotoOption)
+
+export const STATION_PHOTO_OPTIONS = ['bag-restricted', 'wallet-restricted'].map(buildPhotoOption)
+
+const DEFAULT_PHOTO_OPTIONS = STREET_PHOTO_OPTIONS
 
 const MAX_PHOTOS = 10
 const AI_RECOGNITION_DELAY = 1200
@@ -56,6 +66,7 @@ export default function FoundLeftItemMain({
   locationSectionTitle = '발견 장소는 어디인가요?',
   locationRowDesc = '지도에서 발견 위치를 선택해요',
   locationRoute = '/found/new/left/location',
+  photoOptions = DEFAULT_PHOTO_OPTIONS,
 }) {
   const navigate = useNavigate()
   const readOnly = mode === 'review' || mode === 'readonly'
@@ -66,6 +77,9 @@ export default function FoundLeftItemMain({
   const [isRecognizing, setIsRecognizing] = useState(false)
   const [pickedPhotoOption, setPickedPhotoOption] = useState(null)
   const [showErrors, setShowErrors] = useState(false)
+  const [attachedItemKey, setAttachedItemKey] = useState(null)
+  const [isMismatchOpen, setMismatchOpen] = useState(false)
+  const lastGoodPhotosRef = useRef(photos)
 
   const setName = (value) => onDraftChange({ ...draft, name: value })
   const setDescription = (value) => onDraftChange({ ...draft, description: value })
@@ -75,11 +89,25 @@ export default function FoundLeftItemMain({
   }
 
   useEffect(() => {
+    if (!isMismatchOpen) lastGoodPhotosRef.current = photos
+  }, [photos, isMismatchOpen])
+
+  const handlePickPhoto = (option) => {
+    if (attachedItemKey && option.itemKey !== attachedItemKey) {
+      handlePhotosChange(lastGoodPhotosRef.current)
+      setMismatchOpen(true)
+      return
+    }
+    setAttachedItemKey(option.itemKey)
+    setPickedPhotoOption(option)
+  }
+
+  useEffect(() => {
     if (!pickedPhotoOption) return
 
     setIsRecognizing(true)
     const timer = setTimeout(() => {
-      onDraftChange((prev) => ({ ...prev, name: pickedPhotoOption.aiName, description: pickedPhotoOption.aiDesc }))
+      onDraftChange((prev) => ({ ...prev, name: pickedPhotoOption.aiName, description: pickedPhotoOption.aiDesc, itemKey: pickedPhotoOption.itemKey }))
       setIsRecognizing(false)
     }, AI_RECOGNITION_DELAY)
 
@@ -119,8 +147,8 @@ export default function FoundLeftItemMain({
             disabled={readOnly}
           >
             <AttachmentInputPreset
-              pickerOptions={PHOTO_OPTIONS}
-              onPick={setPickedPhotoOption}
+              pickerOptions={photoOptions}
+              onPick={handlePickPhoto}
               triggerClassName="found-left__photo-trigger"
               countClassName="found-left__photo-count"
               disabled={readOnly}
@@ -248,6 +276,27 @@ export default function FoundLeftItemMain({
       {isRecognizing && (
         <div className="found-left__ai-overlay">
           <ProgressCircle size="40" tone="neutral" />
+        </div>
+      )}
+
+      {isMismatchOpen && (
+        <div className="found-left__mismatch-overlay" onClick={() => setMismatchOpen(false)}>
+          <div className="found-left__mismatch-dialog" onClick={(event) => event.stopPropagation()}>
+            <img src={iconRetry} alt="" className="found-left__mismatch-icon" />
+            <p className="found-left__mismatch-title">
+              같은 물건의 사진인지
+              <br />
+              확인해주세요
+            </p>
+            <p className="found-left__mismatch-desc">
+              서로 다른 물건의 사진이 함께
+              <br />
+              선택되어 있어요.
+            </p>
+            <button type="button" className="found-left__mismatch-submit" onClick={() => setMismatchOpen(false)}>
+              다시 선택하기
+            </button>
+          </div>
         </div>
       )}
     </div>

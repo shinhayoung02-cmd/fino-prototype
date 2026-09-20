@@ -10,6 +10,8 @@ import NearbyMapView from './pages/Home/NearbyMapView'
 import SearchPage from './pages/Home/SearchPage'
 import iconSettingsGear from './assets/my-page/icon-settings-gear.svg'
 import AiMatching from './pages/AiMatching/AiMatching'
+import { ITEM_PROFILES, getItemProfile } from './data/itemProfiles'
+import { withObjectParticle } from './utils/korean'
 import MatchDetail from './pages/AiMatching/MatchDetail'
 import OwnershipRequested from './pages/AiMatching/OwnershipRequested'
 import WaitingScreen from './pages/AiMatching/WaitingScreen'
@@ -76,7 +78,7 @@ import ParcelDeliveryComplete from './pages/AiMatching/ParcelDeliveryComplete'
 import ParcelStoreDeliveryStart from './pages/AiMatching/ParcelStoreDeliveryStart'
 import ParcelStoreWeightSelect from './pages/AiMatching/ParcelStoreWeightSelect'
 import ParcelStoreInfoForm from './pages/AiMatching/ParcelStoreInfoForm'
-import ParcelStoreSendSelect from './pages/AiMatching/ParcelStoreSendSelect'
+import ParcelStoreNearby from './pages/AiMatching/ParcelStoreNearby'
 import ParcelStoreDeliveryProgress from './pages/AiMatching/ParcelStoreDeliveryProgress'
 import ParcelStoreDeliveryComplete from './pages/AiMatching/ParcelStoreDeliveryComplete'
 import MultipleClaimants from './pages/AiMatching/MultipleClaimants'
@@ -91,7 +93,10 @@ import PoliceBoxHandover from './pages/FoundItemRegister/PoliceBoxHandover'
 import PoliceBoxHandoverDetails from './pages/FoundItemRegister/PoliceBoxHandoverDetails'
 import FoundItemCamera from './pages/FoundItemCamera/FoundItemCamera'
 import FoundItemMain from './pages/FoundItemRegister/FoundItemMain'
-import FoundLeftItemMain from './pages/FoundItemRegister/FoundLeftItemMain'
+import FoundLeftItemMain, {
+  STREET_PHOTO_OPTIONS,
+  STATION_PHOTO_OPTIONS,
+} from './pages/FoundItemRegister/FoundLeftItemMain'
 import FoundLeftRegisterComplete from './pages/FoundItemRegister/FoundLeftRegisterComplete'
 import FoundStationLocationPicker from './pages/FoundItemRegister/FoundStationLocationPicker'
 import FoundStationLostReport from './pages/FoundItemRegister/FoundStationLostReport'
@@ -107,7 +112,9 @@ import DetailPreview from './pages/Playground/DetailPreview'
 import MyPage from './pages/MyPage/MyPage'
 import Notifications from './pages/Notifications/Notifications'
 import Modal from './components/common/Modal/Modal'
+import BottomSheet from './components/common/BottomSheet/BottomSheet'
 import FlowChangeModal from './components/common/FlowChangeModal/FlowChangeModal'
+import iconCheckNeutral from './assets/ai-matching/icon-check-neutral.svg'
 import NavMenu from './components/common/NavMenu/NavMenu'
 
 import iconHomeFill from './assets/home/icon-home-fill.svg'
@@ -123,6 +130,12 @@ const APPROVAL_RESULT_DELAY = 3000
 const PARCEL_RESULT_DELAY = 3000
 const RETURN_PROPOSAL_DELAY = 2000
 const RETRY_RETURN_PROPOSAL_DELAY = 3000
+
+const DELIVERY_METHOD_PICK_OPTIONS = [
+  { id: 'in-person', label: '직접 만나서 전달' },
+  { id: 'parcel', label: '일반 택배로 전달' },
+  { id: 'parcel-store', label: '편의점 택배로 전달' },
+]
 
 const OWNERSHIP_QUIZ_FAQ_ITEMS = [
   {
@@ -300,10 +313,11 @@ const INITIAL_LOST_DRAFT = {
 }
 
 const INITIAL_FOUND_DRAFT = {
-  name: '지갑/카드',
-  description: '검정색 Matin Kim 가죽 반지갑',
+  name: ITEM_PROFILES['wallet-normal'].category,
+  description: ITEM_PROFILES['wallet-normal'].description,
   timeRange: null,
   location: null,
+  itemKey: 'wallet-normal',
 }
 
 const INITIAL_FOUND_LEFT_DRAFT = {
@@ -346,6 +360,8 @@ function App() {
   const [isMultiClaimantResultDialogOpen, setMultiClaimantResultDialogOpen] = useState(false)
   const [isAwaitingMultiClaimantResultNotification, setAwaitingMultiClaimantResultNotification] = useState(false)
   const [isReturnProposalDialogOpen, setReturnProposalDialogOpen] = useState(false)
+  const [isDeliveryMethodPickDialogOpen, setDeliveryMethodPickDialogOpen] = useState(false)
+  const [deliveryMethodPick, setDeliveryMethodPick] = useState('in-person')
   const [isAwaitingReturnProposalNotification, setAwaitingReturnProposalNotification] = useState(false)
   const [isAwaitingRetryReturnProposalNotification, setAwaitingRetryReturnProposalNotification] = useState(false)
   const [isOwnershipRequested, setOwnershipRequested] = useState(false)
@@ -366,12 +382,14 @@ function App() {
   const [isQuizFailFlow, setQuizFailFlow] = useState(false)
   const [isFoundRestrictedFlow, setFoundRestrictedFlow] = useState(false)
   const [returnDeliveryMethod, setReturnDeliveryMethod] = useState('in-person')
+  const [returnRetryCount, setReturnRetryCount] = useState(0)
   const [isFoundMultipleClaimantsFlow, setFoundMultipleClaimantsFlow] = useState(false)
   const [meetupLocations, setMeetupLocations] = useState([])
   const [meetupDates, setMeetupDates] = useState([])
   const [meetupSlotTimes, setMeetupSlotTimes] = useState({})
   const [thanksMethod, setThanksMethod] = useState('coffee')
   const [parcelStore, setParcelStore] = useState(null)
+  const [foundParcelStore, setFoundParcelStore] = useState(null)
   const [inPersonSchedulePlace, setInPersonSchedulePlace] = useState(null)
   const [inPersonScheduleSlot, setInPersonScheduleSlot] = useState(undefined)
   const [mailbox, setMailbox] = useState(null)
@@ -548,11 +566,19 @@ function App() {
   }
 
   const handleFinishFoundReport = () => {
-    setCompletedFoundItem(null)
-    setFoundDraft(INITIAL_FOUND_DRAFT)
-    setMailbox(null)
+    resetFoundFlowState()
     navigate('/')
   }
+
+  const handleFoundPhotoRecognized = (item) => {
+    setFoundDraft((prev) => ({ ...prev, name: item.category, description: item.description, itemKey: item.itemKey }))
+  }
+
+  const handleRestrictedPhotoRecognized = (item) => {
+    setFoundStationDraft((prev) => ({ ...prev, name: item.category, description: item.description, itemKey: item.itemKey }))
+  }
+
+  const foundItemProfile = getItemProfile(completedFoundItem?.itemKey)
 
   const handleGoHomeAfterFoundSubmit = () => {
     setActiveTab('/')
@@ -585,6 +611,22 @@ function App() {
     navigate('/')
   }
 
+  const handleChooseReturnDeliveryMethod = (method) => {
+    setReturnDeliveryMethod(method)
+    setDeliveryMethodPickDialogOpen(false)
+    navigate('/found/match-result/quiz/claimants/return-prep/review')
+  }
+
+  const handleSubmitReturnRetryReason = (reasonId) => {
+    if (reasonId === 'delivery') {
+      const order = DELIVERY_METHOD_PICK_OPTIONS.map((option) => option.id)
+      const nextMethod = order[(order.indexOf(returnDeliveryMethod) + 1) % order.length]
+      setReturnDeliveryMethod(nextMethod)
+    }
+    setReturnRetryCount((prev) => prev + 1)
+    navigate('/found/match-result/quiz/claimants/return-prep/review/retry-reason/submitted')
+  }
+
   const handleViewFoundMatchResult = () => {
     setFoundMatchDialogOpen(false)
     navigate('/found/match-result')
@@ -612,6 +654,53 @@ function App() {
   const handleGoHomeWithSearchComplete = () => {
     setActiveTab('/')
     navigate('/', { state: { showSearchComplete: true } })
+  }
+
+  // 습득자(찾은 사람) 쪽 플로우 전체를 처음 상태로 되돌림 — "찾기 마치기" 버튼에서 사용
+  const resetFoundFlowState = () => {
+    setFoundDraft(INITIAL_FOUND_DRAFT)
+    setFoundLeftDraft(INITIAL_FOUND_LEFT_DRAFT)
+    setFoundStationDraft(INITIAL_FOUND_STATION_DRAFT)
+    setCompletedFoundItem(null)
+    setFoundMatchDialogOpen(false)
+    setAwaitingFoundMatchNotification(false)
+    setFoundFlowResumePath('/found/match-result')
+    setVerificationMaterialDialogOpen(false)
+    setAwaitingVerificationMaterialNotification(false)
+    setSecondaryVerificationOrigin('claimants')
+    setOwnershipQuizPassDialogOpen(false)
+    setAwaitingOwnershipQuizPassNotification(false)
+    setSecondaryVerificationDialogOpen(false)
+    setAwaitingSecondaryVerificationNotification(false)
+    setMultiClaimantResultDialogOpen(false)
+    setAwaitingMultiClaimantResultNotification(false)
+    setReturnProposalDialogOpen(false)
+    setDeliveryMethodPickDialogOpen(false)
+    setDeliveryMethodPick('in-person')
+    setAwaitingReturnProposalNotification(false)
+    setAwaitingRetryReturnProposalNotification(false)
+    setAwaitingParcelNotification(false)
+    setParcelResultDialogOpen(false)
+    setMultipleClaimantsFlow(false)
+    setOwnershipQuizAnswers([null, null, null])
+    setSecondaryVerificationAnswers([null, null, null])
+    setQuizFailFlow(false)
+    setFoundRestrictedFlow(false)
+    setReturnDeliveryMethod('in-person')
+    setReturnRetryCount(0)
+    setFoundMultipleClaimantsFlow(false)
+    setThanksMethod('coffee')
+    setParcelStore(null)
+    setFoundParcelStore(null)
+    setInPersonSchedulePlace(null)
+    setInPersonScheduleSlot(undefined)
+    setMailbox(null)
+    setPoliceBox(null)
+  }
+
+  const handleFinishFoundFlow = () => {
+    resetFoundFlowState()
+    navigate('/')
   }
 
   const resetFlowState = () => {
@@ -1294,7 +1383,7 @@ function App() {
           path="/found/new"
           element={
             <SubStepScreen title="습득물 등록" backTo="/" activeTab="/" onSelectTab={setActiveTab}>
-              <FoundItemRegister />
+              <FoundItemRegister onRecognized={handleFoundPhotoRecognized} onRestrictedRecognized={handleRestrictedPhotoRecognized} />
             </SubStepScreen>
           }
         />
@@ -1410,9 +1499,7 @@ function App() {
               className="found-camera-shell"
               bottomNav={<BottomNav items={NAV_ITEMS} activeTab="/" onSelect={setActiveTab} />}
             >
-              <FoundItemCamera
-                nextPath={isFoundRestrictedFlow ? '/found/new/restricted' : '/found/new/main'}
-              />
+              <FoundItemCamera onRecognized={handleFoundPhotoRecognized} onRestrictedRecognized={handleRestrictedPhotoRecognized} />
             </AppShell>
           }
         />
@@ -1421,7 +1508,7 @@ function App() {
           element={
             <SubStepScreen
               title="습득물 등록"
-              backTo="/found/new/camera"
+              backTo="/found/new"
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
               activeTab="/"
               onSelectTab={setActiveTab}
@@ -1463,6 +1550,7 @@ function App() {
                 draft={foundLeftDraft}
                 onDraftChange={setFoundLeftDraft}
                 onRegister={handleRegisterFoundLeftItem}
+                photoOptions={STREET_PHOTO_OPTIONS}
               />
             </SubStepScreen>
           }
@@ -1509,6 +1597,7 @@ function App() {
                 locationRowDesc="지도에서 대략적인 위치를 선택해요"
                 locationRoute="/found/new/station/location"
                 onRegister={() => navigate('/found/new/station/report')}
+                photoOptions={STATION_PHOTO_OPTIONS}
               />
             </SubStepScreen>
           }
@@ -1667,7 +1756,6 @@ function App() {
             >
               <FoundRegisterComplete
                 draft={completedFoundItem ?? foundDraft}
-                onFinishSearch={handleFinishFoundReport}
                 onKeepAndGoHome={() => {
                   setActiveTab('/')
                   setAwaitingFoundMatchNotification(true)
@@ -1708,6 +1796,8 @@ function App() {
               onSelectTab={setActiveTab}
             >
               <FoundMatchResult
+                cardTitle={foundItemProfile.matchCandidates?.[0]?.title ?? `${withObjectParticle(foundItemProfile.shortDescription)} 잃어버렸어요`}
+                cardDesc={foundItemProfile.matchCandidates?.[0]?.feature ?? foundItemProfile.description}
                 onNext={() =>
                   navigate(
                     isFoundMultipleClaimantsFlow ? '/found/match-result/quiz/claimants' : '/found/match-result/quiz',
@@ -1753,6 +1843,7 @@ function App() {
                 answers={ownershipQuizAnswers}
                 onChangeAnswers={setOwnershipQuizAnswers}
                 onSubmit={() => navigate('/found/match-result/quiz/review')}
+                steps={foundItemProfile.verificationQuestions}
               />
             </SubStepScreen>
           }
@@ -1771,6 +1862,7 @@ function App() {
                 answers={ownershipQuizAnswers}
                 onEdit={() => navigate('/found/match-result/quiz/1')}
                 onSubmit={() => navigate('/found/match-result/quiz/submitted')}
+                steps={foundItemProfile.verificationQuestions}
               />
             </SubStepScreen>
           }
@@ -1787,10 +1879,7 @@ function App() {
             >
               <OwnershipQuizSubmitted
                 onViewWaiting={() => navigate('/found/match-result/quiz/waiting')}
-                onGoHome={() => {
-                  setActiveTab('/')
-                  setAwaitingOwnershipResultNotification(true)
-                }}
+                onGoHome={handleGoHomeAfterOwnershipQuiz}
               />
             </SubStepScreen>
           }
@@ -1885,6 +1974,8 @@ function App() {
             >
               <SecondaryVerificationStart
                 onStart={() => navigate('/found/match-result/quiz/claimants/verification/1')}
+                cardTitle={`${withObjectParticle(foundItemProfile.category)} 습득했어요`}
+                cardDesc={foundItemProfile.shortDescription}
               />
             </SubStepScreen>
           }
@@ -1903,6 +1994,7 @@ function App() {
                 answers={secondaryVerificationAnswers}
                 onChangeAnswers={setSecondaryVerificationAnswers}
                 onSubmit={() => navigate('/found/match-result/quiz/claimants/verification/review')}
+                steps={foundItemProfile.secondaryVerificationSteps}
               />
             </SubStepScreen>
           }
@@ -1927,6 +2019,7 @@ function App() {
                     navigate('/found/match-result/quiz/claimants/verification/submitted')
                   }
                 }}
+                steps={foundItemProfile.secondaryVerificationSteps}
               />
             </SubStepScreen>
           }
@@ -1946,6 +2039,7 @@ function App() {
                 onGoHome={() => {
                   setActiveTab('/')
                   setAwaitingOwnershipQuizPassNotification(true)
+                  navigate('/')
                 }}
               />
             </SubStepScreen>
@@ -1966,6 +2060,7 @@ function App() {
                 onGoHome={() => {
                   setActiveTab('/')
                   setAwaitingMultiClaimantResultNotification(true)
+                  navigate('/')
                 }}
               />
             </SubStepScreen>
@@ -1997,6 +2092,9 @@ function App() {
             >
               <MultiClaimantOwnerConfirmed
                 onConfirm={() => navigate('/found/match-result/quiz/claimants/return-prep')}
+                cardMeta={`${foundItemProfile.matchCandidates?.[0]?.location ?? '서울 마포구 홍대입구역'} 근처 · ${foundItemProfile.matchCandidates?.[0]?.time ?? '오늘 오전 9~12시'}`}
+                cardTitle={`${foundItemProfile.category} 습득`}
+                cardDesc={foundItemProfile.shortDescription}
               />
             </SubStepScreen>
           }
@@ -2025,7 +2123,7 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ReturnProposalReview deliveryMethod={returnDeliveryMethod} />
+              <ReturnProposalReview deliveryMethod={returnDeliveryMethod} itemProfile={foundItemProfile} />
             </SubStepScreen>
           }
         />
@@ -2040,8 +2138,9 @@ function App() {
               onSelectTab={setActiveTab}
             >
               <ReturnProposalRetryReason
+                retryCount={returnRetryCount}
                 onPrevious={() => navigate('/found/match-result/quiz/claimants/return-prep/review')}
-                onSubmit={() => navigate('/found/match-result/quiz/claimants/return-prep/review/retry-reason/submitted')}
+                onSubmit={handleSubmitReturnRetryReason}
               />
             </SubStepScreen>
           }
@@ -2084,6 +2183,7 @@ function App() {
                 slot={inPersonScheduleSlot}
                 onSlotChange={setInPersonScheduleSlot}
                 onNext={() => navigate('/found/match-result/quiz/claimants/return-prep/review/in-person/confirm')}
+                itemProfile={foundItemProfile}
               />
             </SubStepScreen>
           }
@@ -2105,6 +2205,7 @@ function App() {
                 onConfirm={() =>
                   navigate('/found/match-result/quiz/claimants/return-prep/review/in-person/scheduled')
                 }
+                itemProfile={foundItemProfile}
               />
             </SubStepScreen>
           }
@@ -2125,6 +2226,7 @@ function App() {
                 onNext={() =>
                   navigate('/found/match-result/quiz/claimants/return-prep/review/in-person/complete')
                 }
+                itemProfile={foundItemProfile}
               />
             </SubStepScreen>
           }
@@ -2140,12 +2242,9 @@ function App() {
               onSelectTab={setActiveTab}
             >
               <InPersonDeliveryComplete
-                onFinishSearch={() => {
-                  setInPersonSchedulePlace(null)
-                  setInPersonScheduleSlot(undefined)
-                  navigate('/')
-                }}
+                onFinishSearch={handleFinishFoundFlow}
                 onKeepAndGoHome={() => navigate('/')}
+                itemProfile={foundItemProfile}
               />
             </SubStepScreen>
           }
@@ -2202,7 +2301,7 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ParcelDeliveryReview />
+              <ParcelDeliveryReview itemProfile={foundItemProfile} />
             </SubStepScreen>
           }
         />
@@ -2216,7 +2315,7 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ParcelDeliveryTracking />
+              <ParcelDeliveryTracking itemProfile={foundItemProfile} />
             </SubStepScreen>
           }
         />
@@ -2231,8 +2330,9 @@ function App() {
               onSelectTab={setActiveTab}
             >
               <ParcelDeliveryComplete
-                onFinishSearch={() => navigate('/')}
+                onFinishSearch={handleFinishFoundFlow}
                 onKeepAndGoHome={() => navigate('/')}
+                itemProfile={foundItemProfile}
               />
             </SubStepScreen>
           }
@@ -2247,7 +2347,7 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ParcelStoreDeliveryStart />
+              <ParcelStoreDeliveryStart itemProfile={foundItemProfile} />
             </SubStepScreen>
           }
         />
@@ -2280,16 +2380,34 @@ function App() {
           }
         />
         <Route
-          path="/found/match-result/quiz/claimants/return-prep/review/parcel-store/store"
+          path="/found/match-result/quiz/claimants/return-prep/review/parcel-store/nearby"
           element={
             <SubStepScreen
-              title="보낼 편의점 선택"
+              title="편의점 택배"
               backTo="/found/match-result/quiz/claimants/return-prep/review/parcel-store/info"
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ParcelStoreSendSelect />
+              <ParcelStoreNearby store={foundParcelStore} />
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/found/match-result/quiz/claimants/return-prep/review/parcel-store/store"
+          element={
+            <SubStepScreen
+              title="보낼 편의점 선택"
+              backTo="/found/match-result/quiz/claimants/return-prep/review/parcel-store/nearby"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+              activeTab="/matching"
+              onSelectTab={setActiveTab}
+            >
+              <ParcelStoreSelect
+                value={foundParcelStore}
+                onConfirm={setFoundParcelStore}
+                backTo="/found/match-result/quiz/claimants/return-prep/review/parcel-store/nearby"
+              />
             </SubStepScreen>
           }
         />
@@ -2298,12 +2416,12 @@ function App() {
           element={
             <SubStepScreen
               title="편의점 택배"
-              backTo="/found/match-result/quiz/claimants/return-prep/review/parcel-store/store"
+              backTo="/found/match-result/quiz/claimants/return-prep/review/parcel-store/nearby"
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ParcelStoreDeliveryProgress />
+              <ParcelStoreDeliveryProgress itemProfile={foundItemProfile} />
             </SubStepScreen>
           }
         />
@@ -2318,8 +2436,9 @@ function App() {
               onSelectTab={setActiveTab}
             >
               <ParcelStoreDeliveryComplete
-                onFinishSearch={() => navigate('/')}
+                onFinishSearch={handleFinishFoundFlow}
                 onKeepAndGoHome={() => navigate('/')}
+                itemProfile={foundItemProfile}
               />
             </SubStepScreen>
           }
@@ -2588,7 +2707,7 @@ function App() {
           </div>
         }
       >
-        분실자가 소유권 확인을 위해 추가 자료를 보냈어요
+        확인을 눌러 자료를 확인해주세요
       </Modal>
 
       <Modal
@@ -2710,7 +2829,7 @@ function App() {
               className="match-dialog__action match-dialog__action--primary"
               onClick={() => {
                 setReturnProposalDialogOpen(false)
-                navigate('/found/match-result/quiz/claimants/return-prep/review')
+                setDeliveryMethodPickDialogOpen(true)
               }}
             >
               확인
@@ -2727,6 +2846,51 @@ function App() {
       >
         확인을 눌러 확인해주세요
       </Modal>
+
+      <BottomSheet
+        isOpen={isDeliveryMethodPickDialogOpen}
+        onClose={() => setDeliveryMethodPickDialogOpen(false)}
+        title={
+          <>
+            <h2 className="delivery-pick-sheet__title">
+              프로토타입에서 확인할
+              <br />
+              반환 방식을 선택해주세요.
+            </h2>
+            <p className="delivery-pick-sheet__subtitle">
+              실제 서비스에서는
+              <br />
+              분실자가 선택한 방식으로 자동 진행돼요.
+            </p>
+          </>
+        }
+      >
+        <div className="delivery-pick-sheet__options">
+          {DELIVERY_METHOD_PICK_OPTIONS.map((option) => {
+            const isSelected = deliveryMethodPick === option.id
+            return (
+              <button
+                key={option.id}
+                type="button"
+                className={`delivery-pick-sheet__option${isSelected ? ' delivery-pick-sheet__option--selected' : ''}`}
+                onClick={() => setDeliveryMethodPick(option.id)}
+              >
+                <span className="delivery-pick-sheet__option-label">{option.label}</span>
+                {isSelected && (
+                  <img src={iconCheckNeutral} alt="" className="delivery-pick-sheet__option-check" />
+                )}
+              </button>
+            )
+          })}
+        </div>
+        <button
+          type="button"
+          className="delivery-pick-sheet__confirm"
+          onClick={() => handleChooseReturnDeliveryMethod(deliveryMethodPick)}
+        >
+          이 방식으로 체험하기
+        </button>
+      </BottomSheet>
 
       <Modal
         isOpen={isVerificationDialogOpen}

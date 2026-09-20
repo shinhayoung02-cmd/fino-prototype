@@ -1,8 +1,8 @@
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import iconInfo from '../../assets/ai-matching/icon-info-informative.svg'
 import iconProgressStepDone from '../../assets/ai-matching/icon-progress-step-done.svg'
 import iconPayment from '../../assets/ai-matching/icon-payment.svg'
 import iconClock from '../../assets/ai-matching/icon-clock.svg'
-import walletPhoto from '../../assets/ai-matching/samples/wallet-matin-kim-photo.jpg'
 import './InPersonMeetupScheduled.css'
 
 const PROGRESS_STEPS = [
@@ -11,6 +11,8 @@ const PROGRESS_STEPS = [
   { label: '만남예정', done: true },
   { label: '전달완료', done: false },
 ]
+
+const LAST_DONE_INDEX = PROGRESS_STEPS.reduce((acc, step, index) => (step.done ? index : acc), -1)
 
 function pad2(value) {
   return String(value).padStart(2, '0')
@@ -23,7 +25,7 @@ function formatSlot(slot) {
   return `${slot.year}.${pad2(slot.month)}.${pad2(slot.day)} ${period} ${hour12}:${pad2(slot.minute)}`
 }
 
-export default function InPersonMeetupScheduled({ place, slot, onNext }) {
+export default function InPersonMeetupScheduled({ place, slot, onNext, itemProfile = ITEM_PROFILES['wallet-normal'] }) {
   return (
     <div className="in-person-scheduled">
       <div className="in-person-scheduled__progress">
@@ -35,12 +37,18 @@ export default function InPersonMeetupScheduled({ place, slot, onNext }) {
                   step.done && PROGRESS_STEPS[index - 1].done
                     ? ' in-person-scheduled__progress-connector--active'
                     : ''
-                }`}
+                }${index === LAST_DONE_INDEX ? ' in-person-scheduled__progress-connector--latest' : ''}`}
               />
             )}
             <div className="in-person-scheduled__progress-node">
               {step.done ? (
-                <img src={iconProgressStepDone} alt="" className="in-person-scheduled__progress-circle" />
+                <img
+                  src={iconProgressStepDone}
+                  alt=""
+                  className={`in-person-scheduled__progress-circle${
+                    index === LAST_DONE_INDEX ? ' in-person-scheduled__progress-circle--latest' : ''
+                  }`}
+                />
               ) : (
                 <span className="in-person-scheduled__progress-circle in-person-scheduled__progress-circle--empty" />
               )}
@@ -75,14 +83,14 @@ export default function InPersonMeetupScheduled({ place, slot, onNext }) {
 
       <div className="in-person-scheduled__item-card">
         <div className="in-person-scheduled__item-photo">
-          <img src={walletPhoto} alt="" />
+          <img src={itemProfile.photo} alt="" />
         </div>
         <div className="in-person-scheduled__item-info">
-          <p className="in-person-scheduled__item-title">검정 반지갑 습득</p>
+          <p className="in-person-scheduled__item-title">{itemProfile.category} 습득</p>
           <div className="in-person-scheduled__item-rows">
             <p className="in-person-scheduled__item-row">
               <img src={iconPayment} alt="" />
-              검정색 Matin Kim 가죽 반지갑
+              {itemProfile.shortDescription}
             </p>
             <p className="in-person-scheduled__item-row">
               <img src={iconClock} alt="" />

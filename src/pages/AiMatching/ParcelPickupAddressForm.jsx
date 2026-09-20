@@ -15,6 +15,17 @@ export default function ParcelPickupAddressForm() {
   const [addressDetail, setAddressDetail] = useState('')
   const [entryMethod, setEntryMethod] = useState(null)
   const [note, setNote] = useState('')
+  const [showErrors, setShowErrors] = useState(false)
+
+  const isNextEnabled = address.trim().length > 0 && addressDetail.trim().length > 0 && entryMethod !== null
+
+  const handleNext = () => {
+    if (!isNextEnabled) {
+      setShowErrors(true)
+      return
+    }
+    navigate('/found/match-result/quiz/claimants/return-prep/review/parcel/box-size')
+  }
 
   return (
     <div className="parcel-pickup-address-form">
@@ -29,7 +40,11 @@ export default function ParcelPickupAddressForm() {
       <div className="parcel-pickup-address-form__field">
         <p className="parcel-pickup-address-form__field-label">주소를 입력해주세요</p>
         <div className="parcel-pickup-address-form__input-group">
-          <div className="parcel-pickup-address-form__input">
+          <div
+            className={`parcel-pickup-address-form__input${
+              showErrors && !address.trim() ? ' parcel-pickup-address-form__input--error' : ''
+            }`}
+          >
             <input
               type="text"
               className="parcel-pickup-address-form__input-field"
@@ -39,7 +54,11 @@ export default function ParcelPickupAddressForm() {
             />
             <img src={iconSearchMuted} alt="" className="parcel-pickup-address-form__input-suffix" />
           </div>
-          <div className="parcel-pickup-address-form__input">
+          <div
+            className={`parcel-pickup-address-form__input${
+              showErrors && !addressDetail.trim() ? ' parcel-pickup-address-form__input--error' : ''
+            }`}
+          >
             <input
               type="text"
               className="parcel-pickup-address-form__input-field"
@@ -54,7 +73,11 @@ export default function ParcelPickupAddressForm() {
 
       <div className="parcel-pickup-address-form__field">
         <p className="parcel-pickup-address-form__field-label">공동현관 출입방법</p>
-        <div className="parcel-pickup-address-form__radio-group">
+        <div
+          className={`parcel-pickup-address-form__radio-group${
+            showErrors && entryMethod === null ? ' parcel-pickup-address-form__radio-group--error' : ''
+          }`}
+        >
           {ENTRY_OPTIONS.map((option) => {
             const isSelected = entryMethod === option.id
             return (
@@ -91,11 +114,7 @@ export default function ParcelPickupAddressForm() {
       </div>
 
       <div className="parcel-pickup-address-form__next-wrap">
-        <button
-          type="button"
-          className="parcel-pickup-address-form__next"
-          onClick={() => navigate('/found/match-result/quiz/claimants/return-prep/review/parcel/box-size')}
-        >
+        <button type="button" className="parcel-pickup-address-form__next" onClick={handleNext}>
           다음
         </button>
       </div>

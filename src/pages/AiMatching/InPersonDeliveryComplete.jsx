@@ -1,15 +1,15 @@
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import { useState } from 'react'
 import iconClock from '../../assets/ai-matching/icon-clock.svg'
 import iconPayment from '../../assets/ai-matching/icon-payment.svg'
 import iconReceiptGift from '../../assets/ai-matching/icon-receipt-gift.svg'
 import iconProgressStepDone from '../../assets/ai-matching/icon-progress-step-done.svg'
-import walletPhoto from '../../assets/ai-matching/samples/wallet-matin-kim-photo.jpg'
 import Modal from '../../components/common/Modal/Modal'
 import './InPersonDeliveryComplete.css'
 
 const PROGRESS_STEPS = ['제안완료', '일정확정', '만남예정', '전달완료']
 
-export default function InPersonDeliveryComplete({ onFinishSearch, onKeepAndGoHome }) {
+export default function InPersonDeliveryComplete({ onFinishSearch, onKeepAndGoHome, itemProfile = ITEM_PROFILES['wallet-normal'] }) {
   const [isFinishDialogOpen, setFinishDialogOpen] = useState(false)
 
   return (
@@ -29,10 +29,20 @@ export default function InPersonDeliveryComplete({ onFinishSearch, onKeepAndGoHo
         {PROGRESS_STEPS.map((label, index) => (
           <div className="in-person-delivery-complete__progress-step" key={label}>
             {index > 0 && (
-              <div className="in-person-delivery-complete__progress-connector in-person-delivery-complete__progress-connector--done" />
+              <div
+                className={`in-person-delivery-complete__progress-connector in-person-delivery-complete__progress-connector--done${
+                  index === PROGRESS_STEPS.length - 1 ? ' in-person-delivery-complete__progress-connector--latest' : ''
+                }`}
+              />
             )}
             <div className="in-person-delivery-complete__progress-node">
-              <img src={iconProgressStepDone} alt="" className="in-person-delivery-complete__progress-circle" />
+              <img
+                src={iconProgressStepDone}
+                alt=""
+                className={`in-person-delivery-complete__progress-circle${
+                  index === PROGRESS_STEPS.length - 1 ? ' in-person-delivery-complete__progress-circle--latest' : ''
+                }`}
+              />
               <span className="in-person-delivery-complete__progress-label">{label}</span>
             </div>
           </div>
@@ -41,14 +51,14 @@ export default function InPersonDeliveryComplete({ onFinishSearch, onKeepAndGoHo
 
       <div className="in-person-delivery-complete__item-card">
         <div className="in-person-delivery-complete__item-photo">
-          <img src={walletPhoto} alt="" />
+          <img src={itemProfile.photo} alt="" />
         </div>
         <div className="in-person-delivery-complete__item-info">
-          <p className="in-person-delivery-complete__item-title">검정 반지갑 습득</p>
+          <p className="in-person-delivery-complete__item-title">{itemProfile.category} 습득</p>
           <div className="in-person-delivery-complete__item-rows">
             <p className="in-person-delivery-complete__item-row">
               <img src={iconPayment} alt="" />
-              검정색 Matin Kim 가죽 반지갑
+              {itemProfile.shortDescription}
             </p>
             <p className="in-person-delivery-complete__item-row">
               <img src={iconClock} alt="" />

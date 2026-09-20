@@ -83,6 +83,42 @@
   height: 29.837px;
 }
 
+.parcel-delivery-complete__progress-circle--latest {
+  animation: parcel-delivery-complete-step-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.parcel-delivery-complete__progress-connector--latest {
+  transform-origin: left;
+  animation: parcel-delivery-complete-connector-fill 0.45s ease-out both;
+}
+
+@keyframes parcel-delivery-complete-step-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes parcel-delivery-complete-connector-fill {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parcel-delivery-complete__progress-circle--latest,
+  .parcel-delivery-complete__progress-connector--latest {
+    animation: none;
+  }
+}
+
 .parcel-delivery-complete__progress-label {
   font-size: 11px;
   color: var(--color-gray-1000);

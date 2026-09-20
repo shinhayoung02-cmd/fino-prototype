@@ -10,6 +10,21 @@ export default function ParcelStoreInfoForm() {
   const [contact, setContact] = useState('')
   const [address, setAddress] = useState('')
   const [addressDetail, setAddressDetail] = useState('')
+  const [showErrors, setShowErrors] = useState(false)
+
+  const isNextEnabled =
+    name.trim().length > 0 &&
+    contact.trim().length > 0 &&
+    address.trim().length > 0 &&
+    addressDetail.trim().length > 0
+
+  const handleNext = () => {
+    if (!isNextEnabled) {
+      setShowErrors(true)
+      return
+    }
+    navigate('/found/match-result/quiz/claimants/return-prep/review/parcel-store/nearby')
+  }
 
   return (
     <div className="parcel-store-info-form">
@@ -17,7 +32,11 @@ export default function ParcelStoreInfoForm() {
 
       <div className="parcel-store-info-form__field">
         <p className="parcel-store-info-form__field-label">이름</p>
-        <div className="parcel-store-info-form__input">
+        <div
+          className={`parcel-store-info-form__input${
+            showErrors && !name.trim() ? ' parcel-store-info-form__input--error' : ''
+          }`}
+        >
           <input
             type="text"
             className="parcel-store-info-form__input-field"
@@ -30,7 +49,11 @@ export default function ParcelStoreInfoForm() {
 
       <div className="parcel-store-info-form__field">
         <p className="parcel-store-info-form__field-label">연락처</p>
-        <div className="parcel-store-info-form__input">
+        <div
+          className={`parcel-store-info-form__input${
+            showErrors && !contact.trim() ? ' parcel-store-info-form__input--error' : ''
+          }`}
+        >
           <input
             type="text"
             className="parcel-store-info-form__input-field"
@@ -44,7 +67,11 @@ export default function ParcelStoreInfoForm() {
       <div className="parcel-store-info-form__field">
         <p className="parcel-store-info-form__field-label">주소를 입력해주세요</p>
         <div className="parcel-store-info-form__input-group">
-          <div className="parcel-store-info-form__input">
+          <div
+            className={`parcel-store-info-form__input${
+              showErrors && !address.trim() ? ' parcel-store-info-form__input--error' : ''
+            }`}
+          >
             <input
               type="text"
               className="parcel-store-info-form__input-field"
@@ -54,7 +81,11 @@ export default function ParcelStoreInfoForm() {
             />
             <img src={iconSearchMuted} alt="" className="parcel-store-info-form__input-suffix" />
           </div>
-          <div className="parcel-store-info-form__input">
+          <div
+            className={`parcel-store-info-form__input${
+              showErrors && !addressDetail.trim() ? ' parcel-store-info-form__input--error' : ''
+            }`}
+          >
             <input
               type="text"
               className="parcel-store-info-form__input-field"
@@ -68,11 +99,7 @@ export default function ParcelStoreInfoForm() {
       </div>
 
       <div className="parcel-store-info-form__next-wrap">
-        <button
-          type="button"
-          className="parcel-store-info-form__next"
-          onClick={() => navigate('/found/match-result/quiz/claimants/return-prep/review/parcel-store/store')}
-        >
+        <button type="button" className="parcel-store-info-form__next" onClick={handleNext}>
           다음
         </button>
       </div>

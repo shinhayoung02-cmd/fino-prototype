@@ -50,6 +50,11 @@
   box-sizing: border-box;
 }
 
+.parcel-store-info-form__input--error {
+  border: 2px solid #fa342c;
+  padding: 0 15px;
+}
+
 .parcel-store-info-form__input-field {
   flex: 1;
   min-width: 0;

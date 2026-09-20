@@ -9,6 +9,7 @@ import iconClock from '../../assets/home/icon-clock.svg'
 import ScanningCard from '../../components/common/ScanningCard/ScanningCard'
 import { MATCH_CANDIDATES } from './matchCandidates'
 import { FOUND_MATCH_CANDIDATES } from './foundMatchCandidates'
+import { getItemProfile } from '../../data/itemProfiles'
 import './AiMatching.css'
 
 const INITIAL_CHIPS = [
@@ -70,7 +71,13 @@ export default function AiMatching({
   const [isScanCardDismissed, setIsScanCardDismissed] = useState(false)
   const navigate = useNavigate()
   const isFoundFlow = !completedItem && Boolean(completedFoundItem)
-  const candidates = isFoundFlow ? FOUND_MATCH_CANDIDATES : MATCH_CANDIDATES
+  const foundProfile = getItemProfile(completedFoundItem?.itemKey)
+  const candidates = isFoundFlow
+    ? FOUND_MATCH_CANDIDATES.map((candidate, index) => {
+        const override = foundProfile.matchCandidates?.[index]
+        return override ? { ...candidate, ...override, photo: foundProfile.photo } : candidate
+      })
+    : MATCH_CANDIDATES
   const scanItem = isFoundFlow ? completedFoundItem : completedItem
   const hasCandidates = Boolean(scanItem) && candidates.length > 0
 

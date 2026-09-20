@@ -55,6 +55,42 @@
   background: var(--color-gray-200);
 }
 
+.in-person-scheduled__progress-circle--latest {
+  animation: in-person-scheduled-step-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.in-person-scheduled__progress-connector--latest {
+  transform-origin: left;
+  animation: in-person-scheduled-connector-fill 0.45s ease-out both;
+}
+
+@keyframes in-person-scheduled-step-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes in-person-scheduled-connector-fill {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .in-person-scheduled__progress-circle--latest,
+  .in-person-scheduled__progress-connector--latest {
+    animation: none;
+  }
+}
+
 .in-person-scheduled__progress-label {
   font-size: 11px;
   color: var(--color-fg-neutral-subtle, #868b94);

@@ -14,12 +14,12 @@
   justify-content: center;
   min-height: 20px;
   padding: 2px 6px;
-  border: 1px solid #fed4d2;
+  border: 1px solid var(--color-brand-weak);
   border-radius: 4px;
-  color: #fa342c;
+  color: var(--color-brand);
   font-size: 11px;
   font-weight: 700;
-  margin-bottom: 21px;
+  margin-bottom: 20px;
 }
 
 .multiple-claimants-verification__intro {
@@ -70,7 +70,7 @@
 
 .multiple-claimants-verification__field {
   margin-top: auto;
-  margin-bottom: 26px;
+  margin-bottom: 20px;
 }
 
 .multiple-claimants-verification__field-label {

@@ -1,3 +1,4 @@
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import { useState } from 'react'
 import { DatePicker } from '@seed-design/react'
 import iconInfo from '../../assets/ai-matching/icon-info-informative.svg'
@@ -6,7 +7,6 @@ import iconChevronRight from '../../assets/ai-matching/icon-chevron-right.svg'
 import iconProgressStepDone from '../../assets/ai-matching/icon-progress-step-done.svg'
 import iconPayment from '../../assets/ai-matching/icon-payment.svg'
 import iconClock from '../../assets/ai-matching/icon-clock.svg'
-import walletPhoto from '../../assets/ai-matching/samples/wallet-matin-kim-photo.jpg'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import './InPersonScheduleConfirm.css'
 
@@ -16,6 +16,8 @@ const PROGRESS_STEPS = [
   { label: '만남예정', done: false },
   { label: '전달완료', done: false },
 ]
+
+const LAST_DONE_INDEX = PROGRESS_STEPS.reduce((acc, step, index) => (step.done ? index : acc), -1)
 
 function pad2(value) {
   return String(value).padStart(2, '0')
@@ -49,7 +51,7 @@ function onlyCandidateDate(candidate) {
   return CANDIDATE_SLOTS.some((slot) => isSameDate(slot, candidate))
 }
 
-export default function InPersonScheduleConfirm({ place, onSelectPlace, slot: selectedSlot, onSlotChange, onNext }) {
+export default function InPersonScheduleConfirm({ place, onSelectPlace, slot: selectedSlot, onSlotChange, onNext, itemProfile = ITEM_PROFILES['wallet-normal'] }) {
   const [isCalendarOpen, setCalendarOpen] = useState(false)
   const [pendingSlot, setPendingSlot] = useState(null)
 
@@ -93,12 +95,18 @@ export default function InPersonScheduleConfirm({ place, onSelectPlace, slot: se
                   step.done && PROGRESS_STEPS[index - 1].done
                     ? ' in-person-schedule__progress-connector--active'
                     : ''
-                }`}
+                }${index === LAST_DONE_INDEX ? ' in-person-schedule__progress-connector--latest' : ''}`}
               />
             )}
             <div className="in-person-schedule__progress-node">
               {step.done ? (
-                <img src={iconProgressStepDone} alt="" className="in-person-schedule__progress-circle" />
+                <img
+                  src={iconProgressStepDone}
+                  alt=""
+                  className={`in-person-schedule__progress-circle${
+                    index === LAST_DONE_INDEX ? ' in-person-schedule__progress-circle--latest' : ''
+                  }`}
+                />
               ) : (
                 <span className="in-person-schedule__progress-circle in-person-schedule__progress-circle--empty" />
               )}
@@ -116,14 +124,14 @@ export default function InPersonScheduleConfirm({ place, onSelectPlace, slot: se
 
       <div className="in-person-schedule__item-card">
         <div className="in-person-schedule__item-photo">
-          <img src={walletPhoto} alt="" />
+          <img src={itemProfile.photo} alt="" />
         </div>
         <div className="in-person-schedule__item-info">
-          <p className="in-person-schedule__item-title">검정 반지갑 습득</p>
+          <p className="in-person-schedule__item-title">{itemProfile.category} 습득</p>
           <div className="in-person-schedule__item-rows">
             <p className="in-person-schedule__item-row">
               <img src={iconPayment} alt="" />
-              검정색 Matin Kim 가죽 반지갑
+              {itemProfile.shortDescription}
             </p>
             <p className="in-person-schedule__item-row">
               <img src={iconClock} alt="" />

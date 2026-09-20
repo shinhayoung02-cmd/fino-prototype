@@ -1,8 +1,8 @@
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import iconInfo from '../../assets/ai-matching/icon-info-informative.svg'
 import iconProgressStepDone from '../../assets/ai-matching/icon-progress-step-done.svg'
 import iconPayment from '../../assets/ai-matching/icon-payment.svg'
 import iconClock from '../../assets/ai-matching/icon-clock.svg'
-import walletPhoto from '../../assets/ai-matching/samples/wallet-matin-kim-photo.jpg'
 import './InPersonScheduleReview.css'
 
 const PROGRESS_STEPS = [
@@ -11,6 +11,8 @@ const PROGRESS_STEPS = [
   { label: '만남예정', done: false },
   { label: '전달완료', done: false },
 ]
+
+const LAST_DONE_INDEX = PROGRESS_STEPS.reduce((acc, step, index) => (step.done ? index : acc), -1)
 
 function pad2(value) {
   return String(value).padStart(2, '0')
@@ -23,7 +25,7 @@ function formatSlot(slot) {
   return `${slot.year}.${pad2(slot.month)}.${pad2(slot.day)} ${period} ${hour12}:${pad2(slot.minute)}`
 }
 
-export default function InPersonScheduleReview({ place, slot, onEdit, onConfirm }) {
+export default function InPersonScheduleReview({ place, slot, onEdit, onConfirm, itemProfile = ITEM_PROFILES['wallet-normal'] }) {
   return (
     <div className="in-person-review">
       <div className="in-person-review__progress">
@@ -33,12 +35,18 @@ export default function InPersonScheduleReview({ place, slot, onEdit, onConfirm 
               <div
                 className={`in-person-review__progress-connector${
                   step.done && PROGRESS_STEPS[index - 1].done ? ' in-person-review__progress-connector--active' : ''
-                }`}
+                }${index === LAST_DONE_INDEX ? ' in-person-review__progress-connector--latest' : ''}`}
               />
             )}
             <div className="in-person-review__progress-node">
               {step.done ? (
-                <img src={iconProgressStepDone} alt="" className="in-person-review__progress-circle" />
+                <img
+                  src={iconProgressStepDone}
+                  alt=""
+                  className={`in-person-review__progress-circle${
+                    index === LAST_DONE_INDEX ? ' in-person-review__progress-circle--latest' : ''
+                  }`}
+                />
               ) : (
                 <span className="in-person-review__progress-circle in-person-review__progress-circle--empty" />
               )}
@@ -73,14 +81,14 @@ export default function InPersonScheduleReview({ place, slot, onEdit, onConfirm 
 
       <div className="in-person-review__item-card">
         <div className="in-person-review__item-photo">
-          <img src={walletPhoto} alt="" />
+          <img src={itemProfile.photo} alt="" />
         </div>
         <div className="in-person-review__item-info">
-          <p className="in-person-review__item-title">검정 반지갑 습득</p>
+          <p className="in-person-review__item-title">{itemProfile.category} 습득</p>
           <div className="in-person-review__item-rows">
             <p className="in-person-review__item-row">
               <img src={iconPayment} alt="" />
-              검정색 Matin Kim 가죽 반지갑
+              {itemProfile.shortDescription}
             </p>
             <p className="in-person-review__item-row">
               <img src={iconClock} alt="" />

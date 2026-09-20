@@ -22,6 +22,27 @@
   margin-bottom: 17px;
 }
 
+.secondary-verification-question__progress {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4.68px;
+  margin: 15px 0 21px;
+}
+
+.secondary-verification-question__progress-dot {
+  width: 5.39px;
+  height: 5.39px;
+  border-radius: 9999px;
+  background: #979797;
+}
+
+.secondary-verification-question__progress-dot--active {
+  width: 21.86px;
+  height: 5.465px;
+  border-radius: 9999px;
+}
+
 .secondary-verification-question__step-badge {
   display: inline-flex;
   align-items: center;
@@ -74,14 +95,14 @@
 
 .secondary-verification-question__image-frame {
   display: block;
-  width: 100%;
+  width: 366px;
   height: 183px;
   padding: 0;
   border: none;
   border-radius: var(--radius-md);
   background: #eff6ff;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin: 0 auto 10px;
   cursor: pointer;
 }
 
@@ -172,7 +193,7 @@
   color: var(--color-brand);
   font-size: 11px;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .secondary-verification-question__point-desc {
@@ -188,6 +209,10 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.secondary-verification-question__actions-wrap:has(> .secondary-verification-question__actions:only-child) {
+  margin-bottom: 7px;
 }
 
 .secondary-verification-question__actions {
@@ -213,31 +238,25 @@
   box-sizing: border-box;
 }
 
-.secondary-verification-question__confirm--selected,
-.secondary-verification-question__unclear--selected {
-  border-color: var(--color-gray-900);
+.secondary-verification-question__confirm--fixed {
+  border: none;
   background: var(--color-gray-900);
   color: #ffffff;
 }
 
-.secondary-verification-question__next {
+.secondary-verification-question__unclear--fixed {
+  border: none;
+  background: var(--color-gray-200);
+  color: var(--color-gray-1000);
+}
+
+.secondary-verification-question__next-label {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 40px;
-  border: none;
-  border-radius: var(--radius-md);
-  background: transparent;
   color: #d1d3d8;
   font-size: 16px;
   font-weight: 600;
-  cursor: not-allowed;
-  font-family: inherit;
-}
-
-.secondary-verification-question__next:not(:disabled) {
-  background: var(--color-gray-900);
-  color: #ffffff;
-  cursor: pointer;
 }

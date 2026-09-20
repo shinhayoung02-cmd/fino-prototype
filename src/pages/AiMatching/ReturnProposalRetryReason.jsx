@@ -8,8 +8,9 @@ const RETRY_REASONS = [
   { id: 'etc', title: '기타 사유가 있어요', desc: '직접 이유를 간단히 적을게요' },
 ]
 
-export default function ReturnProposalRetryReason({ onPrevious, onSubmit }) {
+export default function ReturnProposalRetryReason({ retryCount = 0, onPrevious, onSubmit }) {
   const [selectedId, setSelectedId] = useState('delivery')
+  const isRetryLimitReached = retryCount >= 2
 
   return (
     <div className="retry-reason">
@@ -55,7 +56,12 @@ export default function ReturnProposalRetryReason({ onPrevious, onSubmit }) {
         <button type="button" className="retry-reason__previous" onClick={onPrevious}>
           이전
         </button>
-        <button type="button" className="retry-reason__submit" onClick={onSubmit}>
+        <button
+          type="button"
+          className="retry-reason__submit"
+          disabled={isRetryLimitReached}
+          onClick={() => onSubmit?.(selectedId)}
+        >
           다시 제안 요청하기
         </button>
       </div>

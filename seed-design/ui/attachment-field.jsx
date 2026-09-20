@@ -270,8 +270,11 @@ function PresetTrigger({ samples = [], className, countClassName, pickerOptions,
   const disabled = disabledProp || currentFileEntryCount >= maxFiles || (!nextSample && !pickerOptions);
 
   const attach = async (sample) => {
-    const file = await sampleUrlToFile(sample.url, sample.name);
-    setFileEntries([file]);
+    const urls = sample.urls ?? [sample.url];
+    const files = await Promise.all(
+      urls.map((url, index) => sampleUrlToFile(url, urls.length > 1 ? `${sample.name}-${index + 1}` : sample.name))
+    );
+    setFileEntries(files);
   };
 
   const setHeight = (h) => {

@@ -1,8 +1,8 @@
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import { useNavigate } from 'react-router-dom'
 import iconPayment from '../../assets/ai-matching/icon-payment.svg'
 import iconClock from '../../assets/ai-matching/icon-clock.svg'
 import iconProgressStepDone from '../../assets/ai-matching/icon-progress-step-done.svg'
-import walletPhoto from '../../assets/ai-matching/samples/wallet-matin-kim-photo.jpg'
 import './ParcelStoreDeliveryStart.css'
 
 const PROGRESS_STEPS = [
@@ -12,7 +12,9 @@ const PROGRESS_STEPS = [
   { label: '수령완료', done: false },
 ]
 
-export default function ParcelStoreDeliveryStart() {
+const LAST_DONE_INDEX = PROGRESS_STEPS.reduce((acc, step, index) => (step.done ? index : acc), -1)
+
+export default function ParcelStoreDeliveryStart({ itemProfile = ITEM_PROFILES['wallet-normal'] } = {}) {
   const navigate = useNavigate()
   return (
     <div className="parcel-store-delivery-start">
@@ -25,12 +27,18 @@ export default function ParcelStoreDeliveryStart() {
                   step.done && PROGRESS_STEPS[index - 1].done
                     ? ' parcel-store-delivery-start__progress-connector--active'
                     : ''
-                }`}
+                }${index === LAST_DONE_INDEX ? ' parcel-store-delivery-start__progress-connector--latest' : ''}`}
               />
             )}
             <div className="parcel-store-delivery-start__progress-node">
               {step.done ? (
-                <img src={iconProgressStepDone} alt="" className="parcel-store-delivery-start__progress-circle" />
+                <img
+                  src={iconProgressStepDone}
+                  alt=""
+                  className={`parcel-store-delivery-start__progress-circle${
+                    index === LAST_DONE_INDEX ? ' parcel-store-delivery-start__progress-circle--latest' : ''
+                  }`}
+                />
               ) : (
                 <span className="parcel-store-delivery-start__progress-circle parcel-store-delivery-start__progress-circle--empty" />
               )}
@@ -56,14 +64,14 @@ export default function ParcelStoreDeliveryStart() {
 
       <div className="parcel-store-delivery-start__item-card">
         <div className="parcel-store-delivery-start__item-photo">
-          <img src={walletPhoto} alt="" />
+          <img src={itemProfile.photo} alt="" />
         </div>
         <div className="parcel-store-delivery-start__item-info">
-          <p className="parcel-store-delivery-start__item-title">검정 반지갑 습득</p>
+          <p className="parcel-store-delivery-start__item-title">{itemProfile.category} 습득</p>
           <div className="parcel-store-delivery-start__item-rows">
             <p className="parcel-store-delivery-start__item-row">
               <img src={iconPayment} alt="" />
-              검정색 Matin Kim 가죽 반지갑
+              {itemProfile.shortDescription}
             </p>
             <p className="parcel-store-delivery-start__item-row">
               <img src={iconClock} alt="" />

@@ -254,6 +254,7 @@
 
 .return-proposal-review .bottom-sheet__footer {
   flex-direction: column;
+  margin-top: 12px;
 }
 
 .return-proposal-review__retry-desc {
@@ -273,7 +274,7 @@
   height: 40px;
   border: none;
   border-radius: 9999px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;

@@ -27,7 +27,11 @@ const HOW_TO_ITEMS = [
   },
 ]
 
-export default function SecondaryVerificationStart({ onStart }) {
+export default function SecondaryVerificationStart({
+  onStart,
+  cardTitle = '검정 반지갑을 습득했어요',
+  cardDesc = '검정색 Matin Kim 가죽 반지갑',
+}) {
   const [isHowToOpen, setHowToOpen] = useState(false)
 
   return (
@@ -53,8 +57,8 @@ export default function SecondaryVerificationStart({ onStart }) {
           <p className="secondary-verification-start__card-meta">역삼1동 · 반경 500m · 오늘 오전 9~12시</p>
           <span className="secondary-verification-start__card-pill">접수 완료</span>
         </div>
-        <p className="secondary-verification-start__card-title">검정 반지갑을 습득했어요</p>
-        <p className="secondary-verification-start__card-desc">검정색 Matin Kim 가죽 반지갑</p>
+        <p className="secondary-verification-start__card-title">{cardTitle}</p>
+        <p className="secondary-verification-start__card-desc">{cardDesc}</p>
       </div>
 
       <div className="secondary-verification-start__divider" />

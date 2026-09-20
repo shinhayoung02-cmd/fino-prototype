@@ -12,7 +12,11 @@ function CheckBadge() {
   )
 }
 
-export default function FoundMatchResult({ onNext }) {
+export default function FoundMatchResult({
+  onNext,
+  cardTitle = '검정 반지갑을 잃어버렸어요',
+  cardDesc = '검정색 Matin Kim 가죽 반지갑',
+}) {
   return (
     <div className="found-match-result">
       <span className="found-match-result__badge">소유권 확인중</span>
@@ -30,8 +34,8 @@ export default function FoundMatchResult({ onNext }) {
           <p className="found-match-result__card-meta">역삼1동 · 반경 500m · 오늘 오전 9~12시</p>
           <span className="found-match-result__card-pill">접수 완료</span>
         </div>
-        <p className="found-match-result__card-title">검정 반지갑을 잃어버렸어요</p>
-        <p className="found-match-result__card-desc">검정색 Matin Kim 가죽 반지갑</p>
+        <p className="found-match-result__card-title">{cardTitle}</p>
+        <p className="found-match-result__card-desc">{cardDesc}</p>
       </div>
 
       <div className="found-match-result__reasons">
