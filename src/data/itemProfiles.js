@@ -18,6 +18,7 @@ import carKeyAppImage from '../assets/ai-matching/secondary-verification/car-key
 import carKeyStoryImage from '../assets/ai-matching/secondary-verification/car-key-story.png'
 import walletReceiptImage from '../assets/ai-matching/samples/matin-kim-receipt.jpg'
 import walletUnboxingImage from '../assets/ai-matching/samples/wallet-unboxing-photo.jpg'
+import wornPhotoStory from '../assets/ai-matching/samples/worn-photo-story.png'
 
 export const ITEM_PROFILES = {
   'bag-restricted': {
@@ -79,6 +80,61 @@ export const ITEM_PROFILES = {
         feature: '케이스가 씌워진 흰색 AirPods Pro',
         time: '오늘 오후 5시',
         location: '서울 마포구 홍대입구역',
+      },
+    ],
+    // 분실자 쪽 AI 매칭 후보(습득자가 올린 후보 2건) — 보내주신 앞/뒤 사진 2장을 그대로 사용
+    lostMatchCandidates: [
+      {
+        similarity: 74,
+        photo: airpodsPhoto,
+        title: '핑크 케이스 에어팟 습득',
+        feature: '핑크 케이스가 씌워진 흰색 AirPods Pro',
+        time: '오늘 오전 9~12시',
+        location: '서울 마포구 홍대입구역',
+      },
+      {
+        similarity: 64,
+        photo: airpodsPhotoBack,
+        title: '에어팟 습득',
+        feature: '케이스가 씌워진 흰색 AirPods Pro',
+        time: '오늘 오후 5시',
+        location: '서울 마포구 홍대입구역',
+      },
+    ],
+    // 소유권 증빙 제출(EvidenceUpload/Review) 3단계
+    evidenceSteps: [
+      {
+        badge: '1/3',
+        title: '구매 영수증이 있나요?',
+        subtitle: '온·오프라인 구매 내역을 올려주세요.',
+        tip: '영수증에 상품명이나 구매 시점이 보이면 확인에 도움이 돼요.',
+        accept: 'image/*',
+        sample: { url: airpodsReceiptImage, name: 'airpods-receipt.png' },
+        reviewLabel: '답변 1',
+        reviewTitle: '구매 영수증',
+        reviewDetail: 'Apple 온라인 스토어 구매',
+      },
+      {
+        badge: '2/3',
+        title: '기기 연결 기록이 있나요?',
+        subtitle: '블루투스 페어링 이력이나 연결 기록 화면을 올려주세요.',
+        tip: '이어폰, 스마트워치 같은 기기 확인에 도움이 돼요.',
+        accept: 'image/*',
+        sample: { url: airpodsBluetoothImage, name: 'airpods-bluetooth.png' },
+        reviewLabel: '답변 2',
+        reviewTitle: '블루투스 연결 기록',
+        reviewDetail: 'AirPods Pro 연결 기록',
+      },
+      {
+        badge: '3/3',
+        title: '이전에 사용한 사진이 있나요?',
+        subtitle: '물건을 착용하거나 사용하던 사진을 올려주세요.',
+        tip: 'SNS, 갤러리 사진도 괜찮아요.',
+        accept: 'image/*',
+        sample: { url: airpodsStoryImage, name: 'airpods-story.png' },
+        reviewLabel: '답변 3',
+        reviewTitle: '과거 사용 사진',
+        reviewDetail: '인스타 스토리 사진',
       },
     ],
     verificationQuestions: [
@@ -185,6 +241,59 @@ export const ITEM_PROFILES = {
         location: '서울 마포구 홍대입구역',
       },
     ],
+    lostMatchCandidates: [
+      {
+        similarity: 74,
+        photo: walletUsagePhoto,
+        title: '검정 반지갑 습득',
+        feature: '검정색 Matin Kim 가죽 반지갑',
+        time: '오늘 오전 9~12시',
+        location: '서울 마포구 홍대입구역',
+      },
+      {
+        similarity: 64,
+        photo: walletUsagePhotoBack,
+        title: '홍대입구에서 검정색 반지갑 습득',
+        feature: '검정색 반지갑',
+        time: '오늘 오후 5시',
+        location: '서울 마포구 홍대입구역',
+      },
+    ],
+    evidenceSteps: [
+      {
+        badge: '1/3',
+        title: '구매 영수증이 있나요?',
+        subtitle: '온·오프라인 구매 내역을 올려주세요.',
+        tip: '영수증에 상품명이나 구매 시점이 보이면 확인에 도움이 돼요.',
+        accept: 'application/pdf',
+        sample: { url: '/samples/matin_kim_receipt.pdf', name: 'matin_kim_receipt.pdf' },
+        reviewLabel: '답변 1',
+        reviewTitle: '구매 영수증',
+        reviewDetail: '2026.07.15 구매',
+      },
+      {
+        badge: '2/3',
+        title: '기기 연결 기록이 있나요?',
+        subtitle: '블루투스 페어링 이력이나 연결 기록 화면을 올려주세요.',
+        tip: '이어폰, 스마트워치 같은 기기 확인에 도움이 돼요.',
+        accept: 'image/*',
+        sample: null,
+        reviewLabel: '답변 2',
+        reviewTitle: '블루투스 연결 기록',
+        reviewDetail: '기기 연결 기록 스크린샷',
+      },
+      {
+        badge: '3/3',
+        title: '이전에 사용한 사진이 있나요?',
+        subtitle: '물건을 착용하거나 사용하던 사진을 올려주세요.',
+        tip: 'SNS, 갤러리 사진도 괜찮아요.',
+        accept: 'image/*',
+        sample: { url: wornPhotoStory, name: 'worn-photo-story.png' },
+        reviewLabel: '답변 3',
+        reviewTitle: '과거 사용 사진',
+        reviewDetail: '갤러리 사진 2장',
+      },
+    ],
     verificationQuestions: [
       {
         step: 1,
@@ -288,6 +397,59 @@ export const ITEM_PROFILES = {
         feature: 'BMW 스마트키',
         time: '오늘 오후 5시',
         location: '서울 마포구 홍대입구역',
+      },
+    ],
+    lostMatchCandidates: [
+      {
+        similarity: 74,
+        photo: carKeyPhoto,
+        title: 'BMW 차키 습득',
+        feature: 'BMW 스마트키 · 곰인형 키링 부착',
+        time: '오늘 오전 9~12시',
+        location: '서울 마포구 홍대입구역',
+      },
+      {
+        similarity: 64,
+        photo: carKeyPhotoBack,
+        title: '차키 습득',
+        feature: 'BMW 스마트키',
+        time: '오늘 오후 5시',
+        location: '서울 마포구 홍대입구역',
+      },
+    ],
+    evidenceSteps: [
+      {
+        badge: '1/3',
+        title: '구매 영수증이 있나요?',
+        subtitle: '온·오프라인 구매 내역을 올려주세요.',
+        tip: '영수증에 상품명이나 구매 시점이 보이면 확인에 도움이 돼요.',
+        accept: 'image/*',
+        sample: { url: carKeyReceiptImage, name: 'car-key-receipt.png' },
+        reviewLabel: '답변 1',
+        reviewTitle: '구매 영수증',
+        reviewDetail: 'BMW 320i 전자영수증',
+      },
+      {
+        badge: '2/3',
+        title: '기기 연결 기록이 있나요?',
+        subtitle: '블루투스 페어링 이력이나 연결 기록 화면을 올려주세요.',
+        tip: '이어폰, 스마트워치 같은 기기 확인에 도움이 돼요.',
+        accept: 'image/*',
+        sample: { url: carKeyAppImage, name: 'car-key-app.png' },
+        reviewLabel: '답변 2',
+        reviewTitle: '차량 연결 기록',
+        reviewDetail: 'BMW 앱 연결 기록',
+      },
+      {
+        badge: '3/3',
+        title: '이전에 사용한 사진이 있나요?',
+        subtitle: '물건을 착용하거나 사용하던 사진을 올려주세요.',
+        tip: 'SNS, 갤러리 사진도 괜찮아요.',
+        accept: 'image/*',
+        sample: { url: carKeyStoryImage, name: 'car-key-story.png' },
+        reviewLabel: '답변 3',
+        reviewTitle: '과거 사용 사진',
+        reviewDetail: '인스타 스토리 사진',
       },
     ],
     verificationQuestions: [

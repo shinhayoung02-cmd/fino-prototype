@@ -4,7 +4,7 @@ import iconInfo from '../../assets/lost-register/icon-info.svg'
 import { EVIDENCE_STEPS } from './evidenceSteps'
 import './EvidenceReview.css'
 
-export default function EvidenceReview({ filesByStep }) {
+export default function EvidenceReview({ filesByStep, steps = EVIDENCE_STEPS }) {
   const navigate = useNavigate()
 
   return (
@@ -20,7 +20,7 @@ export default function EvidenceReview({ filesByStep }) {
       </div>
 
       <div className="evidence-review__list">
-        {EVIDENCE_STEPS.map((step, index) => {
+        {steps.map((step, index) => {
           const isSubmitted = filesByStep[index]?.length > 0
           return (
             <div className="evidence-review__item" key={step.reviewLabel}>

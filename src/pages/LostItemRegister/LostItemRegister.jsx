@@ -3,22 +3,27 @@ import { useNavigate } from 'react-router-dom'
 import iconClose from '../../assets/lost-register/icon-close.svg'
 import iconClock from '../../assets/lost-register/icon-clock.svg'
 import iconChevronRight from '../../assets/lost-register/icon-chevron-right.svg'
-import walletSample1 from '../../assets/lost-register/samples/wallet-1.png'
-import earphoneSample from '../../assets/home/item-buzz-earphone.jpg'
-import watchSample from '../../assets/found-report/samples/watch-placeholder.svg'
-import bagSample from '../../assets/found-report/samples/bag-placeholder.svg'
 import { AttachmentField, AttachmentInputPreset } from '../../../seed-design/ui/attachment-field'
 import { ProgressCircle } from '../../../seed-design/ui/progress-circle'
+import { ITEM_PROFILES } from '../../data/itemProfiles'
 import TimeRangeSheet from './TimeRangeSheet'
 import FeatureSheet from './FeatureSheet'
 import './LostItemRegister.css'
 
-const PHOTO_OPTIONS = [
-  { label: '지갑', url: walletSample1, name: 'wallet.png', aiName: '지갑/카드', aiDesc: '검정색 Matin Kim 가죽 반지갑' },
-  { label: '이어폰', url: earphoneSample, name: 'earphone.jpg', aiName: '무선 이어폰', aiDesc: '흰색 무선 이어폰 케이스' },
-  { label: '시계', url: watchSample, name: 'watch.svg', aiName: '손목시계', aiDesc: '은색 메탈 밴드 손목시계' },
-  { label: '가방', url: bagSample, name: 'bag.svg', aiName: '가방', aiDesc: '검정색 캔버스 숄더백' },
-]
+function buildPhotoOption(itemKey) {
+  const profile = ITEM_PROFILES[itemKey]
+  return {
+    label: profile.shortDescription,
+    url: profile.photo,
+    urls: [profile.photo, profile.photoBack],
+    name: `${itemKey}.jpg`,
+    aiName: profile.category,
+    aiDesc: profile.description,
+    itemKey,
+  }
+}
+
+const PHOTO_OPTIONS = ['wallet-normal', 'airpods', 'car-key'].map(buildPhotoOption)
 
 const MAX_PHOTOS = 5
 const AI_RECOGNITION_DELAY = 1200
@@ -45,7 +50,12 @@ export default function LostItemRegister({ draft, onDraftChange }) {
 
     setIsRecognizing(true)
     const timer = setTimeout(() => {
-      onDraftChange((prev) => ({ ...prev, name: pickedPhotoOption.aiName, description: pickedPhotoOption.aiDesc }))
+      onDraftChange((prev) => ({
+        ...prev,
+        name: pickedPhotoOption.aiName,
+        description: pickedPhotoOption.aiDesc,
+        itemKey: pickedPhotoOption.itemKey,
+      }))
       setIsRecognizing(false)
     }, AI_RECOGNITION_DELAY)
 

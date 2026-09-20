@@ -5,14 +5,17 @@ import FilePreviewModal from '../../components/common/FilePreviewModal/FilePrevi
 import { EVIDENCE_STEPS } from './evidenceSteps'
 import './EvidenceUpload.css'
 
-export default function EvidenceUpload({ filesByStep, onFilesByStepChange }) {
+export default function EvidenceUpload({ filesByStep, onFilesByStepChange, steps = EVIDENCE_STEPS }) {
   const navigate = useNavigate()
   const [stepIndex, setStepIndex] = useState(0)
   const [direction, setDirection] = useState('forward')
   const [previewFile, setPreviewFile] = useState(null)
 
-  const step = EVIDENCE_STEPS[stepIndex]
-  const isLastStep = stepIndex === EVIDENCE_STEPS.length - 1
+  const step = steps[stepIndex]
+  const isLastStep = stepIndex === steps.length - 1
+  const galleryOptions = steps
+    .filter((entry) => entry.sample)
+    .map((entry) => ({ label: entry.reviewTitle, url: entry.sample.url, name: entry.sample.name }))
 
   const setStepFiles = (files) => {
     onFilesByStepChange(filesByStep.map((entry, index) => (index === stepIndex ? files : entry)))
@@ -55,6 +58,7 @@ export default function EvidenceUpload({ filesByStep, onFilesByStepChange }) {
         >
           <AttachmentDropzonePreset
             samples={step.sample ? [step.sample] : []}
+            pickerOptions={galleryOptions.length > 0 ? galleryOptions : undefined}
             onPreview={(fileEntry) => setPreviewFile(fileEntry.file)}
           />
         </AttachmentField>

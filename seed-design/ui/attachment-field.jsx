@@ -500,17 +500,33 @@ function PresetTrigger({ samples = [], className, countClassName, pickerOptions,
 
 /**
  * Prototype-only variant: dropzone-styled trigger whose button appends the next
- * preset sample file instead of opening the native OS file picker.
+ * preset sample file instead of opening the native OS file picker. When
+ * `pickerOptions` is provided, the button opens a labeled gallery sheet
+ * instead, letting the user choose which preset sample to attach.
  */
-export const AttachmentDropzonePreset = ({ samples, onPreview }) => {
+export const AttachmentDropzonePreset = ({ samples = [], onPreview, pickerOptions }) => {
   const { setFileEntries, currentFileEntryCount, maxFiles } = useFileUploadContext();
+  const [isGalleryOpen, setGalleryOpen] = React.useState(false);
   const nextSample = samples[currentFileEntryCount];
-  const disabled = currentFileEntryCount >= maxFiles || !nextSample;
+  const disabled = currentFileEntryCount >= maxFiles || (!nextSample && !pickerOptions);
+
+  const attach = async (sample) => {
+    const file = await sampleUrlToFile(sample.url, sample.name);
+    setFileEntries([file]);
+  };
 
   const handleClick = async () => {
+    if (pickerOptions) {
+      setGalleryOpen(true);
+      return;
+    }
     if (!nextSample) return;
-    const file = await sampleUrlToFile(nextSample.url, nextSample.name);
-    setFileEntries([file]);
+    await attach(nextSample);
+  };
+
+  const handlePick = async (option) => {
+    await attach(option);
+    setGalleryOpen(false);
   };
 
   return (
@@ -532,6 +548,98 @@ export const AttachmentDropzonePreset = ({ samples, onPreview }) => {
           </SeedAttachmentInput.Context>
         </SeedAttachmentInput.ItemGroup>
       </SeedAttachmentInput.Container>
+      {pickerOptions && isGalleryOpen && (
+        <>
+          <div
+            onClick={() => setGalleryOpen(false)}
+            style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0, 0, 0, 0.45)" }}
+          />
+          <div
+            role="dialog"
+            aria-label="보관함"
+            style={{
+              position: "fixed",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 201,
+              maxHeight: "70vh",
+              background: "#ffffff",
+              borderRadius: "20px 20px 0 0",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+              boxShadow: "0 -2px 16px rgba(0, 0, 0, 0.12)",
+            }}
+          >
+            <div style={{ flexShrink: 0, padding: "10px 0 6px", display: "flex", justifyContent: "center" }}>
+              <span style={{ width: 72, height: 4, borderRadius: 9999, background: "#d8dadf" }} />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexShrink: 0,
+                padding: "20px 16px",
+                borderBottom: "1px solid #eeeeee",
+              }}
+            >
+              <span style={{ fontSize: 20, fontWeight: 600, color: "#1a1c20" }}>보관함</span>
+              <button
+                type="button"
+                onClick={() => setGalleryOpen(false)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  fontFamily: "inherit",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "#cfd1d6",
+                  cursor: "pointer",
+                }}
+              >
+                취소
+              </button>
+            </div>
+            <div style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+              {pickerOptions.map((option) => (
+                <button
+                  key={option.label}
+                  type="button"
+                  onClick={() => handlePick(option)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    border: "1px solid #eeeff1",
+                    borderRadius: 12,
+                    padding: 8,
+                    background: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 8,
+                      overflow: "hidden",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <img src={option.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#1a1c20" }}>{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

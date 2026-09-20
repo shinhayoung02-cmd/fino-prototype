@@ -12,6 +12,7 @@ import iconSettingsGear from './assets/my-page/icon-settings-gear.svg'
 import AiMatching from './pages/AiMatching/AiMatching'
 import { ITEM_PROFILES, getItemProfile } from './data/itemProfiles'
 import { withObjectParticle } from './utils/korean'
+import { MATCH_CANDIDATES } from './pages/AiMatching/matchCandidates'
 import MatchDetail from './pages/AiMatching/MatchDetail'
 import OwnershipRequested from './pages/AiMatching/OwnershipRequested'
 import WaitingScreen from './pages/AiMatching/WaitingScreen'
@@ -579,6 +580,7 @@ function App() {
   }
 
   const foundItemProfile = getItemProfile(completedFoundItem?.itemKey)
+  const lostItemProfile = getItemProfile(completedItem?.itemKey)
 
   const handleGoHomeAfterFoundSubmit = () => {
     setActiveTab('/')
@@ -887,6 +889,11 @@ function App() {
                 onRequestOwnership={() => setOwnershipRequested(true)}
                 isVerificationReady={isVerificationReady}
                 verificationResultPath={verificationResultPath}
+                candidate={{
+                  ...MATCH_CANDIDATES[0],
+                  ...lostItemProfile.lostMatchCandidates?.[0],
+                  gallery: [lostItemProfile.photo, lostItemProfile.photoBack],
+                }}
               />
             </SubStepScreen>
           }
@@ -1285,7 +1292,11 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <EvidenceUpload filesByStep={evidenceFiles} onFilesByStepChange={setEvidenceFiles} />
+              <EvidenceUpload
+                filesByStep={evidenceFiles}
+                onFilesByStepChange={setEvidenceFiles}
+                steps={lostItemProfile.evidenceSteps}
+              />
             </SubStepScreen>
           }
         />
@@ -1299,7 +1310,7 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <EvidenceReview filesByStep={evidenceFiles} />
+              <EvidenceReview filesByStep={evidenceFiles} steps={lostItemProfile.evidenceSteps} />
             </SubStepScreen>
           }
         />

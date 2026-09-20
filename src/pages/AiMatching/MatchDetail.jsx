@@ -6,14 +6,13 @@ import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import { MATCH_CANDIDATES } from './matchCandidates'
 import './MatchDetail.css'
 
-const candidate = MATCH_CANDIDATES[0]
-
 export default function MatchDetail({
   completedItem,
   isOwnershipRequested,
   onRequestOwnership,
   isVerificationReady,
   verificationResultPath,
+  candidate = MATCH_CANDIDATES[0],
 }) {
   const [isExcludeSheetOpen, setExcludeSheetOpen] = useState(false)
   const navigate = useNavigate()

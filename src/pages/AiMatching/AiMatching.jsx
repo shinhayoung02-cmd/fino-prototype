@@ -72,12 +72,16 @@ export default function AiMatching({
   const navigate = useNavigate()
   const isFoundFlow = !completedItem && Boolean(completedFoundItem)
   const foundProfile = getItemProfile(completedFoundItem?.itemKey)
+  const lostProfile = getItemProfile(completedItem?.itemKey)
   const candidates = isFoundFlow
     ? FOUND_MATCH_CANDIDATES.map((candidate, index) => {
         const override = foundProfile.matchCandidates?.[index]
         return override ? { ...candidate, ...override, photo: foundProfile.photo } : candidate
       })
-    : MATCH_CANDIDATES
+    : MATCH_CANDIDATES.map((candidate, index) => {
+        const override = lostProfile.lostMatchCandidates?.[index]
+        return override ? { ...candidate, ...override } : candidate
+      })
   const scanItem = isFoundFlow ? completedFoundItem : completedItem
   const hasCandidates = Boolean(scanItem) && candidates.length > 0
 
