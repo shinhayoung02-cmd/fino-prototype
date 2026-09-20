@@ -208,10 +208,6 @@ export default function NavMenu({
   onToggleFoundRestrictedFlow,
   isFoundMultipleClaimantsFlow,
   onToggleFoundMultipleClaimantsFlow,
-  isParcelDeliveryFlow,
-  onToggleParcelDeliveryFlow,
-  isParcelStoreDeliveryFlow,
-  onToggleParcelStoreDeliveryFlow,
 }) {
   return (
     <div className="nav-menu-scope">
@@ -299,36 +295,6 @@ export default function NavMenu({
                 <span className="nav-menu__switch-label">
                   <span className="nav-menu__switch-title">다중 분실자 플로우(습득자)</span>
                   <span className="nav-menu__switch-desc">같은 물건을 찾는 사람이 여러 명일 때</span>
-                </span>
-                <span className="nav-menu__switch-track">
-                  <span className="nav-menu__switch-thumb" />
-                </span>
-              </button>
-              <button
-                type="button"
-                className={`nav-menu__switch-row${isParcelDeliveryFlow ? ' nav-menu__switch-row--on' : ''}`}
-                role="switch"
-                aria-checked={isParcelDeliveryFlow}
-                onClick={() => onToggleParcelDeliveryFlow?.()}
-              >
-                <span className="nav-menu__switch-label">
-                  <span className="nav-menu__switch-title">일반 택배 플로우(습득자)</span>
-                  <span className="nav-menu__switch-desc">반환 방법으로 일반 택배를 고를 때</span>
-                </span>
-                <span className="nav-menu__switch-track">
-                  <span className="nav-menu__switch-thumb" />
-                </span>
-              </button>
-              <button
-                type="button"
-                className={`nav-menu__switch-row${isParcelStoreDeliveryFlow ? ' nav-menu__switch-row--on' : ''}`}
-                role="switch"
-                aria-checked={isParcelStoreDeliveryFlow}
-                onClick={() => onToggleParcelStoreDeliveryFlow?.()}
-              >
-                <span className="nav-menu__switch-label">
-                  <span className="nav-menu__switch-title">편의점 택배 플로우(습득자)</span>
-                  <span className="nav-menu__switch-desc">반환 방법으로 편의점 택배를 고를 때</span>
                 </span>
                 <span className="nav-menu__switch-track">
                   <span className="nav-menu__switch-thumb" />

@@ -52,33 +52,6 @@
   object-fit: contain;
 }
 
-.found-camera__ai-pill {
-  position: absolute;
-  top: 105px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 20px;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.45);
-  box-sizing: border-box;
-}
-
-.found-camera__ai-pill-icon {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-}
-
-.found-camera__ai-pill-text {
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: -0.5px;
-  color: #e5e5e5;
-  white-space: nowrap;
-}
-
 .found-camera__corner {
   position: absolute;
   width: 24px;
@@ -188,13 +161,121 @@
   justify-content: center;
   width: 56px;
   height: 56px;
+  border: none;
+  padding: 0;
   border-radius: 8px;
   background: rgba(217, 217, 217, 0.15);
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .found-camera__thumb img {
   width: 22.4px;
   height: 22.4px;
+}
+
+.found-camera__thumb-photo {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+.found-camera__gallery-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.found-camera__gallery-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 201;
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.12);
+}
+
+.found-camera__gallery-handle-row {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 6px;
+}
+
+.found-camera__gallery-handle {
+  width: 72px;
+  height: 4px;
+  border-radius: 9999px;
+  background: #d8dadf;
+}
+
+.found-camera__gallery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding: 20px 16px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.found-camera__gallery-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1c20;
+}
+
+.found-camera__gallery-cancel {
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #cfd1d6;
+  cursor: pointer;
+}
+
+.found-camera__gallery-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.found-camera__gallery-date {
+  margin: 0;
+  padding: 12px 16px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #868b94;
+}
+
+.found-camera__gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 2px;
+}
+
+.found-camera__gallery-item {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.found-camera__gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .found-camera__shutter-btn {

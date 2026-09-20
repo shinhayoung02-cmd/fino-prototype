@@ -50,6 +50,7 @@
 
 .nearby-map__map-img {
   position: absolute;
+  z-index: 0;
   left: -10.45%;
   top: -66.29%;
   width: 115.91%;
@@ -62,8 +63,18 @@
   height: 113.71%;
 }
 
+.nearby-map__map-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 .nearby-map__pin {
   position: absolute;
+  z-index: 1;
   width: 61px;
   height: 61px;
   transform: translate(-50%, -50%);
@@ -143,6 +154,7 @@
   position: absolute;
   left: 50%;
   top: 7px;
+  z-index: 2;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
@@ -178,6 +190,7 @@
   position: absolute;
   left: 16px;
   bottom: 16px;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 8px;

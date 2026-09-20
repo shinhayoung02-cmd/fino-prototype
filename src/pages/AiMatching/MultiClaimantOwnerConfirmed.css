@@ -73,7 +73,7 @@
 .multi-claimant-owner-confirmed__card {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   padding: 16px;
   border-radius: var(--radius-md);
   background: var(--color-bg);
@@ -140,14 +140,11 @@
 }
 
 .multi-claimant-owner-confirmed__list {
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
 .multi-claimant-owner-confirmed__item-divider {
   height: 1px;
-  margin: 0 12px;
   background: rgba(0, 0, 0, 0.05);
 }
 
@@ -155,7 +152,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
+  padding: 16px 4px;
   box-sizing: border-box;
 }
 

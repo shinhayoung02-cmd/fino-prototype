@@ -1,5 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './BottomSheet.css'
+
+const CLOSE_ANIMATION_DURATION = 250
 
 export default function BottomSheet({
   isOpen,
@@ -9,7 +11,9 @@ export default function BottomSheet({
   footer,
   fullHeight,
   overlayClassName = '',
+  dismissible = true,
 }) {
+  const [isClosing, setClosing] = useState(false)
   useEffect(() => {
     if (!isOpen) return undefined
 
@@ -39,13 +43,22 @@ export default function BottomSheet({
 
   if (!isOpen) return null
 
+  const handleBackdropClick = () => {
+    if (!dismissible || isClosing) return
+    setClosing(true)
+    setTimeout(() => {
+      setClosing(false)
+      onClose?.()
+    }, CLOSE_ANIMATION_DURATION)
+  }
+
   return (
     <div
       className={`bottom-sheet-overlay${overlayClassName ? ` ${overlayClassName}` : ''}`}
-      onClick={onClose}
+      onClick={handleBackdropClick}
     >
       <div
-        className={`bottom-sheet${fullHeight ? ' bottom-sheet--full-height' : ''}`}
+        className={`bottom-sheet${fullHeight ? ' bottom-sheet--full-height' : ''}${isClosing ? ' bottom-sheet--closing' : ''}`}
         role="dialog"
         aria-modal="true"
         onClick={(e) => e.stopPropagation()}

@@ -47,6 +47,44 @@
   animation: station-slide-down 0.25s ease;
 }
 
+.station-picker__suggestions {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  border-top: 1px solid var(--color-stroke-weak);
+  border-bottom: 1px solid var(--color-stroke-weak);
+  animation: station-slide-down 0.2s ease;
+}
+
+.station-picker__suggestion {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.station-picker__suggestion-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-gray-1000);
+}
+
+.station-picker__suggestion-address {
+  font-size: 12px;
+  color: var(--color-fg-neutral-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .station-picker__search-field {
   display: flex;
   align-items: center;
@@ -110,16 +148,22 @@
   background: #e5e5e5;
 }
 
-.station-picker__map-img {
+.station-picker__map-img,
+.station-picker__map-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  overflow: hidden;
 }
 
 .station-picker__radius {
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 1;
   width: 287px;
   height: 279px;
   pointer-events: none;
@@ -129,6 +173,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 1;
   width: 56px;
   height: 56px;
   transform: translate(-50%, -50%);
@@ -224,10 +269,21 @@
   height: 10.5px;
 }
 
+.station-picker__area-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.55);
+}
+
 .station-picker__controls {
   position: absolute;
   left: 16px;
   bottom: 16px;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -297,7 +353,7 @@
 .station-picker__station-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .station-picker__station-label {
@@ -332,11 +388,12 @@
 
 .station-picker__station--selected {
   border: 2px solid var(--color-gray-1000);
-  padding: 15px 15px 15px 19px;
 }
 
 .station-picker__station-body {
   display: flex;
+  flex: 1;
+  min-width: 0;
   flex-direction: column;
   gap: 2px;
 }
@@ -350,6 +407,10 @@
 .station-picker__station-distance {
   font-size: 13px;
   color: var(--color-fg-neutral-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .station-picker__station-radio {
@@ -357,8 +418,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 9999px;
   border: 1px solid var(--color-stroke-weak);
   box-sizing: border-box;

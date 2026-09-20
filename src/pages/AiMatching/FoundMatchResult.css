@@ -159,6 +159,7 @@
 
 .found-match-result__reasons {
   margin-top: 28px;
+  padding-left: 6px;
   display: flex;
   flex-direction: column;
   gap: 16px;

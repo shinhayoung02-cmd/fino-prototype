@@ -9,6 +9,7 @@ import iconAddChip from '../../assets/ai-matching/icon-add-chip.svg'
 import pinHalo from '../../assets/home/pin-halo.svg'
 import pinBody from '../../assets/home/pin-body.svg'
 import { MATCH_CANDIDATES } from './matchCandidates'
+import { useKakaoMap } from '../../lib/kakaoMaps'
 import './InPersonLocationPicker.css'
 
 const candidate = MATCH_CANDIDATES[0]
@@ -39,6 +40,7 @@ export default function InPersonLocationPicker({ value, onConfirm, backTo }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [address, setAddress] = useState(value?.length ? value[value.length - 1] : candidate.location)
   const [locations, setLocations] = useState(value ?? [])
+  const { containerRef: mapContainerRef, mapReady, mapFailed } = useKakaoMap()
 
   const commitSearch = () => {
     const trimmed = searchQuery.trim()
@@ -114,7 +116,12 @@ export default function InPersonLocationPicker({ value, onConfirm, backTo }) {
             </p>
           </div>
         )}
-        <img src={mapBg} alt="지도" className="meetup-location-picker__map-img" />
+        <div
+          ref={mapContainerRef}
+          className="meetup-location-picker__map-canvas"
+          style={{ visibility: mapReady && !mapFailed ? 'visible' : 'hidden' }}
+        />
+        {(!mapReady || mapFailed) && <img src={mapBg} alt="지도" className="meetup-location-picker__map-img" />}
         <img src={radiusCircle} alt="" className="meetup-location-picker__radius" />
         <div className="meetup-location-picker__pin">
           <img src={pinHalo} alt="" className="meetup-location-picker__pin-halo" />

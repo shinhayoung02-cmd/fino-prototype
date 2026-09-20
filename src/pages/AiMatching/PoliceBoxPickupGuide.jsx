@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import mapPoliceBox from '../../assets/parcel-store-select/map-bg.png'
 import pinHalo from '../../assets/parcel-store-select/pin-halo.svg'
 import pinBody from '../../assets/parcel-store-select/pin-body.svg'
+import { useKakaoMap } from '../../lib/kakaoMaps'
 import './PoliceBoxPickupGuide.css'
 
 const PICKUP_STEPS = [
@@ -15,13 +16,21 @@ export default function PoliceBoxPickupGuide({
   onConfirm,
 }) {
   const navigate = useNavigate()
+  const { containerRef: mapContainerRef, mapReady, mapFailed } = useKakaoMap()
 
   return (
     <div className="police-pickup-guide">
       <h2 className="police-pickup-guide__title">관할 파출소 정보</h2>
 
       <div className="police-pickup-guide__map">
-        <img src={mapPoliceBox} alt="지도" className="police-pickup-guide__map-img" />
+        <div
+          ref={mapContainerRef}
+          className="police-pickup-guide__map-canvas"
+          style={{ visibility: mapReady && !mapFailed ? 'visible' : 'hidden' }}
+        />
+        {(!mapReady || mapFailed) && (
+          <img src={mapPoliceBox} alt="지도" className="police-pickup-guide__map-img" />
+        )}
         <div className="police-pickup-guide__pin">
           <img src={pinHalo} alt="" className="police-pickup-guide__pin-halo" />
           <img src={pinBody} alt="" className="police-pickup-guide__pin-body" />

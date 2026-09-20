@@ -19,7 +19,9 @@ export default function MultiClaimantOwnerConfirmed({ onConfirm }) {
       <div className="multi-claimant-owner-confirmed__callout">
         <img src={iconInfoPositive} alt="" className="multi-claimant-owner-confirmed__callout-icon" />
         <p className="multi-claimant-owner-confirmed__callout-text">
-          이제 확인된 분실자와 감사 및 전달 방식 절차로 이어집니다.
+          이제 확인된 분실자와 감사 및 전달 방식
+          <br />
+          절차로 이어집니다.
         </p>
       </div>
 

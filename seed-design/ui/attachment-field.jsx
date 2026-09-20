@@ -230,7 +230,7 @@ AttachmentInputItem.displayName = "AttachmentInputItem";
  * Prototype-only variant: tapping the trigger appends the next preset sample photo
  * instead of opening the native OS file picker. Reuses SEED's item/remove-button UI.
  */
-export const AttachmentInputPreset = React.forwardRef(({ samples, triggerClassName, countClassName, pickerOptions, onPick }, ref) => {
+export const AttachmentInputPreset = React.forwardRef(({ samples, triggerClassName, countClassName, pickerOptions, onPick, disabled }, ref) => {
   return (
     <SeedAttachmentInput.Container ref={ref}>
       <PresetTrigger
@@ -239,6 +239,7 @@ export const AttachmentInputPreset = React.forwardRef(({ samples, triggerClassNa
         countClassName={countClassName}
         pickerOptions={pickerOptions}
         onPick={onPick}
+        disabled={disabled}
       />
       <SeedAttachmentInput.ItemGroup>
         <SeedAttachmentInput.Context>
@@ -255,7 +256,7 @@ AttachmentInputPreset.displayName = "AttachmentInputPreset";
 
 const PICKER_TOP_INSET = 88; // status bar (44px) + app header (44px)
 
-function PresetTrigger({ samples = [], className, countClassName, pickerOptions, onPick }) {
+function PresetTrigger({ samples = [], className, countClassName, pickerOptions, onPick, disabled: disabledProp }) {
   const { setFileEntries, currentFileEntryCount, maxFiles, stateProps } = useFileUploadContext();
   const [pickerOpen, setPickerOpen] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
@@ -266,7 +267,7 @@ function PresetTrigger({ samples = [], className, countClassName, pickerOptions,
   const dragStartRef = React.useRef({ y: 0, height: 0 });
 
   const nextSample = samples[currentFileEntryCount];
-  const disabled = currentFileEntryCount >= maxFiles || (!nextSample && !pickerOptions);
+  const disabled = disabledProp || currentFileEntryCount >= maxFiles || (!nextSample && !pickerOptions);
 
   const attach = async (sample) => {
     const file = await sampleUrlToFile(sample.url, sample.name);
@@ -464,18 +465,28 @@ function PresetTrigger({ samples = [], className, countClassName, pickerOptions,
                 취소
               </button>
             </div>
-            <div
-              style={{
-                flex: 1,
-                overflowY: "auto",
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 2,
-                padding: 2,
-                alignContent: "start",
-              }}
-            >
-              {pickerOptions.map((option) => renderGridItem(option))}
+            <div style={{ flex: 1, overflowY: "auto" }}>
+              <p
+                style={{
+                  margin: 0,
+                  padding: "12px 16px 8px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#868b94",
+                }}
+              >
+                오늘
+              </p>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: 2,
+                  padding: 2,
+                }}
+              >
+                {pickerOptions.map((option) => renderGridItem(option))}
+              </div>
             </div>
           </div>
         </>

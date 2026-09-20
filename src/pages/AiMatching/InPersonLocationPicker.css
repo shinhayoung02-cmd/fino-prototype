@@ -110,16 +110,22 @@
   background: #e5e5e5;
 }
 
-.meetup-location-picker__map-img {
+.meetup-location-picker__map-img,
+.meetup-location-picker__map-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  overflow: hidden;
 }
 
 .meetup-location-picker__radius {
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 1;
   width: 287px;
   height: 279px;
   transform: translate(-50%, -50%);
@@ -130,6 +136,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 1;
   width: 56px;
   height: 56px;
   transform: translate(-50%, -50%);
@@ -229,6 +236,7 @@
   position: absolute;
   left: 16px;
   bottom: 16px;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 8px;

@@ -5,6 +5,7 @@ import mapPoliceBox from '../../assets/parcel-store-select/map-bg.png'
 import pinHalo from '../../assets/parcel-store-select/pin-halo.svg'
 import pinBody from '../../assets/parcel-store-select/pin-body.svg'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
+import { useKakaoMap } from '../../lib/kakaoMaps'
 import './PoliceBoxHandover.css'
 
 const CHECK_STEPS = [
@@ -17,6 +18,7 @@ export default function PoliceBoxHandover({ policeBox }) {
   const navigate = useNavigate()
   const selected = policeBox || { title: '연남파출소', desc: '서울 마포구 연남동 373-20' }
   const [isCheckSheetOpen, setCheckSheetOpen] = useState(false)
+  const { containerRef: mapContainerRef, mapReady, mapFailed } = useKakaoMap()
 
   return (
     <div className="police-box-handover">
@@ -34,8 +36,19 @@ export default function PoliceBoxHandover({ policeBox }) {
       <div className="police-box-handover__field">
         <p className="police-box-handover__field-label">내 근처 파출소</p>
 
-        <div className="police-box-handover__map">
-          <img src={mapPoliceBox} alt="지도" className="police-box-handover__map-img" />
+        <button
+          type="button"
+          className="police-box-handover__map"
+          onClick={() => navigate('/found/new/restricted/police-box/location')}
+        >
+          <div
+            ref={mapContainerRef}
+            className="police-box-handover__map-canvas"
+            style={{ visibility: mapReady && !mapFailed ? 'visible' : 'hidden' }}
+          />
+          {(!mapReady || mapFailed) && (
+            <img src={mapPoliceBox} alt="지도" className="police-box-handover__map-img" />
+          )}
           <div className="police-box-handover__pin">
             <img src={pinHalo} alt="" className="police-box-handover__pin-halo" />
             <img src={pinBody} alt="" className="police-box-handover__pin-body" />
@@ -45,7 +58,7 @@ export default function PoliceBoxHandover({ policeBox }) {
             <span className="police-box-handover__selected-title">{selected.title}</span>
             <span className="police-box-handover__selected-desc">{selected.desc}</span>
           </div>
-        </div>
+        </button>
 
         <p className="police-box-handover__hint">가까운 인계 가능한 파출소를 찾아보세요.</p>
       </div>

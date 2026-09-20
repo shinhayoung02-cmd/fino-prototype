@@ -89,6 +89,10 @@
   box-sizing: border-box;
 }
 
+.station-report__field--readonly {
+  background: #f3f4f5;
+}
+
 .station-report__field-input {
   flex: 1;
   min-width: 0;
@@ -104,6 +108,16 @@
   color: #d1d3d8;
 }
 
+.station-report__ai-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.85);
+}
+
 .station-report__field-clear {
   display: flex;
   align-items: center;
@@ -115,6 +129,41 @@
   background: transparent;
   flex-shrink: 0;
   cursor: pointer;
+}
+
+.station-report__number-hint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 0;
+  padding: 14px;
+  border-radius: 12px;
+  background: #eff6ff;
+  animation: station-report-hint-in 0.2s ease;
+}
+
+.station-report__number-hint-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.station-report__number-hint-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 19px;
+  color: #0b4596;
+}
+
+@keyframes station-report-hint-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .station-report__field-clear img {

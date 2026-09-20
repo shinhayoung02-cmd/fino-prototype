@@ -233,6 +233,7 @@ button.home-quick-card:active {
 
 .home-map__image {
   position: absolute;
+  z-index: 0;
   left: -10.45%;
   top: -66.29%;
   width: 115.91%;
@@ -240,8 +241,18 @@ button.home-quick-card:active {
   max-width: none;
 }
 
+.home-map__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 .home-map__pin {
   position: absolute;
+  z-index: 1;
   width: 56px;
   height: 56px;
   transform: translate(-50%, -50%);

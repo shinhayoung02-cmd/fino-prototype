@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import mapBg from '../../assets/location-picker/map-bg.png'
 import iconLocate from '../../assets/location-picker/icon-locate.svg'
@@ -9,6 +9,7 @@ import itemBuzzEarphone from '../../assets/home/item-buzz-earphone.jpg?inline'
 import itemAirpods from '../../assets/home/item-airpods.jpg?inline'
 import iconPayment from '../../assets/home/icon-payment.svg'
 import iconClock from '../../assets/home/icon-clock.svg'
+import { useKakaoMap } from '../../lib/kakaoMaps'
 import './NearbyMapView.css'
 
 const NEARBY_ITEMS = [
@@ -123,6 +124,18 @@ export default function NearbyMapView() {
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState(null)
   const selectedItem = NEARBY_ITEMS.find((item) => item.id === selectedId) ?? null
+  const { containerRef: mapContainerRef, mapRef: kakaoMapRef, mapReady, mapFailed } = useKakaoMap({
+    draggable: false,
+    zoomable: false,
+  })
+
+  useEffect(() => {
+    if (!mapReady) return
+    // the map height changes (normal <-> tall) when an item is selected;
+    // Kakao doesn't pick up container resizes on its own, so nudge it.
+    const timer = setTimeout(() => kakaoMapRef.current.relayout(), 0)
+    return () => clearTimeout(timer)
+  }, [mapReady, selectedItem, kakaoMapRef])
 
   return (
     <div className="nearby-map">
@@ -153,7 +166,12 @@ export default function NearbyMapView() {
       )}
 
       <div className={`nearby-map__map${selectedItem ? ' nearby-map__map--tall' : ''}`}>
-        <img src={mapBg} alt="지도" className="nearby-map__map-img" />
+        <div
+          ref={mapContainerRef}
+          className="nearby-map__map-canvas"
+          style={{ visibility: mapReady && !mapFailed ? 'visible' : 'hidden' }}
+        />
+        {(!mapReady || mapFailed) && <img src={mapBg} alt="지도" className="nearby-map__map-img" />}
 
         {NEARBY_ITEMS.map((item) => {
           const isSelected = selectedItem?.id === item.id
@@ -192,8 +210,8 @@ export default function NearbyMapView() {
         <div className="nearby-map__address">
           <LocationPinIcon />
           <div className="nearby-map__address-text">
-            <p className="nearby-map__address-title">서울 마포구 서교동</p>
-            <p className="nearby-map__address-desc">홍대입구역 9번 출구 인근</p>
+            <p className="nearby-map__address-title">{selectedItem ? selectedItem.location : '서울 마포구 서교동'}</p>
+            <p className="nearby-map__address-desc">{selectedItem ? selectedItem.title : '홍대입구역 9번 출구 인근'}</p>
           </div>
         </div>
 

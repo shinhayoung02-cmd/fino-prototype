@@ -40,6 +40,7 @@
   font-weight: 500;
   line-height: 19px;
   color: #757b85;
+  white-space: nowrap;
 }
 
 .ownership-quiz-waiting__callout {
@@ -82,14 +83,11 @@
 }
 
 .ownership-quiz-waiting__list {
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
 .ownership-quiz-waiting__divider {
   height: 1px;
-  margin: 0 12px;
   background: rgba(0, 0, 0, 0.05);
 }
 
@@ -97,7 +95,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
+  padding: 16px 4px;
   box-sizing: border-box;
 }
 

@@ -40,7 +40,7 @@ const MEETUP_CHECK_ITEMS = [
   },
 ]
 
-export default function DeliveryMethodSelect() {
+export default function DeliveryMethodSelect({ onSelect }) {
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState('meetup')
   const [isMeetupSheetOpen, setMeetupSheetOpen] = useState(false)
@@ -65,6 +65,7 @@ export default function DeliveryMethodSelect() {
   const handleConfirmParcelType = () => {
     setParcelType(pendingParcelType)
     setParcelSheetOpen(false)
+    onSelect?.(pendingParcelType === 'store' ? 'parcel-store' : 'parcel')
     navigate(`/matching/result/ownership/parcel/${pendingParcelType}`)
   }
 
@@ -126,7 +127,10 @@ export default function DeliveryMethodSelect() {
           <button
             type="button"
             className="meetup-check-sheet__confirm"
-            onClick={() => navigate('/matching/result/ownership/in-person')}
+            onClick={() => {
+              onSelect?.('in-person')
+              navigate('/matching/result/ownership/in-person')
+            }}
           >
             직접 만나기 진행
           </button>

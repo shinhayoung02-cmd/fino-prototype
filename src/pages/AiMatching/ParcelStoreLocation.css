@@ -137,16 +137,22 @@
   overflow: hidden;
 }
 
-.parcel-store-location__map-img {
+.parcel-store-location__map-img,
+.parcel-store-location__map-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  overflow: hidden;
 }
 
 .parcel-store-location__pin {
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 1;
   width: 56px;
   height: 56px;
   transform: translate(-50%, -50%);

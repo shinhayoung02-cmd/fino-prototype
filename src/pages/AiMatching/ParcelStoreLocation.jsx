@@ -9,6 +9,7 @@ import iconVoucher from '../../assets/parcel-info/icon-voucher.svg'
 import iconNote from '../../assets/parcel-info/icon-note.svg'
 import iconMoneyWon from '../../assets/ai-matching/icon-money-won.svg'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
+import { useKakaoMap } from '../../lib/kakaoMaps'
 import './ParcelStoreLocation.css'
 
 const CONFIRM_ITEMS_GROUP = [
@@ -21,6 +22,7 @@ const CONFIRM_ITEM_SINGLE = { icon: iconMoneyWon, text: '배송비는 분실자�
 export default function ParcelStoreLocation({ store }) {
   const navigate = useNavigate()
   const [isConfirmSheetOpen, setConfirmSheetOpen] = useState(false)
+  const { containerRef: mapContainerRef, mapReady, mapFailed } = useKakaoMap()
 
   return (
     <div className="parcel-store-location">
@@ -53,7 +55,14 @@ export default function ParcelStoreLocation({ store }) {
         </button>
 
         <div className="parcel-store-location__map">
-          <img src={mapBg} alt="지도" className="parcel-store-location__map-img" />
+          <div
+            ref={mapContainerRef}
+            className="parcel-store-location__map-canvas"
+            style={{ visibility: mapReady && !mapFailed ? 'visible' : 'hidden' }}
+          />
+          {(!mapReady || mapFailed) && (
+            <img src={mapBg} alt="지도" className="parcel-store-location__map-img" />
+          )}
           <div className="parcel-store-location__pin">
             <img src={pinHalo} alt="" className="parcel-store-location__pin-halo" />
             <img src={pinBody} alt="" className="parcel-store-location__pin-body" />

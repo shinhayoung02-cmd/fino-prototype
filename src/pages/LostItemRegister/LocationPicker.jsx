@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import mapBg from '../../assets/location-picker/map-bg.png'
 import radiusCircle from '../../assets/location-picker/radius-circle.svg'
@@ -8,6 +8,7 @@ import iconLocate from '../../assets/location-picker/icon-locate.svg'
 import pinHalo from '../../assets/home/pin-halo.svg'
 import pinBody from '../../assets/home/pin-body.svg'
 import { ProgressCircle } from '../../../seed-design/ui/progress-circle'
+import { useKakaoMap } from '../../lib/kakaoMaps'
 import './LocationPicker.css'
 
 const RADIUS_OPTIONS = ['500m', '100m', '동네 전체']
@@ -39,7 +40,36 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
   const [searchQuery, setSearchQuery] = useState('')
   const [radius, setRadius] = useState(value?.radius ?? '500m')
   const [isAreaSearching, setIsAreaSearching] = useState(false)
-  const [confirmedQuery, setConfirmedQuery] = useState(null)
+  const [hasSetLocation, setHasSetLocation] = useState(false)
+  const [addressInfo, setAddressInfo] = useState({
+    title: '서울 마포구 서교동',
+    detail: '홍대입구역 9번 출구 인근',
+  })
+  const district = addressInfo.title.trim().split(/\s+/).pop()
+  const { containerRef: mapContainerRef, kakaoRef, mapRef: kakaoMapRef, mapReady, mapFailed } = useKakaoMap()
+
+  useEffect(() => {
+    if (!mapReady) return
+    const kakao = kakaoRef.current
+    const map = kakaoMapRef.current
+    const geocoder = new kakao.maps.services.Geocoder()
+    const handleIdle = () => {
+      const center = map.getCenter()
+      geocoder.coord2Address(center.getLng(), center.getLat(), (result, status) => {
+        if (status !== kakao.maps.services.Status.OK || !result[0]) return
+        const { address, road_address: roadAddress } = result[0]
+        setAddressInfo({
+          title: [address.region_1depth_name, address.region_2depth_name, address.region_3depth_name]
+            .filter(Boolean)
+            .join(' '),
+          detail: roadAddress ? roadAddress.address_name : address.address_name,
+        })
+      })
+    }
+    kakao.maps.event.addListener(map, 'idle', handleIdle)
+    return () => kakao.maps.event.removeListener(map, 'idle', handleIdle)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapReady])
 
   const radiusLabel = type === 'lost' ? '분실 반경' : type === 'discovered' ? '발견 반경' : '습득 반경'
   const radiusHint =
@@ -50,7 +80,7 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
         : '습득 위치가 정확할수록 매칭에 도움이 돼요.'
 
   const handleConfirm = () => {
-    onConfirm({ address: '서울 마포구 서교동', detail: '홍대입구역 9번 출구 인근', radius })
+    onConfirm({ address: addressInfo.title, detail: addressInfo.detail, radius })
     navigate(backTo)
   }
 
@@ -59,12 +89,48 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
   const handleSearchThisArea = () => {
     const query = searchQuery.trim()
     setIsAreaSearching(true)
-    setTimeout(() => {
+
+    const finish = (nextAddress) => {
       setIsAreaSearching(false)
       setSearchMode(false)
       setSearchQuery('')
-      setConfirmedQuery(query)
-    }, 2000)
+      if (nextAddress) setAddressInfo(nextAddress)
+      setHasSetLocation(true)
+    }
+
+    const kakao = kakaoRef.current
+    if (!kakao || !kakaoMapRef.current || mapFailed || !query) {
+      setTimeout(() => finish(), 2000)
+      return
+    }
+
+    const startedAt = Date.now()
+    const places = new kakao.maps.services.Places()
+    places.keywordSearch(query, (results, status) => {
+      const remaining = Math.max(0, 2000 - (Date.now() - startedAt))
+      setTimeout(() => {
+        if (status === kakao.maps.services.Status.OK && results[0]) {
+          const place = results[0]
+          const center = new kakao.maps.LatLng(Number(place.y), Number(place.x))
+          kakaoMapRef.current.setCenter(center)
+          finish({
+            title: place.place_name,
+            detail: place.road_address_name || place.address_name,
+          })
+        } else {
+          finish()
+        }
+      }, remaining)
+    })
+  }
+
+  const handleLocate = () => {
+    const kakao = kakaoRef.current
+    if (!kakao || !kakaoMapRef.current || !navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition(({ coords }) => {
+      kakaoMapRef.current.panTo(new kakao.maps.LatLng(coords.latitude, coords.longitude))
+      setHasSetLocation(true)
+    })
   }
 
   return (
@@ -109,9 +175,9 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
           <div className="location-picker__callout">
             <LocationPinIcon />
             <p className="location-picker__callout-text">
-              {confirmedQuery ? (
+              {hasSetLocation ? (
                 <>
-                  지도에서 선택한 위치가 <strong>&lsquo;{confirmedQuery}&rsquo;</strong>에 있어요
+                  선택한 위치를 <strong>&lsquo;{district}&rsquo;</strong>으로 설정했어요
                 </>
               ) : (
                 <>
@@ -121,7 +187,12 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
             </p>
           </div>
         )}
-        <img src={mapBg} alt="지도" className="location-picker__map-img" />
+        <div
+          ref={mapContainerRef}
+          className="location-picker__map-canvas"
+          style={{ visibility: mapReady && !mapFailed ? 'visible' : 'hidden' }}
+        />
+        {(!mapReady || mapFailed) && <img src={mapBg} alt="지도" className="location-picker__map-img" />}
         <img
           src={radiusCircle}
           alt=""
@@ -159,6 +230,7 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
             type="button"
             className="location-picker__control-btn"
             aria-label="내 위치로 이동"
+            onClick={handleLocate}
           >
             <img src={iconLocate} alt="" />
           </button>
@@ -169,8 +241,8 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
         <div className="location-picker__address">
           <LocationPinIcon />
           <div className="location-picker__address-text">
-            <p className="location-picker__address-title">서울 마포구 서교동</p>
-            <p className="location-picker__address-desc">홍대입구역 9번 출구 인근</p>
+            <p className="location-picker__address-title">{addressInfo.title}</p>
+            <p className="location-picker__address-desc">{addressInfo.detail}</p>
           </div>
         </div>
 

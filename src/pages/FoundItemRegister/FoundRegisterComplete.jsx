@@ -1,20 +1,18 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import iconInfo from '../../assets/lost-register/icon-info.svg'
+import iconInfo from '../../assets/lost-register/icon-info-blue.svg'
 import SuccessGraphic from '../../components/common/SuccessGraphic/SuccessGraphic'
+import Modal from '../../components/common/Modal/Modal'
 import './FoundRegisterComplete.css'
 
-export default function FoundRegisterComplete({ draft, onGoHome }) {
+export default function FoundRegisterComplete({ draft, onFinishSearch, onKeepAndGoHome }) {
   const navigate = useNavigate()
   const { name, description, timeRange, location } = draft
+  const [isFinishDialogOpen, setFinishDialogOpen] = useState(false)
 
   const metaParts = []
   if (location) metaParts.push(location.address, `반경 ${location.radius}`)
   if (timeRange) metaParts.push(`${timeRange.month} ${timeRange.day} ${timeRange.hour} ${timeRange.minute}`)
-
-  const handleGoHome = () => {
-    onGoHome?.()
-    navigate('/')
-  }
 
   return (
     <div className="found-complete">
@@ -47,10 +45,45 @@ export default function FoundRegisterComplete({ draft, onGoHome }) {
         <button type="button" className="found-complete__secondary" onClick={() => navigate('/found/new/waiting')}>
           대기 화면 보기
         </button>
-        <button type="button" className="found-complete__primary" onClick={handleGoHome}>
+        <button type="button" className="found-complete__primary" onClick={() => setFinishDialogOpen(true)}>
           홈으로
         </button>
       </div>
+
+      <Modal
+        isOpen={isFinishDialogOpen}
+        onClose={() => setFinishDialogOpen(false)}
+        title="분실물 찾기가 완료됐어요"
+        footer={
+          <div className="found-complete__dialog-actions">
+            <button
+              type="button"
+              className="found-complete__dialog-action found-complete__dialog-action--primary"
+              onClick={() => {
+                setFinishDialogOpen(false)
+                onFinishSearch?.()
+              }}
+            >
+              찾기 마치기
+            </button>
+            <button
+              type="button"
+              className="found-complete__dialog-action found-complete__dialog-action--secondary"
+              onClick={() => {
+                setFinishDialogOpen(false)
+                onKeepAndGoHome?.()
+                navigate('/')
+              }}
+            >
+              아직 유지하기
+            </button>
+          </div>
+        }
+      >
+        이번 찾기를 마치고
+        <br />
+        새로 시작할까요?
+      </Modal>
     </div>
   )
 }

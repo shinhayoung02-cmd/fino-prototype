@@ -4,23 +4,23 @@ import iconClose from '../../assets/lost-register/icon-close.svg'
 import iconClock from '../../assets/lost-register/icon-clock.svg'
 import iconChevronRight from '../../assets/lost-register/icon-chevron-right.svg'
 import walletSample1 from '../../assets/lost-register/samples/wallet-1.png'
-import walletSample2 from '../../assets/lost-register/samples/wallet-2.png'
-import walletSample3 from '../../assets/lost-register/samples/wallet-3.png'
+import earphoneSample from '../../assets/home/item-buzz-earphone.jpg'
+import watchSample from '../../assets/found-report/samples/watch-placeholder.svg'
+import bagSample from '../../assets/found-report/samples/bag-placeholder.svg'
 import { AttachmentField, AttachmentInputPreset } from '../../../seed-design/ui/attachment-field'
 import { ProgressCircle } from '../../../seed-design/ui/progress-circle'
 import TimeRangeSheet from './TimeRangeSheet'
 import FeatureSheet from './FeatureSheet'
 import './LostItemRegister.css'
 
-const SAMPLE_PHOTOS = [
-  { url: walletSample1, name: 'wallet-1.png' },
-  { url: walletSample2, name: 'wallet-2.png' },
-  { url: walletSample3, name: 'wallet-3.png' },
+const PHOTO_OPTIONS = [
+  { label: '지갑', url: walletSample1, name: 'wallet.png', aiName: '지갑/카드', aiDesc: '검정색 Matin Kim 가죽 반지갑' },
+  { label: '이어폰', url: earphoneSample, name: 'earphone.jpg', aiName: '무선 이어폰', aiDesc: '흰색 무선 이어폰 케이스' },
+  { label: '시계', url: watchSample, name: 'watch.svg', aiName: '손목시계', aiDesc: '은색 메탈 밴드 손목시계' },
+  { label: '가방', url: bagSample, name: 'bag.svg', aiName: '가방', aiDesc: '검정색 캔버스 숄더백' },
 ]
 
 const MAX_PHOTOS = 5
-const AI_RECOGNITION_NAME = '지갑/카드'
-const AI_RECOGNITION_DESCRIPTION = '검정색 Matin Kim 가죽 반지갑'
 const AI_RECOGNITION_DELAY = 1200
 
 export default function LostItemRegister({ draft, onDraftChange }) {
@@ -31,6 +31,7 @@ export default function LostItemRegister({ draft, onDraftChange }) {
   const [isTimeSheetOpen, setTimeSheetOpen] = useState(false)
   const [isFeatureSheetOpen, setFeatureSheetOpen] = useState(false)
   const [isRecognizing, setIsRecognizing] = useState(false)
+  const [pickedPhotoOption, setPickedPhotoOption] = useState(null)
 
   const setName = (value) => onDraftChange({ ...draft, name: value })
   const setDescription = (value) => onDraftChange({ ...draft, description: value })
@@ -40,21 +41,17 @@ export default function LostItemRegister({ draft, onDraftChange }) {
   }
 
   useEffect(() => {
-    if (photos.length === 0 || name !== '' || description !== '') return
+    if (!pickedPhotoOption) return
 
     setIsRecognizing(true)
     const timer = setTimeout(() => {
-      onDraftChange((prev) =>
-        prev.name === '' && prev.description === ''
-          ? { ...prev, name: AI_RECOGNITION_NAME, description: AI_RECOGNITION_DESCRIPTION }
-          : prev,
-      )
+      onDraftChange((prev) => ({ ...prev, name: pickedPhotoOption.aiName, description: pickedPhotoOption.aiDesc }))
       setIsRecognizing(false)
     }, AI_RECOGNITION_DELAY)
 
     return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [photos.length])
+  }, [pickedPhotoOption])
 
   const handleConfirmTime = (range) => {
     onDraftChange({ ...draft, timeRange: range })
@@ -85,7 +82,8 @@ export default function LostItemRegister({ draft, onDraftChange }) {
             onAcceptedFileEntriesChange={handlePhotosChange}
           >
             <AttachmentInputPreset
-              samples={SAMPLE_PHOTOS}
+              pickerOptions={PHOTO_OPTIONS}
+              onPick={setPickedPhotoOption}
               triggerClassName="lost-register__photo-trigger"
               countClassName="lost-register__photo-count"
             />

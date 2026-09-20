@@ -49,7 +49,7 @@ export default function FoundItemRestricted() {
   const [isFaqOpen, setFaqOpen] = useState(false)
   const [openFaqId, setOpenFaqId] = useState(null)
   const [isHandoverSheetOpen, setHandoverSheetOpen] = useState(false)
-  const [handoverMethod, setHandoverMethod] = useState('mailbox')
+  const [handoverMethod, setHandoverMethod] = useState(null)
 
   const toggleFaqItem = (id) => {
     setOpenFaqId((prev) => (prev === id ? null : id))
@@ -59,16 +59,18 @@ export default function FoundItemRestricted() {
     <div className="found-item-restricted">
       <div className="found-item-restricted__body">
         <span className="found-item-restricted__badge">습득물 확인중</span>
-        <h2 className="found-item-restricted__title">
-          개인 보관이
-          <br />
-          어려운 물건이에요
-        </h2>
-        <p className="found-item-restricted__subtitle">
-          신분증 및 금융 카드는 2차 피해 방지를 위해
-          <br />
-          개인 보관이 불가합니다.
-        </p>
+        <div className="found-item-restricted__heading">
+          <h2 className="found-item-restricted__title">
+            개인 보관이
+            <br />
+            어려운 물건이에요
+          </h2>
+          <p className="found-item-restricted__subtitle">
+            신분증 및 금융 카드는 2차 피해 방지를 위해
+            <br />
+            개인 보관이 불가합니다.
+          </p>
+        </div>
 
         <div className="found-item-restricted__callout">
           <img src={iconProhibition} alt="" className="found-item-restricted__callout-icon" />
@@ -94,7 +96,14 @@ export default function FoundItemRestricted() {
       </div>
 
       <div className="found-item-restricted__bottom">
-        <button type="button" className="found-item-restricted__next" onClick={() => setHandoverSheetOpen(true)}>
+        <button
+          type="button"
+          className="found-item-restricted__next"
+          onClick={() => {
+            setHandoverMethod(null)
+            setHandoverSheetOpen(true)
+          }}
+        >
           다음 단계로
         </button>
       </div>
@@ -113,14 +122,12 @@ export default function FoundItemRestricted() {
                 key={option.id}
                 className={`handover-sheet__option${isSelected ? ' handover-sheet__option--selected' : ''}`}
                 onClick={() => {
+                  if (handoverMethod) return
                   setHandoverMethod(option.id)
-                  if (option.id === 'mailbox') {
+                  setTimeout(() => {
                     setHandoverSheetOpen(false)
-                    navigate('/found/new/restricted/mailbox')
-                  } else if (option.id === 'police-box') {
-                    setHandoverSheetOpen(false)
-                    navigate('/found/new/restricted/police-box')
-                  }
+                    navigate(option.id === 'mailbox' ? '/found/new/restricted/mailbox' : '/found/new/restricted/police-box')
+                  }, 1000)
                 }}
               >
                 <span className="handover-sheet__option-body">

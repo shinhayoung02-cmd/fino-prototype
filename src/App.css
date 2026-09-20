@@ -24,6 +24,11 @@
   color: #ffffff;
 }
 
+.match-dialog__action--brand {
+  background: var(--color-brand);
+  color: #ffffff;
+}
+
 .match-dialog__action--secondary {
   background: var(--color-gray-200);
   color: var(--color-gray-1000);

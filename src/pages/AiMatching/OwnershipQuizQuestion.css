@@ -37,7 +37,7 @@
 }
 
 .ownership-quiz-question__intro {
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .ownership-quiz-question__title {
@@ -65,7 +65,7 @@
   border-radius: 10px;
   background: var(--color-gray-200);
   box-sizing: border-box;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .ownership-quiz-question__callout-icon {
@@ -99,7 +99,7 @@
 }
 
 .ownership-quiz-question__hint {
-  margin: 0 0 44px 2px;
+  margin: 0 0 30px 2px;
   font-size: 13px;
   line-height: 14px;
   letter-spacing: -0.5px;
@@ -109,7 +109,7 @@
 .ownership-quiz-question__options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   margin: 0 4px;
 }
 

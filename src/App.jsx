@@ -117,7 +117,7 @@ import iconStory from './assets/home/icon-story.svg'
 import iconMenu from './assets/chat/icon-menu.svg'
 import './App.css'
 
-const MATCH_RESULT_DELAY = 3000
+const MATCH_RESULT_DELAY = 1300
 const VERIFICATION_RESULT_DELAY = 3000
 const APPROVAL_RESULT_DELAY = 3000
 const PARCEL_RESULT_DELAY = 3000
@@ -365,8 +365,7 @@ function App() {
   const [secondaryVerificationAnswers, setSecondaryVerificationAnswers] = useState([null, null, null])
   const [isQuizFailFlow, setQuizFailFlow] = useState(false)
   const [isFoundRestrictedFlow, setFoundRestrictedFlow] = useState(false)
-  const [isParcelDeliveryFlow, setParcelDeliveryFlow] = useState(false)
-  const [isParcelStoreDeliveryFlow, setParcelStoreDeliveryFlow] = useState(false)
+  const [returnDeliveryMethod, setReturnDeliveryMethod] = useState('in-person')
   const [isFoundMultipleClaimantsFlow, setFoundMultipleClaimantsFlow] = useState(false)
   const [meetupLocations, setMeetupLocations] = useState([])
   const [meetupDates, setMeetupDates] = useState([])
@@ -376,6 +375,7 @@ function App() {
   const [inPersonSchedulePlace, setInPersonSchedulePlace] = useState(null)
   const [inPersonScheduleSlot, setInPersonScheduleSlot] = useState(undefined)
   const [mailbox, setMailbox] = useState(null)
+  const [policeBox, setPoliceBox] = useState(null)
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -569,8 +569,8 @@ function App() {
   const getOwnershipQuizResultPath = () => {
     const incorrectCount = ownershipQuizAnswers.filter((answer) => answer === 'incorrect').length
     const unsureCount = ownershipQuizAnswers.filter((answer) => answer === 'unsure').length
-    if (incorrectCount >= 1) return '/matching/result/ownership/quiz-failed'
-    if (unsureCount >= 1) return '/found/match-result/quiz/undecided'
+    if (unsureCount >= 1) return '/found/match-result/quiz/claimants'
+    if (incorrectCount >= 1) return '/found/match-result/quiz/undecided'
     return '/found/match-result/quiz/claimants/result'
   }
 
@@ -735,20 +735,6 @@ function App() {
         onSelectFoundRestricted={requestEnterFoundRestrictedFlow}
         isFoundMultipleClaimantsFlow={isFoundMultipleClaimantsFlow}
         onSelectFoundMultipleClaimants={() => setFoundMultipleClaimantsFlow((prev) => !prev)}
-        isParcelDeliveryFlow={isParcelDeliveryFlow}
-        onSelectParcelDelivery={() => {
-          setParcelDeliveryFlow(true)
-          setParcelStoreDeliveryFlow(false)
-        }}
-        isParcelStoreDeliveryFlow={isParcelStoreDeliveryFlow}
-        onSelectParcelStoreDelivery={() => {
-          setParcelStoreDeliveryFlow(true)
-          setParcelDeliveryFlow(false)
-        }}
-        onSelectInPerson={() => {
-          setParcelDeliveryFlow(false)
-          setParcelStoreDeliveryFlow(false)
-        }}
       >
       <Routes>
         <Route
@@ -944,7 +930,7 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <DeliveryMethodSelect />
+              <DeliveryMethodSelect onSelect={setReturnDeliveryMethod} />
             </SubStepScreen>
           }
         />
@@ -1379,7 +1365,27 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <PoliceBoxHandover />
+              <PoliceBoxHandover
+                policeBox={policeBox ? { title: policeBox.address, desc: policeBox.detail } : undefined}
+              />
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/found/new/restricted/police-box/location"
+          element={
+            <SubStepScreen
+              title="습득 위치 선택"
+              backTo="/found/new/restricted/police-box"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+              activeTab="/"
+              onSelectTab={setActiveTab}
+            >
+              <FoundStationLocationPicker
+                value={policeBox}
+                onConfirm={setPoliceBox}
+                backTo="/found/new/restricted/police-box"
+              />
             </SubStepScreen>
           }
         />
@@ -1584,6 +1590,7 @@ function App() {
                 locationRowDesc="지도에서 대략적인 위치를 선택해요"
                 locationRoute="/found/new/station/location"
                 onRegister={() => navigate('/found/new/station/review/report')}
+                mode="readonly"
               />
             </SubStepScreen>
           }
@@ -1660,7 +1667,8 @@ function App() {
             >
               <FoundRegisterComplete
                 draft={completedFoundItem ?? foundDraft}
-                onGoHome={() => {
+                onFinishSearch={handleFinishFoundReport}
+                onKeepAndGoHome={() => {
                   setActiveTab('/')
                   setAwaitingFoundMatchNotification(true)
                 }}
@@ -2017,11 +2025,7 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ReturnProposalReview
-                deliveryMethod={
-                  isParcelDeliveryFlow ? 'parcel' : isParcelStoreDeliveryFlow ? 'parcel-store' : 'in-person'
-                }
-              />
+              <ReturnProposalReview deliveryMethod={returnDeliveryMethod} />
             </SubStepScreen>
           }
         />
@@ -2450,7 +2454,7 @@ function App() {
           <div className="match-dialog__actions">
             <button
               type="button"
-              className="match-dialog__action match-dialog__action--primary"
+              className="match-dialog__action match-dialog__action--brand"
               onClick={handleFinishSearch}
             >
               찾기 마치기
@@ -2473,6 +2477,7 @@ function App() {
       <Modal
         isOpen={isMatchDialogOpen}
         onClose={() => setMatchDialogOpen(false)}
+        dismissible={false}
         title="AI 매칭 결과가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2495,6 +2500,7 @@ function App() {
       <Modal
         isOpen={isFoundMatchDialogOpen}
         onClose={() => setFoundMatchDialogOpen(false)}
+        dismissible={false}
         title="AI 매칭 결과가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2520,6 +2526,7 @@ function App() {
       <Modal
         isOpen={isOwnershipResultDialogOpen}
         onClose={() => setOwnershipResultDialogOpen(false)}
+        dismissible={false}
         title="확인 결과가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2552,6 +2559,7 @@ function App() {
       <Modal
         isOpen={isVerificationMaterialDialogOpen}
         onClose={() => setVerificationMaterialDialogOpen(false)}
+        dismissible={false}
         title="검증 자료가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2586,6 +2594,7 @@ function App() {
       <Modal
         isOpen={isOwnershipQuizPassDialogOpen}
         onClose={() => setOwnershipQuizPassDialogOpen(false)}
+        dismissible={false}
         title="결과가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2618,6 +2627,7 @@ function App() {
       <Modal
         isOpen={isSecondaryVerificationDialogOpen}
         onClose={() => setSecondaryVerificationDialogOpen(false)}
+        dismissible={false}
         title="검증 자료가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2652,6 +2662,7 @@ function App() {
       <Modal
         isOpen={isMultiClaimantResultDialogOpen}
         onClose={() => setMultiClaimantResultDialogOpen(false)}
+        dismissible={false}
         title="결과가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2684,6 +2695,7 @@ function App() {
       <Modal
         isOpen={isReturnProposalDialogOpen}
         onClose={() => setReturnProposalDialogOpen(false)}
+        dismissible={false}
         title={
           <>
             분실물 반환 제안이
@@ -2719,6 +2731,7 @@ function App() {
       <Modal
         isOpen={isVerificationDialogOpen}
         onClose={() => setVerificationDialogOpen(false)}
+        dismissible={false}
         title="확인 결과가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2745,6 +2758,7 @@ function App() {
       <Modal
         isOpen={isApprovalDialogOpen}
         onClose={() => setApprovalDialogOpen(false)}
+        dismissible={false}
         title="확인 결과가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2771,6 +2785,7 @@ function App() {
       <Modal
         isOpen={isParcelResultDialogOpen}
         onClose={() => setParcelResultDialogOpen(false)}
+        dismissible={false}
         title="확인 결과가 도착했어요"
         footer={
           <div className="match-dialog__actions">
@@ -2815,22 +2830,6 @@ function App() {
         onToggleFoundRestrictedFlow={requestEnterFoundRestrictedFlow}
         isFoundMultipleClaimantsFlow={isFoundMultipleClaimantsFlow}
         onToggleFoundMultipleClaimantsFlow={() => setFoundMultipleClaimantsFlow((prev) => !prev)}
-        isParcelDeliveryFlow={isParcelDeliveryFlow}
-        onToggleParcelDeliveryFlow={() =>
-          setParcelDeliveryFlow((prev) => {
-            const next = !prev
-            if (next) setParcelStoreDeliveryFlow(false)
-            return next
-          })
-        }
-        isParcelStoreDeliveryFlow={isParcelStoreDeliveryFlow}
-        onToggleParcelStoreDeliveryFlow={() =>
-          setParcelStoreDeliveryFlow((prev) => {
-            const next = !prev
-            if (next) setParcelDeliveryFlow(false)
-            return next
-          })
-        }
       />
       </PreviewStage>
     </>

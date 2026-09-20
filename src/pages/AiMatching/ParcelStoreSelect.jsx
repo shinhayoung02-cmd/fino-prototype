@@ -8,6 +8,7 @@ import iconLocationPinLg from '../../assets/parcel-store-select/icon-location-pi
 import iconSearch from '../../assets/parcel-store-select/icon-search.svg'
 import iconLocate from '../../assets/parcel-store-select/icon-locate.svg'
 import iconCheckmark from '../../assets/parcel-store-select/icon-checkmark.svg'
+import { useKakaoMap } from '../../lib/kakaoMaps'
 import './ParcelStoreSelect.css'
 
 const STORE_OPTIONS = [
@@ -19,6 +20,7 @@ const STORE_OPTIONS = [
 export default function ParcelStoreSelect({ value, onConfirm, backTo }) {
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState(value?.id || STORE_OPTIONS[0].id)
+  const { containerRef: mapContainerRef, mapReady, mapFailed } = useKakaoMap()
 
   const handleConfirm = () => {
     const store = STORE_OPTIONS.find((option) => option.id === selectedId)
@@ -29,7 +31,12 @@ export default function ParcelStoreSelect({ value, onConfirm, backTo }) {
   return (
     <div className="parcel-store-select">
       <div className="parcel-store-select__map">
-        <img src={mapBg} alt="지도" className="parcel-store-select__map-img" />
+        <div
+          ref={mapContainerRef}
+          className="parcel-store-select__map-canvas"
+          style={{ visibility: mapReady && !mapFailed ? 'visible' : 'hidden' }}
+        />
+        {(!mapReady || mapFailed) && <img src={mapBg} alt="지도" className="parcel-store-select__map-img" />}
 
         <div className="parcel-store-select__callout">
           <img src={iconLocationPinSm} alt="" className="parcel-store-select__callout-icon" />

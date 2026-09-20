@@ -7,6 +7,7 @@ import iconLocationPinSm from '../../assets/parcel-store-select/icon-location-pi
 import iconLocationPinLg from '../../assets/parcel-store-select/icon-location-pin2.svg'
 import iconSearch from '../../assets/parcel-store-select/icon-search.svg'
 import iconLocate from '../../assets/parcel-store-select/icon-locate.svg'
+import { useKakaoMap } from '../../lib/kakaoMaps'
 import './InPersonPlaceSelect.css'
 
 const PLACE_OPTIONS = [
@@ -18,6 +19,7 @@ const PLACE_OPTIONS = [
 export default function InPersonPlaceSelect({ value, onConfirm, backTo }) {
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState(value?.id || PLACE_OPTIONS[0].id)
+  const { containerRef: mapContainerRef, mapReady, mapFailed } = useKakaoMap()
 
   const handleConfirm = () => {
     const place = PLACE_OPTIONS.find((option) => option.id === selectedId)
@@ -28,7 +30,12 @@ export default function InPersonPlaceSelect({ value, onConfirm, backTo }) {
   return (
     <div className="in-person-place-select">
       <div className="in-person-place-select__map">
-        <img src={mapBg} alt="지도" className="in-person-place-select__map-img" />
+        <div
+          ref={mapContainerRef}
+          className="in-person-place-select__map-canvas"
+          style={{ visibility: mapReady && !mapFailed ? 'visible' : 'hidden' }}
+        />
+        {(!mapReady || mapFailed) && <img src={mapBg} alt="지도" className="in-person-place-select__map-img" />}
 
         <div className="in-person-place-select__callout">
           <img src={iconLocationPinSm} alt="" className="in-person-place-select__callout-icon" />

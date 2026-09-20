@@ -7,7 +7,6 @@ import cameraOffCircleBg from '../../assets/found-camera/camera-off-circle-bg.sv
 import cameraOffSlash from '../../assets/found-camera/camera-off-slash.svg'
 import collapseCircleBg from '../../assets/found-camera/collapse-circle-bg.svg'
 import iconCollapseChevron from '../../assets/found-camera/icon-collapse-chevron.svg'
-import iconAiScan from '../../assets/found-camera/icon-ai-scan.svg'
 import cornerBracketA from '../../assets/found-camera/corner-bracket-a.svg'
 import cornerBracketB from '../../assets/found-camera/corner-bracket-b.svg'
 import zoomDotOutline from '../../assets/found-camera/zoom-dot-outline.svg'
@@ -16,7 +15,18 @@ import iconMountainThumb from '../../assets/found-camera/icon-mountain-thumb.svg
 import iconShutter from '../../assets/found-camera/icon-shutter.svg'
 import iconCameraFlip from '../../assets/found-camera/icon-camera-flip.svg'
 import iconScanner from '../../assets/found-report/icon-scanner.svg'
+import leftItemSample1 from '../../assets/found-report/samples/left-item-1.png'
+import earphoneSample from '../../assets/home/item-buzz-earphone.jpg'
+import watchSample from '../../assets/found-report/samples/watch-placeholder.svg'
+import bagSample from '../../assets/found-report/samples/bag-placeholder.svg'
 import './FoundItemCamera.css'
+
+const GALLERY_OPTIONS = [
+  { label: '지갑', url: leftItemSample1 },
+  { label: '이어폰', url: earphoneSample },
+  { label: '시계', url: watchSample },
+  { label: '가방', url: bagSample },
+]
 
 const CORNERS = [
   { id: 'tl', src: cornerBracketA, style: { left: 1, top: 82, transform: 'rotate(180deg) scaleX(-1)' } },
@@ -38,6 +48,8 @@ const VERIFY_CLOSE_DELAY = 3000
 export default function FoundItemCamera({ nextPath = '/found/new/main' }) {
   const navigate = useNavigate()
   const [isVerifyingOpen, setVerifyingOpen] = useState(false)
+  const [isGalleryOpen, setGalleryOpen] = useState(false)
+  const [selectedThumb, setSelectedThumb] = useState(null)
 
   useEffect(() => {
     if (!isVerifyingOpen) return undefined
@@ -76,11 +88,6 @@ export default function FoundItemCamera({ nextPath = '/found/new/main' }) {
         <img src={iconCollapseChevron} alt="" className="found-camera__chip-glyph" style={{ width: 20, height: 20 }} />
       </span>
 
-      <div className="found-camera__ai-pill" style={{ left: 'calc(20% + 47.6px)', right: 'calc(20% + 48.6px)' }}>
-        <img src={iconAiScan} alt="" className="found-camera__ai-pill-icon" />
-        <span className="found-camera__ai-pill-text">AI 인식 중...</span>
-      </div>
-
       {CORNERS.map((corner) => (
         <img
           key={corner.id}
@@ -115,9 +122,18 @@ export default function FoundItemCamera({ nextPath = '/found/new/main' }) {
       </div>
 
       <div className="found-camera__controls-row">
-        <span className="found-camera__thumb">
-          <img src={iconMountainThumb} alt="" />
-        </span>
+        <button
+          type="button"
+          className="found-camera__thumb"
+          onClick={() => setGalleryOpen(true)}
+          aria-label="최근 항목"
+        >
+          {selectedThumb ? (
+            <img src={selectedThumb.url} alt="" className="found-camera__thumb-photo" />
+          ) : (
+            <img src={iconMountainThumb} alt="" />
+          )}
+        </button>
         <button
           type="button"
           className="found-camera__shutter-btn"
@@ -141,6 +157,41 @@ export default function FoundItemCamera({ nextPath = '/found/new/main' }) {
             </p>
           </div>
         </div>
+      )}
+
+      {isGalleryOpen && (
+        <>
+          <div className="found-camera__gallery-scrim" onClick={() => setGalleryOpen(false)} />
+          <div className="found-camera__gallery-sheet" role="dialog" aria-label="사진 선택">
+            <div className="found-camera__gallery-handle-row">
+              <span className="found-camera__gallery-handle" />
+            </div>
+            <div className="found-camera__gallery-header">
+              <span className="found-camera__gallery-title">최근 항목</span>
+              <button type="button" className="found-camera__gallery-cancel" onClick={() => setGalleryOpen(false)}>
+                취소
+              </button>
+            </div>
+            <div className="found-camera__gallery-body">
+              <p className="found-camera__gallery-date">오늘</p>
+              <div className="found-camera__gallery-grid">
+                {GALLERY_OPTIONS.map((option) => (
+                  <button
+                    key={option.label}
+                    type="button"
+                    className="found-camera__gallery-item"
+                    onClick={() => {
+                      setSelectedThumb(option)
+                      setGalleryOpen(false)
+                    }}
+                  >
+                    <img src={option.url} alt="" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )

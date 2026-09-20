@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import iconInfo from '../../assets/lost-register/icon-info.svg'
+import iconInfo from '../../assets/lost-register/icon-info-blue.svg'
 import SuccessGraphic from '../../components/common/SuccessGraphic/SuccessGraphic'
 import './FoundStationRegisterComplete.css'
 

@@ -22,6 +22,24 @@ const PHOTO_OPTIONS = [
 const MAX_PHOTOS = 10
 const AI_RECOGNITION_DELAY = 1200
 
+const FEATURE_KEYWORDS = {
+  색상: ['검정', '검은', '블랙', '흰', '하양', '화이트', '빨강', '빨간', '레드', '파랑', '파란', '블루', '노랑', '노란', '옐로', '초록', '그린', '회색', '그레이', '갈색', '브라운', '분홍', '핑크', '보라', '퍼플', '남색', '네이비', '베이지', '금색', '골드', '은색', '실버'],
+  브랜드: [], // capitalized latin word (e.g. Matin Kim, Nike) checked separately
+  재질: ['가죽', '레더', '면', '순면', '울', '니트', '스웨이드', '메탈', '금속', '플라스틱', '실리콘', '고무', '데님', '캔버스', '나일론', '폴리에스터', '우드', '나무', '유리', '세라믹', '천'],
+  형태: ['반지갑', '장지갑', '숄더백', '토트백', '크로스백', '백팩', '파우치', '동그란', '네모난', '사각형', '원형', '라운드', '스퀘어', '지퍼형', '버클형', '케이스', '목걸이형', '팔찌형'],
+}
+
+function countFeatureCategories(text) {
+  const trimmed = text.trim()
+  if (!trimmed) return 0
+  let count = 0
+  if (FEATURE_KEYWORDS.색상.some((word) => trimmed.includes(word))) count += 1
+  if (FEATURE_KEYWORDS.재질.some((word) => trimmed.includes(word))) count += 1
+  if (FEATURE_KEYWORDS.형태.some((word) => trimmed.includes(word))) count += 1
+  if (/[A-Z][a-zA-Z]+/.test(trimmed)) count += 1 // 브랜드: capitalized latin word
+  return count
+}
+
 export default function FoundLeftItemMain({
   draft,
   onDraftChange,
@@ -40,6 +58,7 @@ export default function FoundLeftItemMain({
   locationRoute = '/found/new/left/location',
 }) {
   const navigate = useNavigate()
+  const readOnly = mode === 'review' || mode === 'readonly'
 
   const { photos, name, description, timeRange, location } = draft
 
@@ -75,6 +94,8 @@ export default function FoundLeftItemMain({
   const isNextEnabled =
     name.trim().length > 0 && description.trim().length > 0 && timeRange !== null && location !== null
 
+  const showFeatureWarning = description.trim().length > 0 && countFeatureCategories(description) < 3
+
   const handleNext = () => {
     if (!isNextEnabled) {
       setShowErrors(true)
@@ -95,12 +116,14 @@ export default function FoundLeftItemMain({
             accept="image/*"
             acceptedFileEntries={photos}
             onAcceptedFileEntriesChange={handlePhotosChange}
+            disabled={readOnly}
           >
             <AttachmentInputPreset
               pickerOptions={PHOTO_OPTIONS}
               onPick={setPickedPhotoOption}
               triggerClassName="found-left__photo-trigger"
               countClassName="found-left__photo-count"
+              disabled={readOnly}
             />
           </AttachmentField>
         </section>
@@ -108,15 +131,16 @@ export default function FoundLeftItemMain({
         <section className="found-left__section">
           <h2 className="found-left__section-title">물건 정보를 입력해주세요</h2>
           <div className="found-left__field-group">
-            <div className={`found-left__field${showErrors && !name.trim() ? ' found-left__field--error' : ''}`}>
+            <div className={`found-left__field${showErrors && !name.trim() ? ' found-left__field--error' : ''}${readOnly ? ' found-left__field--readonly' : ''}`}>
               <input
                 type="text"
                 className="found-left__field-input"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 placeholder="물건 이름을 입력해주세요"
+                readOnly={readOnly}
               />
-              {name && (
+              {name && !readOnly && (
                 <button
                   type="button"
                   className="found-left__field-clear"
@@ -127,15 +151,16 @@ export default function FoundLeftItemMain({
                 </button>
               )}
             </div>
-            <div className={`found-left__field${showErrors && !description.trim() ? ' found-left__field--error' : ''}`}>
+            <div className={`found-left__field${showErrors && !description.trim() ? ' found-left__field--error' : ''}${readOnly ? ' found-left__field--readonly' : ''}`}>
               <input
                 type="text"
                 className="found-left__field-input"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 placeholder="상세 설명을 입력해주세요 (색상, 브랜드, 특징 등)"
+                readOnly={readOnly}
               />
-              {description && (
+              {description && !readOnly && (
                 <button
                   type="button"
                   className="found-left__field-clear"
@@ -147,6 +172,12 @@ export default function FoundLeftItemMain({
               )}
             </div>
           </div>
+          {showFeatureWarning && !readOnly && (
+            <div className="found-left__feature-warning">
+              <span className="found-left__feature-warning-icon">!</span>
+              <p className="found-left__feature-warning-text">색상, 브랜드, 재질, 형태 중 3가지 이상 적어주세요.</p>
+            </div>
+          )}
           <p className="found-left__hint">등록된 사진 바탕으로 AI가 자동으로 인식한 물건이에요</p>
         </section>
 
@@ -154,8 +185,8 @@ export default function FoundLeftItemMain({
           <h2 className="found-left__section-title">{timeSectionTitle}</h2>
           <button
             type="button"
-            className={`found-left__field${showErrors && !timeRange ? ' found-left__field--error' : ''}`}
-            onClick={() => setTimeSheetOpen(true)}
+            className={`found-left__field${showErrors && !timeRange ? ' found-left__field--error' : ''}${readOnly ? ' found-left__field--readonly' : ''}`}
+            onClick={() => !readOnly && setTimeSheetOpen(true)}
           >
             <img src={iconClock} alt="" className="found-left__field-prefix-icon" />
             <span className={`found-left__field-text${timeRange ? '' : ' found-left__field-text--placeholder'}`}>
@@ -171,8 +202,8 @@ export default function FoundLeftItemMain({
           <h2 className="found-left__section-title">{locationSectionTitle}</h2>
           <button
             type="button"
-            className={`found-left__location-row${showErrors && !location ? ' found-left__location-row--error' : ''}`}
-            onClick={() => navigate(locationRoute)}
+            className={`found-left__location-row${showErrors && !location ? ' found-left__location-row--error' : ''}${readOnly ? ' found-left__location-row--readonly' : ''}`}
+            onClick={() => !readOnly && navigate(locationRoute)}
           >
             <span className="found-left__location-text">
               <span className="found-left__location-title">

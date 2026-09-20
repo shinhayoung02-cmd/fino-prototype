@@ -12,6 +12,7 @@ import ScanningCard from '../../components/common/ScanningCard/ScanningCard'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import iconCheck from '../../assets/ai-matching/icon-parcel-check.svg'
 import scrollHintButton from '../../assets/home/scroll-hint-button.png'
+import { useKakaoMap } from '../../lib/kakaoMaps'
 import './Home.css'
 
 const RECENT_ACTIVITY = [
@@ -63,6 +64,7 @@ export default function Home({
   const [isScrolledToEnd, setIsScrolledToEnd] = useState(false)
   const rootRef = useRef(null)
   const navigate = useNavigate()
+  const { containerRef: mapContainerRef, mapReady, mapFailed } = useKakaoMap({ draggable: false, zoomable: false })
 
   useEffect(() => {
     const scrollEl = rootRef.current?.closest('.app-shell__content')
@@ -184,7 +186,14 @@ export default function Home({
           onClick={isNearbyCardLinked ? handleNearbyCardClick : undefined}
         >
           <div className="home-map">
-            <img src={mapPreview} alt="지도 미리보기" className="home-map__image" />
+            <div
+              ref={mapContainerRef}
+              className="home-map__canvas"
+              style={{ visibility: mapReady && !mapFailed ? 'visible' : 'hidden' }}
+            />
+            {(!mapReady || mapFailed) && (
+              <img src={mapPreview} alt="지도 미리보기" className="home-map__image" />
+            )}
             <div className="home-map__pin" style={{ left: '50%', top: '50%' }}>
               <img src={mapPin} alt="" className="home-map__pin-img" />
             </div>
