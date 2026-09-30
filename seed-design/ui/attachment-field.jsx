@@ -485,7 +485,7 @@ function PresetTrigger({ samples = [], className, countClassName, pickerOptions,
                   display: "grid",
                   gridTemplateColumns: "repeat(3, 1fr)",
                   gap: 2,
-                  padding: "2px 16px 20px",
+                  padding: "2px 4px 20px",
                 }}
               >
                 {pickerOptions.map((option) => renderGridItem(option))}

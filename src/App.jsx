@@ -40,6 +40,7 @@ import ParcelStoreSelect from './pages/AiMatching/ParcelStoreSelect'
 import ParcelStoreDeliveryStatus from './pages/AiMatching/ParcelStoreDeliveryStatus'
 import ParcelStorePickupStatus from './pages/AiMatching/ParcelStorePickupStatus'
 import OwnershipEvidence from './pages/AiMatching/OwnershipEvidence'
+import QuizFailedResult from './pages/AiMatching/QuizFailedResult'
 import EvidenceUpload from './pages/AiMatching/EvidenceUpload'
 import EvidenceReview from './pages/AiMatching/EvidenceReview'
 import EvidenceSubmitted from './pages/AiMatching/EvidenceSubmitted'
@@ -125,9 +126,11 @@ import iconMenu from './assets/chat/icon-menu.svg'
 import './App.css'
 
 const MATCH_RESULT_DELAY = 1300
-const VERIFICATION_RESULT_DELAY = 1300
+const VERIFICATION_RESULT_DELAY = 1000
 const APPROVAL_RESULT_DELAY = 1300
 const PARCEL_RESULT_DELAY = 3000
+const DELIVERY_DONE_DELAY = 1000
+const PARCEL_PROGRESS_STEPS = ['발송대기', '접수완료', '배송중', '수령완료']
 const RETURN_PROPOSAL_DELAY = 2000
 const RETRY_RETURN_PROPOSAL_DELAY = 3000
 
@@ -380,6 +383,10 @@ function App() {
   const [isApprovalResultReady, setApprovalResultReady] = useState(false)
   const [isAwaitingParcelNotification, setAwaitingParcelNotification] = useState(false)
   const [isParcelResultDialogOpen, setParcelResultDialogOpen] = useState(false)
+  const [isAwaitingDeliveryDone, setAwaitingDeliveryDone] = useState(false)
+  const [isDeliveryDoneDialogOpen, setDeliveryDoneDialogOpen] = useState(false)
+  const [isCancelRequestDialogOpen, setCancelRequestDialogOpen] = useState(false)
+  const [deliveryDoneTo, setDeliveryDoneTo] = useState('/matching/result/ownership/parcel/general/receipt')
   const [isSearchCompleteDialogOpen, setSearchCompleteDialogOpen] = useState(false)
   const [isFlowChangeDialogOpen, setFlowChangeDialogOpen] = useState(false)
   const [pendingFlowToggle, setPendingFlowToggle] = useState(null)
@@ -397,6 +404,7 @@ function App() {
   const [meetupSlotTimes, setMeetupSlotTimes] = useState({})
   const [thanksMethod, setThanksMethod] = useState('coffee')
   const [parcelStore, setParcelStore] = useState(null)
+  const [parcelAddress, setParcelAddress] = useState(null)
   const [foundParcelStore, setFoundParcelStore] = useState(null)
   const [inPersonSchedulePlace, setInPersonSchedulePlace] = useState(null)
   const [inPersonScheduleSlot, setInPersonScheduleSlot] = useState(undefined)
@@ -417,6 +425,7 @@ function App() {
     setVerificationDialogOpen(false)
     setApprovalDialogOpen(false)
     setParcelResultDialogOpen(false)
+    setDeliveryDoneDialogOpen(false)
     setSearchCompleteDialogOpen(false)
     setFlowChangeDialogOpen(false)
     setPendingFlowToggle(null)
@@ -532,14 +541,24 @@ function App() {
   }, [location.pathname])
 
   useEffect(() => {
-    if (!isOwnershipRequested) return undefined
+    if (!isAwaitingDeliveryDone || location.pathname !== '/') return undefined
+
+    const timer = setTimeout(() => {
+      setAwaitingDeliveryDone(false)
+      setDeliveryDoneDialogOpen(true)
+    }, DELIVERY_DONE_DELAY)
+    return () => clearTimeout(timer)
+  }, [isAwaitingDeliveryDone, location.pathname])
+
+  useEffect(() => {
+    if (!isOwnershipRequested || isVerificationReady || !['/', '/matching'].includes(location.pathname)) return undefined
 
     const timer = setTimeout(() => {
       setVerificationReady(true)
       setVerificationDialogOpen(true)
     }, VERIFICATION_RESULT_DELAY)
     return () => clearTimeout(timer)
-  }, [isOwnershipRequested])
+  }, [isOwnershipRequested, isVerificationReady, location.pathname])
 
   const markRoomRead = (roomId) => {
     setReadRoomIds((prev) => (prev.has(roomId) ? prev : new Set(prev).add(roomId)))
@@ -690,6 +709,8 @@ function App() {
     setAwaitingRetryReturnProposalNotification(false)
     setAwaitingParcelNotification(false)
     setParcelResultDialogOpen(false)
+    setAwaitingDeliveryDone(false)
+    setDeliveryDoneDialogOpen(false)
     setMultipleClaimantsFlow(false)
     setOwnershipQuizAnswers([null, null, null])
     setSecondaryVerificationAnswers([null, null, null])
@@ -700,6 +721,7 @@ function App() {
     setFoundMultipleClaimantsFlow(false)
     setThanksMethod('coffee')
     setParcelStore(null)
+    setParcelAddress(null)
     setFoundParcelStore(null)
     setInPersonSchedulePlace(null)
     setInPersonScheduleSlot(undefined)
@@ -725,12 +747,15 @@ function App() {
     setApprovalDialogOpen(false)
     setAwaitingParcelNotification(false)
     setParcelResultDialogOpen(false)
+    setAwaitingDeliveryDone(false)
+    setDeliveryDoneDialogOpen(false)
     setSearchCompleteDialogOpen(false)
     setMeetupLocations([])
     setMeetupDates([])
     setMeetupSlotTimes({})
     setThanksMethod('coffee')
     setParcelStore(null)
+    setParcelAddress(null)
     setCompletedFoundItem(null)
     setFoundDraft(INITIAL_FOUND_DRAFT)
     setMailbox(null)
@@ -743,6 +768,17 @@ function App() {
 
   const handleGoHomeAfterEvidenceSubmit = () => {
     navigate('/', { state: { showApprovalResult: true } })
+  }
+
+  const handleCancelOwnershipRequest = () => {
+    setCancelRequestDialogOpen(false)
+    setOwnershipRequested(false)
+    setVerificationReady(false)
+    setVerificationDialogOpen(false)
+    setEvidenceFiles(EMPTY_EVIDENCE_FILES)
+    setApprovalResultReady(false)
+    setApprovalDialogOpen(false)
+    navigate('/matching/result')
   }
 
   const handleToggleMultipleClaimantsFlow = () => {
@@ -834,6 +870,17 @@ function App() {
     navigate('/matching/result/ownership/parcel/general/pickup')
   }
 
+  const handleGoHomeAfterParcelPickup = (receiptPath) => {
+    setDeliveryDoneTo(receiptPath)
+    setAwaitingDeliveryDone(true)
+    navigate('/')
+  }
+
+  const handleViewDeliveryDone = () => {
+    setDeliveryDoneDialogOpen(false)
+    navigate(deliveryDoneTo)
+  }
+
   return (
     <>
       <PreviewStage
@@ -890,6 +937,7 @@ function App() {
                 completedFoundItem={completedFoundItem}
                 onEditFoundItem={handleEditCompletedFoundItem}
                 foundMatchResultPath={foundFlowResumePath}
+                lostItemResumePath={isQuizFailFlow ? '/matching/result/ownership/quiz-failed' : undefined}
               />
             </BackTabScreen>
           }
@@ -958,7 +1006,7 @@ function App() {
                     { label: '현재 상태', value: '대기 중', tone: 'neutral' },
                   ]}
                   secondaryCtaLabel="요청 취소하기"
-                  onSecondaryCta={() => navigate('/matching/result/ownership')}
+                  onSecondaryCta={() => setCancelRequestDialogOpen(true)}
                   onGoHome={handleGoHomeAfterEvidenceSubmit}
                 />
               ) : (
@@ -1027,26 +1075,27 @@ function App() {
           path="/matching/result/ownership/quiz-failed"
           element={
             <SubStepScreen
-              title="소유권 증빙 제출"
+              title="퀴즈 검증 결과"
               backTo="/matching/waiting"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+              activeTab="/"
+              onSelectTab={setActiveTab}
+            >
+              <QuizFailedResult />
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/matching/result/ownership/quiz-failed/evidence"
+          element={
+            <SubStepScreen
+              title="소유권 증빙 제출"
+              backTo="/matching/result/ownership/quiz-failed"
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <WaitingScreen
-                badge="2차 소유권 확인중"
-                title="소유권을 확인할 자료를 추가해주세요"
-                subtitle="습득자가 답변한 결과를 확인하고, 재검증을 요청할 수 있어요."
-                calloutText={
-                  <>
-                    제출 자료는 습득자에게만 공유되며, 검토 후
-                    <br />
-                    즉시 삭제돼요.
-                  </>
-                }
-                ctaLabel="다음"
-                onGoHome={() => navigate('/matching/result/ownership/evidence')}
-              />
+              <OwnershipEvidence />
             </SubStepScreen>
           }
         />
@@ -1102,7 +1151,7 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ParcelAddressForm />
+              <ParcelAddressForm value={parcelAddress} onSubmit={setParcelAddress} />
             </SubStepScreen>
           }
         />
@@ -1239,7 +1288,7 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <ParcelPickupStatus />
+              <ParcelPickupStatus onGoHome={() => handleGoHomeAfterParcelPickup('/matching/result/ownership/parcel/general/receipt')} />
             </SubStepScreen>
           }
         />
@@ -1253,7 +1302,26 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <ParcelReceiptComplete />
+              <ParcelReceiptComplete receiptDoneTo="/matching/result/ownership/parcel/general/receipt/done" />
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/matching/result/ownership/parcel/general/receipt/done"
+          element={
+            <SubStepScreen
+              title="수령 완료"
+              className="parcel-receipt-done"
+              backTo="/matching/result/ownership/parcel/general/receipt"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+              activeTab="/"
+              onSelectTab={setActiveTab}
+            >
+              <InPersonReceiptComplete
+                steps={PARCEL_PROGRESS_STEPS}
+                onFinishSearch={handleFinishSearch}
+                onKeepAndGoHome={handleGoHomeAfterSubmit}
+              />
             </SubStepScreen>
           }
         />
@@ -1267,7 +1335,7 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <ParcelStorePickupStatus />
+              <ParcelStorePickupStatus onGoHome={() => handleGoHomeAfterParcelPickup('/matching/result/ownership/parcel/store/receipt')} />
             </SubStepScreen>
           }
         />
@@ -1281,7 +1349,26 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <ParcelReceiptComplete />
+              <ParcelReceiptComplete receiptDoneTo="/matching/result/ownership/parcel/store/receipt/done" />
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/matching/result/ownership/parcel/store/receipt/done"
+          element={
+            <SubStepScreen
+              title="수령 완료"
+              className="parcel-receipt-done"
+              backTo="/matching/result/ownership/parcel/store/receipt"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+              activeTab="/"
+              onSelectTab={setActiveTab}
+            >
+              <InPersonReceiptComplete
+                steps={PARCEL_PROGRESS_STEPS}
+                onFinishSearch={handleFinishSearch}
+                onKeepAndGoHome={handleGoHomeAfterSubmit}
+              />
             </SubStepScreen>
           }
         />
@@ -3042,6 +3129,59 @@ function App() {
               type="button"
               className="match-dialog__action match-dialog__action--secondary"
               onClick={() => setApprovalDialogOpen(false)}
+            >
+              취소
+            </button>
+          </div>
+        }
+      >
+        확인을 눌러 결과를 확인해주세요
+      </Modal>
+
+      <Modal
+        isOpen={isCancelRequestDialogOpen}
+        onClose={() => setCancelRequestDialogOpen(false)}
+        title="요청을 취소할까요?"
+        footer={
+          <div className="match-dialog__actions">
+            <button
+              type="button"
+              className="match-dialog__action match-dialog__action--primary"
+              onClick={handleCancelOwnershipRequest}
+            >
+              취소하기
+            </button>
+            <button
+              type="button"
+              className="match-dialog__action match-dialog__action--secondary"
+              onClick={() => setCancelRequestDialogOpen(false)}
+            >
+              닫기
+            </button>
+          </div>
+        }
+      >
+        제출한 증빙은 삭제되고, 습득자 확인이 중단돼요
+      </Modal>
+
+      <Modal
+        isOpen={isDeliveryDoneDialogOpen}
+        onClose={() => setDeliveryDoneDialogOpen(false)}
+        dismissible={false}
+        title="배송이 완료 됐어요"
+        footer={
+          <div className="match-dialog__actions">
+            <button
+              type="button"
+              className="match-dialog__action match-dialog__action--primary"
+              onClick={handleViewDeliveryDone}
+            >
+              확인
+            </button>
+            <button
+              type="button"
+              className="match-dialog__action match-dialog__action--secondary"
+              onClick={() => setDeliveryDoneDialogOpen(false)}
             >
               취소
             </button>

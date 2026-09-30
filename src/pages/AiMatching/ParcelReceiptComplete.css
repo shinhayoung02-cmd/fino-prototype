@@ -192,3 +192,34 @@
   cursor: pointer;
   font-family: inherit;
 }
+
+.parcel-receipt-complete__dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.parcel-receipt-complete__dialog-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.parcel-receipt-complete__dialog-action--primary {
+  background: var(--color-gray-900);
+  color: #ffffff;
+}
+
+.parcel-receipt-complete__dialog-action--secondary {
+  background: var(--color-gray-200);
+  color: var(--color-gray-1000);
+}

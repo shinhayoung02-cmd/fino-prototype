@@ -43,7 +43,6 @@ export default function ParcelStoreWeightSelect() {
               </button>
             )
           })}
-          <div className="parcel-store-weight__option parcel-store-weight__option--empty" />
         </div>
       </div>
 

@@ -23,13 +23,13 @@ export default function ParcelDeliveryStatus({ onConfirm }) {
                 <img
                   src={iconProgressStepDone}
                   alt=""
-                  className="parcel-delivery-status__progress-circle parcel-delivery-status__progress-circle--active"
+                  className="parcel-delivery-status__progress-circle parcel-delivery-status__progress-circle--active progress-step-pop"
                 />
               ) : (
                 <span className="parcel-delivery-status__progress-circle" />
               )}
               <span
-                className={`parcel-delivery-status__progress-label${index === 0 ? ' parcel-delivery-status__progress-label--active' : ''}`}
+                className={`parcel-delivery-status__progress-label${index === 0 ? ' parcel-delivery-status__progress-label--active progress-step-blink' : ''}`}
               >
                 {label}
               </span>

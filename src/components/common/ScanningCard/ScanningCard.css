@@ -127,3 +127,7 @@
   color: #ffffff;
   box-shadow: var(--shadow-sm);
 }
+
+.scanning-card__item--clickable {
+  cursor: pointer;
+}

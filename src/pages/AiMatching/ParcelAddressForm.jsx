@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import iconInfo from '../../assets/lost-register/icon-info.svg'
 import iconRemoveCircle from '../../assets/location-picker/icon-remove-circle.svg'
 import iconCheckBrand from '../../assets/ai-matching/icon-check-brand.svg'
+import scrollHintButton from '../../assets/home/scroll-hint-button.png'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import './ParcelAddressForm.css'
 
@@ -11,15 +12,33 @@ const ENTRY_OPTIONS = [
   { id: 'free', label: '자유출입 가능' },
 ]
 
-export default function ParcelAddressForm() {
+export default function ParcelAddressForm({ value, onSubmit }) {
   const navigate = useNavigate()
-  const [address, setAddress] = useState('')
-  const [addressDetail, setAddressDetail] = useState('')
-  const [entryMethod, setEntryMethod] = useState(null)
-  const [note, setNote] = useState('')
+  const [address, setAddress] = useState(value?.address ?? '')
+  const [addressDetail, setAddressDetail] = useState(value?.addressDetail ?? '')
+  const [entryMethod, setEntryMethod] = useState(value?.entryMethod ?? null)
+  const [note, setNote] = useState(value?.note ?? '')
   const [isConsentSheetOpen, setConsentSheetOpen] = useState(false)
   const [agreePrivacy, setAgreePrivacy] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(false)
+
+  const [isScrolledToEnd, setIsScrolledToEnd] = useState(false)
+  const rootRef = useRef(null)
+
+  useEffect(() => {
+    const scrollEl = rootRef.current?.closest('.app-shell__content')
+    if (!scrollEl) return undefined
+    const handleScroll = () => {
+      setIsScrolledToEnd(scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 2)
+    }
+    handleScroll()
+    scrollEl.addEventListener('scroll', handleScroll)
+    window.addEventListener('resize', handleScroll)
+    return () => {
+      scrollEl.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
+    }
+  }, [])
 
   const allAgreed = agreePrivacy && agreeTerms
 
@@ -30,12 +49,13 @@ export default function ParcelAddressForm() {
   }
 
   const handleConfirmConsent = () => {
+    onSubmit?.({ address, addressDetail, entryMethod, note })
     setConsentSheetOpen(false)
     navigate('/matching/result/ownership/proposal-confirm', { state: { deliveryMethod: 'parcel' } })
   }
 
   return (
-    <div className="parcel-address">
+    <div className="parcel-address" ref={rootRef}>
       <div className="parcel-address__banner">
         <img src={iconInfo} alt="" className="parcel-address__banner-icon" />
         <p className="parcel-address__banner-text">물건이 발송될 주소는 습득자가 입력해요.</p>
@@ -131,6 +151,19 @@ export default function ParcelAddressForm() {
       </div>
 
       <div className="parcel-address__next-wrap">
+        {!isScrolledToEnd && (
+          <>
+            <div className="parcel-address__scroll-fog" />
+            <button
+              type="button"
+              className="parcel-address__scroll-button"
+              aria-label="아래로 스크롤"
+              onClick={() => rootRef.current?.closest('.app-shell__content')?.scrollBy({ top: 300, behavior: 'smooth' })}
+            >
+              <img src={scrollHintButton} alt="" />
+            </button>
+          </>
+        )}
         <button type="button" className="parcel-address__submit" onClick={() => setConsentSheetOpen(true)}>
           신청하기
         </button>

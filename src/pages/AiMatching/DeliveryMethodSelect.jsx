@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import iconInfo from '../../assets/lost-register/icon-info.svg'
+import iconInfo from '../../assets/lost-register/icon-info-blue.svg'
 import iconChevronDown from '../../assets/ai-matching/icon-chevron-down.svg'
 import iconMeetupCrowd from '../../assets/ai-matching/icon-meetup-crowd.svg'
 import iconMeetupSchedule from '../../assets/ai-matching/icon-meetup-schedule.svg'

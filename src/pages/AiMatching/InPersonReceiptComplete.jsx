@@ -10,7 +10,7 @@ import './InPersonReceiptComplete.css'
 const PROGRESS_STEPS = ['제안완료', '일정확정', '만남예정', '수령완료']
 const candidate = MATCH_CANDIDATES[0]
 
-export default function InPersonReceiptComplete({ onFinishSearch, onKeepAndGoHome }) {
+export default function InPersonReceiptComplete({ onFinishSearch, onKeepAndGoHome, steps = PROGRESS_STEPS }) {
   const [isFinishDialogOpen, setFinishDialogOpen] = useState(false)
 
   return (
@@ -27,16 +27,16 @@ export default function InPersonReceiptComplete({ onFinishSearch, onKeepAndGoHom
       </p>
 
       <div className="in-person-receipt-complete__progress">
-        {PROGRESS_STEPS.map((label, index) => (
+        {steps.map((label, index) => (
           <div className="in-person-receipt-complete__progress-step" key={label}>
-            {index > 0 && <div className="in-person-receipt-complete__progress-connector in-person-receipt-complete__progress-connector--done" />}
+            {index > 0 && <div className={`in-person-receipt-complete__progress-connector in-person-receipt-complete__progress-connector--done${index === steps.length - 1 ? ' progress-connector-fill' : ''}`} />}
             <div className="in-person-receipt-complete__progress-node">
               <img
                 src={iconProgressStepDone}
                 alt=""
-                className="in-person-receipt-complete__progress-circle"
+                className={`in-person-receipt-complete__progress-circle${index === steps.length - 1 ? ' progress-step-pop' : ''}`}
               />
-              <span className="in-person-receipt-complete__progress-label">{label}</span>
+              <span className={`in-person-receipt-complete__progress-label${index === steps.length - 1 ? ' progress-step-blink' : ''}`}>{label}</span>
             </div>
           </div>
         ))}

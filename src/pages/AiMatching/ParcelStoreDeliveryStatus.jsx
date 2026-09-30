@@ -10,18 +10,17 @@ import './ParcelStoreDeliveryStatus.css'
 const PROGRESS_STEPS = ['발송대기', '접수완료', '배송중', '수령완료']
 const candidate = MATCH_CANDIDATES[0]
 const RECEIPT_NUMBER = 'KRX-2025-08041'
-const RESULT_DIALOG_DELAY = 5000
 
 export default function ParcelStoreDeliveryStatus() {
   const navigate = useNavigate()
   const [isResultDialogOpen, setResultDialogOpen] = useState(false)
 
   const handleConfirm = () => {
-    setTimeout(() => setResultDialogOpen(true), RESULT_DIALOG_DELAY)
+    setResultDialogOpen(true)
   }
 
   return (
-    <div className="parcel-store-status">
+    <div className="parcel-store-status parcel-store-status--waiting">
       <div className="parcel-store-status__progress">
         {PROGRESS_STEPS.map((label, index) => (
           <div className="parcel-store-status__progress-step" key={label}>
@@ -31,13 +30,13 @@ export default function ParcelStoreDeliveryStatus() {
                 <img
                   src={iconProgressStepDone}
                   alt=""
-                  className="parcel-store-status__progress-circle parcel-store-status__progress-circle--active"
+                  className="parcel-store-status__progress-circle parcel-store-status__progress-circle--active progress-step-pop"
                 />
               ) : (
                 <span className="parcel-store-status__progress-circle" />
               )}
               <span
-                className={`parcel-store-status__progress-label${index === 0 ? ' parcel-store-status__progress-label--active' : ''}`}
+                className={`parcel-store-status__progress-label${index === 0 ? ' parcel-store-status__progress-label--active progress-step-blink' : ''}`}
               >
                 {label}
               </span>
@@ -78,7 +77,7 @@ export default function ParcelStoreDeliveryStatus() {
           <div className="parcel-store-status__status-row">
             <span className="parcel-store-status__status-row-label">현재 상태</span>
             <span className="parcel-store-status__status-badge parcel-store-status__status-badge--brand">
-              배송 중
+              발송 대기
             </span>
           </div>
           <div className="parcel-store-status__status-divider" />

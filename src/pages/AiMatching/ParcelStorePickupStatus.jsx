@@ -14,7 +14,7 @@ const RECEIPT_NUMBER = 'KRX-2025-08041'
 const RECEIPT_TIME = '2025.08.06 오후 2:00'
 const DELIVERY_DONE_DELAY = 5000
 
-export default function ParcelStorePickupStatus() {
+export default function ParcelStorePickupStatus({ onGoHome }) {
   const navigate = useNavigate()
   const [isDeliveryDoneDialogOpen, setDeliveryDoneDialogOpen] = useState(false)
 
@@ -30,17 +30,17 @@ export default function ParcelStorePickupStatus() {
           <div className="parcel-store-status__progress-step" key={label}>
             {index > 0 && (
               <div
-                className={`parcel-store-status__progress-connector${index < DONE_COUNT ? ' parcel-store-status__progress-connector--done' : ''}`}
+                className={`parcel-store-status__progress-connector${index < DONE_COUNT ? ' parcel-store-status__progress-connector--done' : ''}${index === DONE_COUNT - 1 ? ' progress-connector-fill' : ''}`}
               />
             )}
             <div className="parcel-store-status__progress-node">
               {index < DONE_COUNT ? (
-                <img src={iconProgressStepDone} alt="" className="parcel-store-status__progress-circle" />
+                <img src={iconProgressStepDone} alt="" className={`parcel-store-status__progress-circle${index === DONE_COUNT - 1 ? ' progress-step-pop' : ''}`} />
               ) : (
                 <span className="parcel-store-status__progress-circle" />
               )}
               <span
-                className={`parcel-store-status__progress-label${index < DONE_COUNT ? ' parcel-store-status__progress-label--active' : ''}`}
+                className={`parcel-store-status__progress-label${index < DONE_COUNT ? ' parcel-store-status__progress-label--active' : ''}${index === DONE_COUNT - 1 ? ' progress-step-blink' : ''}`}
               >
                 {label}
               </span>
@@ -98,7 +98,7 @@ export default function ParcelStorePickupStatus() {
       </div>
 
       <div className="parcel-store-status__next-wrap">
-        <button type="button" className="parcel-store-status__next" onClick={() => navigate('/')}>
+        <button type="button" className="parcel-store-status__next" onClick={() => (onGoHome ? onGoHome() : navigate('/'))}>
           홈으로
         </button>
       </div>

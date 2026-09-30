@@ -65,6 +65,7 @@ export default function AiMatching({
   completedFoundItem,
   onEditFoundItem,
   foundMatchResultPath = '/found/match-result',
+  lostItemResumePath,
 }) {
   const [chips, setChips] = useState(INITIAL_CHIPS)
   const [isScanPaused, setIsScanPaused] = useState(false)
@@ -166,6 +167,7 @@ export default function AiMatching({
                 }}
                 topRightIcon="close"
                 onDismiss={() => setIsScanCardDismissed(true)}
+                onItemClick={!isFoundFlow && lostItemResumePath ? () => navigate(lostItemResumePath) : undefined}
                 itemVerb={isFoundFlow ? '습득했어요' : '잃어버렸어요'}
                 scanningTargetLabel={isFoundFlow ? '분실물' : '습득물'}
                 statusText={

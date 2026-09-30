@@ -90,10 +90,6 @@
   padding: 15px 15px 15px 19px;
 }
 
-.parcel-store-weight__option--empty {
-  cursor: default;
-}
-
 .parcel-store-weight__option-label {
   flex: 1;
   min-width: 0;

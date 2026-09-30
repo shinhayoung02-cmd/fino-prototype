@@ -19,6 +19,7 @@ export default function ScanningCard({
   itemVerb = '잃어버렸어요',
   scanningTargetLabel = '습득물',
   statusText,
+  onItemClick,
 }) {
   const { name, description, location, timeRange } = item?.name ? item : DEFAULT_ITEM
 
@@ -43,7 +44,12 @@ export default function ScanningCard({
           <img src={iconMoreHoriz} alt="" className="scanning-card__more" />
         )}
       </div>
-      <div className="scanning-card__item">
+      <div
+        className={`scanning-card__item${onItemClick ? ' scanning-card__item--clickable' : ''}`}
+        onClick={onItemClick}
+        role={onItemClick ? 'button' : undefined}
+        tabIndex={onItemClick ? 0 : undefined}
+      >
         {metaParts.length > 0 && <p className="scanning-card__item-meta">{metaParts.join(' · ')}</p>}
         <p className="scanning-card__item-title">{name} {itemVerb}</p>
         {description && <p className="scanning-card__item-note">{description}</p>}

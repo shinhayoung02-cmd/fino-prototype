@@ -296,3 +296,31 @@
   background: var(--color-gray-200);
   color: var(--color-gray-1000);
 }
+
+/* 택배 수령 완료(/parcel/…/receipt/done) 전용 — Figma 686:31654 */
+.parcel-receipt-done .in-person-receipt-complete {
+  padding-bottom: 20px;
+}
+
+.parcel-receipt-done .in-person-receipt-complete__item-card {
+  padding: 18px 0 0 4px;
+}
+
+.parcel-receipt-done .in-person-receipt-complete__item-info {
+  padding-top: 0;
+}
+
+.parcel-receipt-done .in-person-receipt-complete__item-title {
+  line-height: 16px;
+}
+
+.parcel-receipt-done .in-person-receipt-complete__link {
+  font-weight: 500;
+  line-height: 19px;
+  color: #d1d3d8;
+}
+
+.parcel-receipt-done .in-person-receipt-complete__next-wrap {
+  margin-top: 0;
+  padding-top: 20px;
+}

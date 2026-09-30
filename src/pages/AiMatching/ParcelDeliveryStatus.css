@@ -52,7 +52,6 @@
 .parcel-delivery-status__progress-circle--active {
   border: none;
   background: transparent;
-  animation: parcel-delivery-status-blink 1.6s ease-in-out infinite;
 }
 
 .parcel-delivery-status__progress-label {
@@ -64,18 +63,8 @@
 .parcel-delivery-status__progress-label--active {
   color: var(--color-gray-1000);
   font-weight: 600;
-  animation: parcel-delivery-status-blink 1.6s ease-in-out infinite;
 }
 
-@keyframes parcel-delivery-status-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
 
 .parcel-delivery-status__title-row {
   display: flex;

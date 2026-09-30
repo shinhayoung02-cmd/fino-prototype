@@ -271,7 +271,7 @@ export const ITEM_PROFILES = {
         title: '구매 영수증이 있나요?',
         subtitle: '온·오프라인 구매 내역을 올려주세요.',
         tip: '영수증에 상품명이나 구매 시점이 보이면 확인에 도움이 돼요.',
-        accept: 'application/pdf',
+        accept: 'image/*,application/pdf',
         sample: { url: walletReceiptImage, name: 'matin_kim_receipt.jpg' },
         reviewLabel: '답변 1',
         reviewTitle: '구매 영수증',

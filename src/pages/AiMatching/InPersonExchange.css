@@ -116,7 +116,6 @@
 .in-person-exchange__progress-circle--active {
   border: none;
   background: transparent;
-  animation: in-person-exchange-blink 1.6s ease-in-out infinite;
 }
 
 .in-person-exchange__progress-label {
@@ -128,18 +127,8 @@
 .in-person-exchange__progress-label--active {
   color: var(--color-gray-1000);
   font-weight: 600;
-  animation: in-person-exchange-blink 1.6s ease-in-out infinite;
 }
 
-@keyframes in-person-exchange-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
 
 .in-person-exchange__item-card {
   display: flex;
@@ -250,6 +239,14 @@
   font-size: 16px;
   color: var(--color-fg-placeholder, #b0b3ba);
   text-align: left;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.in-person-exchange__time-trigger-text--filled {
+  color: var(--color-fg-neutral, #1a1c20);
 }
 
 .in-person-exchange__chip-row {
@@ -299,12 +296,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
   width: 100%;
   margin-top: 8px;
-  padding: 12px 16px;
+  padding: 12px 16px 12px 8px;
   border: none;
-  background: transparent;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
@@ -319,7 +316,8 @@
 
 .in-person-exchange__list-row-title {
   font-size: 16px;
-  color: var(--color-gray-1000);
+  font-weight: 500;
+  color: #585e66;
 }
 
 .in-person-exchange__list-row-desc {

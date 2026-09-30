@@ -52,7 +52,6 @@
 .in-person-proposal-status__progress-circle--active {
   border: none;
   background: transparent;
-  animation: in-person-proposal-status-blink 1.6s ease-in-out infinite;
 }
 
 .in-person-proposal-status__progress-label {
@@ -64,18 +63,8 @@
 .in-person-proposal-status__progress-label--active {
   color: var(--color-gray-1000);
   font-weight: 600;
-  animation: in-person-proposal-status-blink 1.6s ease-in-out infinite;
 }
 
-@keyframes in-person-proposal-status-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
 
 .in-person-proposal-status__title-row {
   display: flex;

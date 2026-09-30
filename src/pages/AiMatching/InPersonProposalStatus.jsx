@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import iconInfo from '../../assets/ai-matching/icon-info-informative.svg'
 import iconClock from '../../assets/home/icon-clock.svg'
@@ -9,17 +9,11 @@ import { MATCH_CANDIDATES } from './matchCandidates'
 import './InPersonProposalStatus.css'
 
 const PROGRESS_STEPS = ['제안완료', '일정확정', '만남예정', '수령완료']
-const RESULT_DIALOG_DELAY = 5000
 const candidate = MATCH_CANDIDATES[0]
 
 export default function InPersonProposalStatus() {
   const navigate = useNavigate()
   const [isResultDialogOpen, setResultDialogOpen] = useState(false)
-
-  useEffect(() => {
-    const timer = setTimeout(() => setResultDialogOpen(true), RESULT_DIALOG_DELAY)
-    return () => clearTimeout(timer)
-  }, [])
 
   const handleViewResult = () => {
     setResultDialogOpen(false)
@@ -37,13 +31,13 @@ export default function InPersonProposalStatus() {
                 <img
                   src={iconProgressStepDone}
                   alt=""
-                  className="in-person-proposal-status__progress-circle in-person-proposal-status__progress-circle--active"
+                  className="in-person-proposal-status__progress-circle in-person-proposal-status__progress-circle--active progress-step-pop"
                 />
               ) : (
                 <span className="in-person-proposal-status__progress-circle" />
               )}
               <span
-                className={`in-person-proposal-status__progress-label${index === 0 ? ' in-person-proposal-status__progress-label--active' : ''}`}
+                className={`in-person-proposal-status__progress-label${index === 0 ? ' in-person-proposal-status__progress-label--active progress-step-blink' : ''}`}
               >
                 {label}
               </span>

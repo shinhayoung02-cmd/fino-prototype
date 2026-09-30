@@ -116,13 +116,13 @@ export default function InPersonExchange({
                 <img
                   src={iconProgressStepDone}
                   alt=""
-                  className="in-person-exchange__progress-circle in-person-exchange__progress-circle--active"
+                  className="in-person-exchange__progress-circle in-person-exchange__progress-circle--active progress-step-pop"
                 />
               ) : (
                 <span className="in-person-exchange__progress-circle" />
               )}
               <span
-                className={`in-person-exchange__progress-label${index === 0 ? ' in-person-exchange__progress-label--active' : ''}`}
+                className={`in-person-exchange__progress-label${index === 0 ? ' in-person-exchange__progress-label--active progress-step-blink' : ''}`}
               >
                 {label}
               </span>
@@ -155,7 +155,13 @@ export default function InPersonExchange({
         <p className="in-person-exchange__field-label">거래 희망 시간대 제안해주세요.</p>
         <button type="button" className="in-person-exchange__time-trigger" onClick={() => setTimeSheetOpen(true)}>
           <img src={iconClockSelect} alt="" className="in-person-exchange__time-trigger-icon" />
-          <span className="in-person-exchange__time-trigger-text">시간을 선택해주세요</span>
+          <span
+            className={`in-person-exchange__time-trigger-text${confirmedSlots.length ? ' in-person-exchange__time-trigger-text--filled' : ''}`}
+          >
+            {confirmedSlots.length
+              ? confirmedSlots.map((slot) => formatSlotLabel(slot.date, slot.time)).join(', ')
+              : '시간을 선택해주세요'}
+          </span>
         </button>
         <div className="in-person-exchange__chip-row">
           {confirmedSlots.map((slot) => (

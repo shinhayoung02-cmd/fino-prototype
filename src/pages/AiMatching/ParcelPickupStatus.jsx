@@ -32,7 +32,7 @@ const FAQ_ITEMS = [
   },
 ]
 
-export default function ParcelPickupStatus() {
+export default function ParcelPickupStatus({ onGoHome }) {
   const navigate = useNavigate()
   const [isDeliveryDoneDialogOpen, setDeliveryDoneDialogOpen] = useState(false)
   const [isFaqOpen, setFaqOpen] = useState(false)
@@ -54,7 +54,7 @@ export default function ParcelPickupStatus() {
           <div className="parcel-pickup-status__progress-step" key={label}>
             {index > 0 && (
               <div
-                className={`parcel-pickup-status__progress-connector${index < DONE_COUNT ? ' parcel-pickup-status__progress-connector--done' : ''}`}
+                className={`parcel-pickup-status__progress-connector${index < DONE_COUNT ? ' parcel-pickup-status__progress-connector--done' : ''}${index === DONE_COUNT - 1 ? ' progress-connector-fill' : ''}`}
               />
             )}
             <div className="parcel-pickup-status__progress-node">
@@ -62,13 +62,13 @@ export default function ParcelPickupStatus() {
                 <img
                   src={iconProgressStepDone}
                   alt=""
-                  className="parcel-pickup-status__progress-circle parcel-pickup-status__progress-circle--active"
+                  className={`parcel-pickup-status__progress-circle parcel-pickup-status__progress-circle--active${index === DONE_COUNT - 1 ? ' progress-step-pop' : ''}`}
                 />
               ) : (
                 <span className="parcel-pickup-status__progress-circle" />
               )}
               <span
-                className={`parcel-pickup-status__progress-label${index < DONE_COUNT ? ' parcel-pickup-status__progress-label--active' : ''}`}
+                className={`parcel-pickup-status__progress-label${index < DONE_COUNT ? ' parcel-pickup-status__progress-label--active' : ''}${index === DONE_COUNT - 1 ? ' progress-step-blink' : ''}`}
               >
                 {label}
               </span>
@@ -116,7 +116,7 @@ export default function ParcelPickupStatus() {
       </div>
 
       <div className="parcel-pickup-status__actions">
-        <button type="button" className="parcel-pickup-status__home" onClick={() => navigate('/')}>
+        <button type="button" className="parcel-pickup-status__home" onClick={() => (onGoHome ? onGoHome() : navigate('/'))}>
           홈으로
         </button>
       </div>

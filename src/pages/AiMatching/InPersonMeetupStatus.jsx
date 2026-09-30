@@ -30,7 +30,7 @@ export default function InPersonMeetupStatus({ locations = [] }) {
           <div className="in-person-meetup-status__progress-step" key={label}>
             {index > 0 && (
               <div
-                className={`in-person-meetup-status__progress-connector${index < DONE_COUNT ? ' in-person-meetup-status__progress-connector--done' : ''}`}
+                className={`in-person-meetup-status__progress-connector${index < DONE_COUNT ? ' in-person-meetup-status__progress-connector--done' : ''}${index === DONE_COUNT - 1 ? ' progress-connector-fill' : ''}`}
               />
             )}
             <div className="in-person-meetup-status__progress-node">
@@ -38,13 +38,13 @@ export default function InPersonMeetupStatus({ locations = [] }) {
                 <img
                   src={iconProgressStepDone}
                   alt=""
-                  className="in-person-meetup-status__progress-circle in-person-meetup-status__progress-circle--active"
+                  className={`in-person-meetup-status__progress-circle in-person-meetup-status__progress-circle--active${index === DONE_COUNT - 1 ? ' progress-step-pop' : ''}`}
                 />
               ) : (
                 <span className="in-person-meetup-status__progress-circle" />
               )}
               <span
-                className={`in-person-meetup-status__progress-label${index < DONE_COUNT ? ' in-person-meetup-status__progress-label--active' : ''}`}
+                className={`in-person-meetup-status__progress-label${index < DONE_COUNT ? ' in-person-meetup-status__progress-label--active' : ''}${index === DONE_COUNT - 1 ? ' progress-step-blink' : ''}`}
               >
                 {label}
               </span>

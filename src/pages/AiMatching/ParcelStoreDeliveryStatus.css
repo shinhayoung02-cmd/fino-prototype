@@ -56,7 +56,6 @@
 .parcel-store-status__progress-circle--active {
   border: none;
   background: transparent;
-  animation: parcel-store-status-blink 1.6s ease-in-out infinite;
 }
 
 .parcel-store-status__progress-label {
@@ -68,18 +67,8 @@
 .parcel-store-status__progress-label--active {
   color: var(--color-gray-1000);
   font-weight: 600;
-  animation: parcel-store-status-blink 1.6s ease-in-out infinite;
 }
 
-@keyframes parcel-store-status-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
 
 .parcel-store-status__title-row {
   display: flex;
@@ -273,4 +262,74 @@
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
+}
+
+/* 편의점 택배 발송 대기(ParcelStoreDeliveryStatus) 전용 — Figma 387:33816 */
+.parcel-store-status--waiting {
+  padding-bottom: 20px;
+}
+
+.parcel-store-status--waiting .parcel-store-status__progress {
+  height: 70px;
+}
+
+.parcel-store-status--waiting .parcel-store-status__title-row,
+.parcel-store-status--waiting .parcel-store-status__subtitle {
+  padding: 0 4px;
+}
+
+.parcel-store-status--waiting .parcel-store-status__subtitle {
+  margin-top: 4px;
+}
+
+.parcel-store-status--waiting .parcel-store-status__item-card {
+  position: relative;
+  height: 115px;
+  flex-shrink: 0;
+  margin-top: 12px;
+  padding: 18px 0 0 7px;
+  border-bottom: none;
+  box-sizing: border-box;
+}
+
+.parcel-store-status--waiting .parcel-store-status__item-card::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  bottom: 0;
+  width: 364px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.parcel-store-status--waiting .parcel-store-status__item-info {
+  padding-top: 0;
+}
+
+.parcel-store-status--waiting .parcel-store-status__item-title {
+  line-height: 16px;
+}
+
+.parcel-store-status--waiting .parcel-store-status__field {
+  margin-top: auto;
+  flex-shrink: 0;
+  gap: 16px;
+}
+
+.parcel-store-status--waiting .parcel-store-status__field-label {
+  line-height: 16px;
+}
+
+.parcel-store-status--waiting .parcel-store-status__status-row {
+  padding: 16px;
+}
+
+.parcel-store-status--waiting .parcel-store-status__status-divider {
+  width: auto;
+  margin: 0 12px;
+}
+
+.parcel-store-status--waiting .parcel-store-status__next-wrap {
+  margin-top: 0;
+  padding-top: 23px;
 }

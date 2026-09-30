@@ -109,7 +109,7 @@ export default function WaitingScreen({
         )
       )}
 
-      <div className={`waiting-screen__next-wrap${showList || statusItems ? '' : ' waiting-screen__next-wrap--pinned'}`}>
+      <div className={`waiting-screen__next-wrap${showList && !statusItems ? '' : ' waiting-screen__next-wrap--pinned'}`}>
         {secondaryCtaLabel && (
           <button type="button" className="waiting-screen__secondary" onClick={onSecondaryCta}>
             {secondaryCtaLabel}
