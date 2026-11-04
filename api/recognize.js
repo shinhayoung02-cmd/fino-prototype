@@ -3,10 +3,15 @@
 // AI는 칸별 값만 주고, 문장은 itemProfiles.js와 같은 형식으로 여기서 조립한다.
 // 무료 서버가 붐비면(503) 다음 모델로 넘어간다
 const MODELS = ['gemini-flash-latest', 'gemini-flash-lite-latest']
-const CATEGORIES = ['지갑', '가방', '이어폰', '열쇠/키', '휴대폰', '카드/신분증', '전자기기', '의류', '액세서리', '우산', '기타']
+const CATEGORIES = [
+  '지갑', '가방', '이어폰', '열쇠/키', '휴대폰', '카드/신분증', '안경/선글라스', '시계', '모자', '신발',
+  '우산', '텀블러/물병', '화장품', '책/문구', '인형/장난감', '전자기기', '의류', '액세서리', '기타',
+]
+// 너무 넓은 분류면 이름은 form(예: 선글라스, 반지)으로 쓴다
+const BROAD = new Set(['전자기기', '의류', '액세서리', '기타', '안경/선글라스', '책/문구', '인형/장난감'])
 
 const PROMPT = `분실물 사진 속 물건 하나를 한국어로 판단해 칸별로 채워.
-- category: 목록 중 하나
+- category: 목록 중 가장 구체적으로 맞는 것 하나
 - color: "검정색"처럼 "~색"
 - brand: 로고·각인이 실제로 보일 때만, 아니면 null (추측 금지)
 - material: 가죽, 플라스틱, 금속 등. 모르면 null
@@ -57,7 +62,7 @@ export default async function handler(req, res) {
   try {
     const data = await r.json()
     const fields = JSON.parse(data.candidates[0].content.parts[0].text)
-    return res.status(200).json({ ...fields, name: fields.category, description: toDescription(fields) })
+    return res.status(200).json({ ...fields, name: BROAD.has(fields.category) ? fields.form : fields.category, description: toDescription(fields) })
   } catch {
     return res.status(502).json({ error: 'unparseable' })
   }
