@@ -4,6 +4,7 @@
 
 - **시연:** https://fino-v2.vercel.app (모바일 화면 기준)
 - **코드:** 이 브랜치 `fino-v2-updates`
+- **AI 활용 정의서:** [AI_USAGE.md](AI_USAGE.md)
 
 ## 주요 기능
 
