@@ -72,3 +72,9 @@ VITE_SUPABASE_PUBLISHABLE_KEY=...
 - **매칭 흐름:** AI 매칭·소유권 확인·전달 흐름은 시연 시나리오로 동작합니다.
 - **사진:** 올린 사진은 인식에만 쓰고 저장하지 않습니다.
 - **로그인:** 없으며, DB는 시연용으로 누구나 등록·조회할 수 있게 열려 있습니다.
+
+## 팀
+
+- [@shinhayoung02-cmd](https://github.com/shinhayoung02-cmd)
+- [@jeff2-you](https://github.com/jeff2-you)
+- [@pyeeun0430-web](https://github.com/pyeeun0430-web)
