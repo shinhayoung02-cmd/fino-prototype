@@ -13,6 +13,7 @@ import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import iconCheck from '../../assets/ai-matching/icon-parcel-check.svg'
 import scrollHintButton from '../../assets/home/scroll-hint-button.png'
 import { useKakaoMap } from '../../lib/kakaoMaps'
+import { fetchRecentItems } from '../../lib/supabase'
 import './Home.css'
 
 const RECENT_ACTIVITY = [
@@ -30,6 +31,13 @@ const LEFT_ITEM_OPTIONS = [
   { id: 'street', title: '길에서 보고 두고 왔어요' },
   { id: 'station', title: '지구대 등에 맡겼어요' },
 ]
+
+const toActivity = (row, i) => ({
+  id: `db-${row.id}`,
+  text: `${row.kind === 'lost' ? '분실물' : '습득물'} '${row.name}'을 등록했어요`,
+  time: new Date(row.created_at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+  active: i === 0,
+})
 
 function QuickActionCard({ title, description, onClick }) {
   const Tag = onClick ? 'button' : 'div'
@@ -55,6 +63,10 @@ export default function Home({
   foundMatchResultPath = '/found/match-result',
 }) {
   const [query, setQuery] = useState('')
+  const [recentActivity, setRecentActivity] = useState(RECENT_ACTIVITY)
+  useEffect(() => {
+    fetchRecentItems().then((rows) => rows.length && setRecentActivity(rows.map(toActivity)))
+  }, [])
   const [isScanPaused, setIsScanPaused] = useState(false)
   const [isFoundScanPaused, setIsFoundScanPaused] = useState(false)
   const [isFoundSheetOpen, setFoundSheetOpen] = useState(false)
@@ -227,7 +239,7 @@ export default function Home({
           <h3 className="home-section-head__title">최근 활동</h3>
         </div>
         <div className="home-activity-card">
-          {RECENT_ACTIVITY.map((item) => (
+          {recentActivity.map((item) => (
             <div className="home-activity-item" key={item.id}>
               <span className={`home-activity-item__dot${item.active ? ' home-activity-item__dot--active' : ''}`} />
               <div className="home-activity-item__body">

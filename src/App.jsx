@@ -10,6 +10,7 @@ import NearbyMapView from './pages/Home/NearbyMapView'
 import SearchPage from './pages/Home/SearchPage'
 import iconSettingsGear from './assets/my-page/icon-settings-gear.svg'
 import AiMatching from './pages/AiMatching/AiMatching'
+import { saveItem } from './lib/supabase'
 import { ITEM_PROFILES, getItemProfile } from './data/itemProfiles'
 import { withObjectParticle } from './utils/korean'
 import { MATCH_CANDIDATES } from './pages/AiMatching/matchCandidates'
@@ -312,6 +313,18 @@ function DetailScreen() {
   )
 }
 
+// 등록 draft → Supabase items 행 (사진은 아직 저장 안 함)
+const toItemRow = (kind, flow, d, extra = null) => ({
+  kind,
+  flow,
+  name: d.name,
+  description: d.description,
+  item_key: d.itemKey ?? null,
+  time_range: d.timeRange,
+  location: d.location,
+  extra,
+})
+
 const INITIAL_LOST_DRAFT = {
   photos: [],
   name: '',
@@ -581,12 +594,14 @@ function App() {
   }
 
   const handleRegisterFoundItem = () => {
+    saveItem(toItemRow('found', 'keep', foundDraft))
     setCompletedFoundItem(foundDraft)
     setFoundDraft(INITIAL_FOUND_DRAFT)
     navigate('/found/new/done')
   }
 
   const handleRegisterFoundLeftItem = () => {
+    saveItem(toItemRow('found', 'left', foundLeftDraft))
     setCompletedFoundItem(foundLeftDraft)
     setFoundLeftDraft(INITIAL_FOUND_LEFT_DRAFT)
     navigate('/found/new/left/done')
@@ -1780,7 +1795,10 @@ function App() {
                 draft={foundStationDraft}
                 onDraftChange={setFoundStationDraft}
                 onPrev={() => navigate('/found/new/station')}
-                onRegister={() => navigate('/found/new/station/done')}
+                onRegister={() => {
+                  saveItem(toItemRow('found', 'station', foundStationDraft, { lost112Number: foundStationDraft.lost112Number }))
+                  navigate('/found/new/station/done')
+                }}
               />
             </SubStepScreen>
           }
@@ -2670,6 +2688,7 @@ function App() {
               <FeatureReview
                 answers={lostDraft.featureAnswers}
                 onRegister={() => {
+                  saveItem(toItemRow('lost', null, lostDraft, { featureAnswers: lostDraft.featureAnswers }))
                   setCompletedItem(lostDraft)
                   setLostDraft(INITIAL_LOST_DRAFT)
                   setAwaitingMatchNotification(true)
