@@ -75,6 +75,8 @@ VITE_SUPABASE_PUBLISHABLE_KEY=...
 
 ## 팀
 
-- [@shinhayoung02-cmd](https://github.com/shinhayoung02-cmd)
-- [@jeff2-you](https://github.com/jeff2-you)
-- [@pyeeun0430-web](https://github.com/pyeeun0430-web)
+| 이름 | GitHub | 역할 |
+|---|---|---|
+| 유소희 | [@jeff2-you](https://github.com/jeff2-you) | 서비스 기획, UX 리서치 및 사용자 시나리오 설계, 서비스 플로우·핵심 기능 정의, 수익모델 기획, 프로젝트 일정·협업 관리 |
+| 박예은 | [@pyeeun0430-web](https://github.com/pyeeun0430-web) | 시장·경쟁 서비스 조사, 핵심 타깃 사용자 분석, 온·오프라인 홍보 전략 수립, 마케팅 콘텐츠 기획, 사용자 확보 및 서비스 반응 조사 |
+| 신하영 | [@shinhayoung02-cmd](https://github.com/shinhayoung02-cmd) | 바이브코딩 기반 웹 서비스 개발, 프론트엔드 구현, AI 이미지 분석·분실물 매칭 기능 연동, DB 및 API 연동, 프로토타입 배포·기능 개선 |
