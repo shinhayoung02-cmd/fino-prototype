@@ -26,7 +26,7 @@ export default function ParcelPickupAddressCheck() {
           <img src={iconSearchLg} alt="" />
         </div>
         <p className="parcel-pickup-address-check__empty-title">등록된 주소가 없어요</p>
-        <p className="parcel-pickup-address-check__empty-desc">당근에서 사용할 주소를 등록해 주세요.</p>
+        <p className="parcel-pickup-address-check__empty-desc">FINO에서 사용할 주소를 등록해 주세요.</p>
       </div>
 
       <div className="parcel-pickup-address-check__next-wrap">

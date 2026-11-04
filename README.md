@@ -1,6 +1,6 @@
-# FINO — 당근마켓 분실물 찾기 서비스 (v2)
+# FINO — AI 분실물 찾기 서비스 (v2)
 
-당근마켓 동네 기반으로 **분실물과 습득물을 AI가 연결해 주는** 서비스의 동작하는 프로토타입입니다.
+동네 기반으로 **분실물과 습득물을 AI가 연결해 주는** 서비스의 동작하는 프로토타입입니다.
 
 - **시연:** https://fino-v2.vercel.app (모바일 화면 기준)
 - **코드:** 이 브랜치 `fino-v2-updates`
@@ -32,7 +32,7 @@
 ## 기술 스택
 
 - React 19 + Vite, React Router
-- SEED Design (당근 디자인 시스템)
+- SEED Design (디자인 시스템)
 - Supabase (PostgreSQL) — REST API로 저장·조회
 - Google Gemini API — 이미지 인식
 - Vercel — 배포 + 서버 함수
