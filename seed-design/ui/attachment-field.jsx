@@ -230,7 +230,7 @@ AttachmentInputItem.displayName = "AttachmentInputItem";
  * Prototype-only variant: tapping the trigger appends the next preset sample photo
  * instead of opening the native OS file picker. Reuses SEED's item/remove-button UI.
  */
-export const AttachmentInputPreset = React.forwardRef(({ samples, triggerClassName, countClassName, pickerOptions, onPick, disabled }, ref) => {
+export const AttachmentInputPreset = React.forwardRef(({ samples, triggerClassName, countClassName, pickerOptions, onPick, onUploadFile, uploadConsent, disabled }, ref) => {
   return (
     <SeedAttachmentInput.Container ref={ref}>
       <PresetTrigger
@@ -239,6 +239,8 @@ export const AttachmentInputPreset = React.forwardRef(({ samples, triggerClassNa
         countClassName={countClassName}
         pickerOptions={pickerOptions}
         onPick={onPick}
+        onUploadFile={onUploadFile}
+        uploadConsent={uploadConsent}
         disabled={disabled}
       />
       <SeedAttachmentInput.ItemGroup>
@@ -256,7 +258,12 @@ AttachmentInputPreset.displayName = "AttachmentInputPreset";
 
 const PICKER_TOP_INSET = 88; // status bar (44px) + app header (44px)
 
-function PresetTrigger({ samples = [], className, countClassName, pickerOptions, onPick, disabled: disabledProp }) {
+const UPLOAD_CONSENT_KEY = "fino-photo-upload-consent";
+
+// onUploadFile이 있으면 갤러리 맨 앞에 "+" 칸 → 실제 파일 선택. 처음 한 번은 uploadConsent 안내에 동의해야 열린다.
+function PresetTrigger({ samples = [], className, countClassName, pickerOptions, onPick, onUploadFile, uploadConsent, disabled: disabledProp }) {
+  const fileInputRef = React.useRef(null);
+  const [consentOpen, setConsentOpen] = React.useState(false);
   const { setFileEntries, currentFileEntryCount, maxFiles, stateProps } = useFileUploadContext();
   const [pickerOpen, setPickerOpen] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
@@ -311,6 +318,52 @@ function PresetTrigger({ samples = [], className, countClassName, pickerOptions,
     onPick?.(option);
     closePicker();
   };
+
+  const openFileInput = () => {
+    if (uploadConsent && !localStorage.getItem(UPLOAD_CONSENT_KEY)) {
+      setConsentOpen(true);
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
+  const handleConsentAgree = () => {
+    localStorage.setItem(UPLOAD_CONSENT_KEY, "1");
+    setConsentOpen(false);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setFileEntries([file]);
+    closePicker();
+    onUploadFile(file);
+  };
+
+  const renderUploadTile = () => (
+    <button
+      key="upload"
+      type="button"
+      onClick={openFileInput}
+      aria-label="내 사진 올리기"
+      style={{
+        aspectRatio: "1 / 1",
+        border: "none",
+        padding: 0,
+        background: "#f3f4f5",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+      }}
+    >
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#868b94" strokeWidth="2" strokeLinecap="round">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+    </button>
+  );
 
   const handleDragStart = (event) => {
     dragStartRef.current = { y: event.clientY, height: heightRef.current };
@@ -488,9 +541,47 @@ function PresetTrigger({ samples = [], className, countClassName, pickerOptions,
                   padding: "2px 4px 20px",
                 }}
               >
+                {onUploadFile && renderUploadTile()}
                 {pickerOptions.map((option) => renderGridItem(option))}
               </div>
             </div>
+            {onUploadFile && (
+              <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleFileChange} />
+            )}
+            {consentOpen && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "rgba(0, 0, 0, 0.45)",
+                  display: "flex",
+                  alignItems: "flex-end",
+                }}
+              >
+                <div style={{ width: "100%", background: "#ffffff", borderRadius: "20px 20px 0 0", padding: "24px 16px 20px" }}>
+                  <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#1a1c20" }}>사진 이용에 동의해주세요</p>
+                  <p style={{ margin: "8px 0 20px", fontSize: 13, lineHeight: 1.5, color: "#555d6d", whiteSpace: "pre-line" }}>
+                    {uploadConsent}
+                  </p>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => setConsentOpen(false)}
+                      style={{ flex: 1, height: 48, border: "none", borderRadius: 10, background: "#f3f4f5", color: "#1a1c20", fontSize: 16, fontWeight: 600, fontFamily: "inherit", cursor: "pointer" }}
+                    >
+                      취소
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleConsentAgree}
+                      style={{ flex: 2, height: 48, border: "none", borderRadius: 10, background: "#ff6600", color: "#ffffff", fontSize: 16, fontWeight: 600, fontFamily: "inherit", cursor: "pointer" }}
+                    >
+                      동의하고 사진 선택
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </>
       )}

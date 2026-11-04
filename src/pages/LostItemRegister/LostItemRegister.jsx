@@ -25,6 +25,24 @@ function buildPhotoOption(itemKey) {
 
 const PHOTO_OPTIONS = ['wallet-normal', 'airpods', 'car-key'].map(buildPhotoOption)
 
+// 직접 올린 사진은 /api/recognize(Gemini)로 판단. 무료 한도(429)를 다 쓰면 오늘은 "+" 칸을 숨긴다.
+const AI_OFF_KEY = 'fino-ai-off-date'
+const today = () => new Date().toDateString()
+const UPLOAD_CONSENT =
+  '올린 사진은 물건 종류·색상·특징을 자동으로 인식하기 위해 AI(Google Gemini)로 전송돼요.\n' +
+  '신분증, 카드 번호, 얼굴 등 개인정보가 보이지 않는 사진을 올려주세요.'
+
+// 긴 변 1024px JPEG base64로 줄여서 전송 (Vercel 요청 크기 제한)
+async function toJpegBase64(file, max = 1024) {
+  const bitmap = await createImageBitmap(file)
+  const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height))
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(bitmap.width * scale)
+  canvas.height = Math.round(bitmap.height * scale)
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+  return canvas.toDataURL('image/jpeg', 0.85).split(',')[1]
+}
+
 const MAX_PHOTOS = 10
 const AI_RECOGNITION_DELAY = 1200
 
@@ -37,6 +55,32 @@ export default function LostItemRegister({ draft, onDraftChange }) {
   const [isFeatureSheetOpen, setFeatureSheetOpen] = useState(false)
   const [isRecognizing, setIsRecognizing] = useState(false)
   const [pickedPhotoOption, setPickedPhotoOption] = useState(null)
+  const [isAiOff, setAiOff] = useState(() => localStorage.getItem(AI_OFF_KEY) === today())
+
+  const handleUploadFile = async (file) => {
+    setIsRecognizing(true)
+    try {
+      const res = await fetch('/api/recognize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: await toJpegBase64(file) }),
+      })
+      if (res.status === 429) {
+        localStorage.setItem(AI_OFF_KEY, today())
+        setAiOff(true)
+        alert('오늘 AI 인식 사용량을 모두 썼어요. 물건 정보를 직접 입력해주세요.')
+        return
+      }
+      if (!res.ok) throw new Error(res.status)
+      const result = await res.json()
+      onDraftChange((prev) => ({ ...prev, name: result.name, description: result.description, itemKey: null }))
+    } catch (err) {
+      console.error('[recognize]', err)
+      alert('사진을 인식하지 못했어요. 물건 정보를 직접 입력해주세요.')
+    } finally {
+      setIsRecognizing(false)
+    }
+  }
 
   const setName = (value) => onDraftChange({ ...draft, name: value })
   const setDescription = (value) => onDraftChange({ ...draft, description: value })
@@ -94,6 +138,8 @@ export default function LostItemRegister({ draft, onDraftChange }) {
             <AttachmentInputPreset
               pickerOptions={PHOTO_OPTIONS}
               onPick={setPickedPhotoOption}
+              onUploadFile={isAiOff ? undefined : handleUploadFile}
+              uploadConsent={UPLOAD_CONSENT}
               triggerClassName="lost-register__photo-trigger"
               countClassName="lost-register__photo-count"
             />
