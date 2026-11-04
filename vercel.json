@@ -1,3 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "fino-prototype.vercel.app" }],
+      "destination": "https://fino-v2.vercel.app/:path*",
+      "permanent": false
+    }
+  ],
   "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
 }
