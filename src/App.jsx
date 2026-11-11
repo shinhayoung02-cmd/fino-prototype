@@ -369,7 +369,7 @@ function App() {
   const [completedItem, setCompletedItem] = useState(null)
   const [storageItems, setStorageItems] = useState(INITIAL_STORAGE_ITEMS)
   // 플로우 설정 '보관함 물건 있음' — 끄면 보관함이 빈 상태로 보임
-  const [hasStorageItems, setHasStorageItems] = useState(true)
+  const [hasStorageItems, setHasStorageItems] = useState(false)
   const visibleStorageItems = hasStorageItems ? storageItems : []
   const [storageDraft, setStorageDraft] = useState(INITIAL_LOST_DRAFT)
   const [addedStorageItem, setAddedStorageItem] = useState(null)
