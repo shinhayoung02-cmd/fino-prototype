@@ -895,7 +895,7 @@ function App() {
     resetFlowState()
     resetFoundFlowState()
     navigate('/')
-    setSplash({ id: Date.now(), withProgress: true })
+    setSplash({ id: Date.now(), withProgress: false })
   }
 
   const handleConfirmFlowChange = () => {
