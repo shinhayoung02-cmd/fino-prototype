@@ -48,9 +48,10 @@ import EvidenceSubmitted from './pages/AiMatching/EvidenceSubmitted'
 import { EMPTY_EVIDENCE_FILES } from './pages/AiMatching/evidenceSteps'
 import FinderReviewing from './pages/AiMatching/FinderReviewing'
 import FoundMatchResult from './pages/AiMatching/FoundMatchResult'
-import OwnershipQuizIntro from './pages/AiMatching/OwnershipQuizIntro'
-import OwnershipQuizQuestion from './pages/AiMatching/OwnershipQuizQuestion'
-import OwnershipQuizReview from './pages/AiMatching/OwnershipQuizReview'
+import OwnerQuizBuilding from './pages/AiMatching/OwnerQuizBuilding'
+import OwnerQuizEditor from './pages/AiMatching/OwnerQuizEditor'
+import OwnerQuizSolve from './pages/AiMatching/OwnerQuizSolve'
+import { getOwnerQuiz } from './data/ownerQuiz'
 import OwnershipQuizSubmitted from './pages/AiMatching/OwnershipQuizSubmitted'
 import OwnershipQuizWaiting from './pages/AiMatching/OwnershipQuizWaiting'
 import OwnershipQuizUndecided from './pages/AiMatching/OwnershipQuizUndecided'
@@ -143,24 +144,6 @@ const DELIVERY_METHOD_PICK_OPTIONS = [
   { id: 'in-person', label: '직접 만나서 전달' },
   { id: 'parcel', label: '일반 택배로 전달' },
   { id: 'parcel-store', label: '편의점 택배로 전달' },
-]
-
-const OWNERSHIP_QUIZ_FAQ_ITEMS = [
-  {
-    id: 'why-check',
-    question: '왜 특징을 확인해야 하나요?',
-    answer: '분실자가 적어둔 특징과 실제 물건을 비교해 주인이 맞는지 확인하기 위해서예요.',
-  },
-  {
-    id: 'unsure-feature',
-    question: '확인하기 어려운 특징은 어떻게 하나요?',
-    answer: '직접 확인하기 어렵다면 잘 모르겠어요를 선택해도 괜찮아요.',
-  },
-  {
-    id: 'info-visibility',
-    question: '분실자가 적은 정보는 모두 볼 수 있나요?',
-    answer: '아니요. 주인 확인에 필요한 특징만 질문 형태로 보여드려요.',
-  },
 ]
 
 const NAV_ITEMS = [
@@ -415,6 +398,8 @@ function App() {
   const [isNavMenuOpen, setNavMenuOpen] = useState(false)
   const [isMultipleClaimantsFlow, setMultipleClaimantsFlow] = useState(() => savedFlowSettings.isMultipleClaimantsFlow ?? false)
   const [ownershipQuizAnswers, setOwnershipQuizAnswers] = useState([null, null, null])
+  // 습득자가 등록한 주관식 퀴즈 (분실자가 풂)
+  const [ownerQuiz, setOwnerQuiz] = useState(null)
   const [secondaryVerificationAnswers, setSecondaryVerificationAnswers] = useState([null, null, null])
   const [isQuizFailFlow, setQuizFailFlow] = useState(() => savedFlowSettings.isQuizFailFlow ?? false)
   const [isFoundRestrictedFlow, setFoundRestrictedFlow] = useState(() => savedFlowSettings.isFoundRestrictedFlow ?? false)
@@ -1028,7 +1013,6 @@ function App() {
               <MatchDetail
                 completedItem={completedItem}
                 isOwnershipRequested={isOwnershipRequested}
-                onRequestOwnership={() => setOwnershipRequested(true)}
                 isVerificationReady={isVerificationReady}
                 verificationResultPath={verificationResultPath}
                 candidate={{
@@ -1086,6 +1070,26 @@ function App() {
               ) : (
                 <WaitingScreen onGoHome={handleGoHomeAfterSubmit} />
               )}
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/matching/result/ownership/quiz"
+          element={
+            <SubStepScreen
+              title="소유권 확인 퀴즈"
+              backTo="/matching/result"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+              activeTab="/matching"
+              onSelectTab={setActiveTab}
+            >
+              <OwnerQuizSolve
+                quiz={ownerQuiz ?? getOwnerQuiz(completedItem?.itemKey)}
+                onSubmit={() => {
+                  setOwnershipRequested(true)
+                  navigate('/matching/result/ownership')
+                }}
+              />
             </SubStepScreen>
           }
         />
@@ -2052,15 +2056,7 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <OwnershipQuizIntro
-                badge="주인 확인중"
-                title="물건의 주인을 확인해주세요"
-                subtitle="분실자가 적어둔 특징과 지금 가지고 있는 물건을 비교해보세요."
-                calloutText="비공개 정보는 주인 확인에만 사용돼요."
-                ctaLabel="특징 확인하기"
-                faqItems={OWNERSHIP_QUIZ_FAQ_ITEMS}
-                onConfirm={() => navigate('/found/match-result/quiz/1')}
-              />
+              <OwnerQuizBuilding onDone={() => navigate('/found/match-result/quiz/1', { replace: true })} />
             </SubStepScreen>
           }
         />
@@ -2074,30 +2070,12 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <OwnershipQuizQuestion
-                answers={ownershipQuizAnswers}
-                onChangeAnswers={setOwnershipQuizAnswers}
-                onSubmit={() => navigate('/found/match-result/quiz/review')}
-                steps={foundItemProfile.verificationQuestions}
-              />
-            </SubStepScreen>
-          }
-        />
-        <Route
-          path="/found/match-result/quiz/review"
-          element={
-            <SubStepScreen
-              title="소유권 확인 퀴즈"
-              backTo="/found/match-result/quiz/1"
-              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
-              activeTab="/"
-              onSelectTab={setActiveTab}
-            >
-              <OwnershipQuizReview
-                answers={ownershipQuizAnswers}
-                onEdit={() => navigate('/found/match-result/quiz/1')}
-                onSubmit={() => navigate('/found/match-result/quiz/submitted')}
-                steps={foundItemProfile.verificationQuestions}
+              <OwnerQuizEditor
+                initialQuiz={ownerQuiz ?? getOwnerQuiz(completedFoundItem?.itemKey)}
+                onSubmit={(quiz) => {
+                  setOwnerQuiz(quiz)
+                  navigate('/found/match-result/quiz/submitted')
+                }}
               />
             </SubStepScreen>
           }
@@ -2106,13 +2084,15 @@ function App() {
           path="/found/match-result/quiz/submitted"
           element={
             <SubStepScreen
-              title="제출 완료"
-              backTo="/found/match-result/quiz/review"
+              title="등록 완료"
+              backTo="/found/match-result/quiz/1"
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
               activeTab="/"
               onSelectTab={setActiveTab}
             >
               <OwnershipQuizSubmitted
+                title="퀴즈를 등록했어요"
+                descLines={['분실자가 퀴즈를 풀면', '결과를 알려드릴게요.']}
                 onViewWaiting={() => navigate('/found/match-result/quiz/waiting')}
                 onGoHome={handleGoHomeAfterOwnershipQuiz}
               />

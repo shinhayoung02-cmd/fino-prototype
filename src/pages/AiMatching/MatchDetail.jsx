@@ -9,7 +9,6 @@ import './MatchDetail.css'
 export default function MatchDetail({
   completedItem,
   isOwnershipRequested,
-  onRequestOwnership,
   isVerificationReady,
   verificationResultPath,
   candidate = MATCH_CANDIDATES[0],
@@ -79,10 +78,7 @@ export default function MatchDetail({
               <button
                 type="button"
                 className="match-detail__action match-detail__action--primary"
-                onClick={() => {
-                  onRequestOwnership?.()
-                  navigate('/matching/result/ownership')
-                }}
+                onClick={() => navigate('/matching/result/ownership/quiz')}
               >
                 소유권 확인하기
               </button>

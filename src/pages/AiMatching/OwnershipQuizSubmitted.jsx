@@ -3,7 +3,13 @@ import iconInfo from '../../assets/lost-register/icon-info.svg'
 import SuccessGraphic from '../../components/common/SuccessGraphic/SuccessGraphic'
 import './OwnershipQuizSubmitted.css'
 
-export default function OwnershipQuizSubmitted({ onGoHome, onViewWaiting, showWaitingButton = true }) {
+export default function OwnershipQuizSubmitted({
+  onGoHome,
+  onViewWaiting,
+  showWaitingButton = true,
+  title = '확인한 답변을 보냈어요',
+  descLines = ['답변을 바탕으로 주인 확인', '결과를 안내할게요.'],
+}) {
   const navigate = useNavigate()
 
   const handleGoHome = () => {
@@ -20,11 +26,11 @@ export default function OwnershipQuizSubmitted({ onGoHome, onViewWaiting, showWa
 
       <div className="ownership-quiz-submitted__body">
         <SuccessGraphic />
-        <h2 className="ownership-quiz-submitted__title">확인한 답변을 보냈어요</h2>
+        <h2 className="ownership-quiz-submitted__title">{title}</h2>
         <p className="ownership-quiz-submitted__desc">
-          답변을 바탕으로 주인 확인
+          {descLines[0]}
           <br />
-          결과를 안내할게요.
+          {descLines[1]}
         </p>
       </div>
 
