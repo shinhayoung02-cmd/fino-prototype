@@ -211,6 +211,9 @@ export default function NavMenu({
   hasStorageItems,
   onToggleHasStorageItems,
   onRestart,
+  deliveryMethodOptions = [],
+  deliveryMethodPick,
+  onSelectDeliveryMethod,
   onToggleFoundMultipleClaimantsFlow,
 }) {
   // 폰 프레임 밖에 떠 있는 접이식 패널. 헤더를 끌면 이동, 짧게 누르면 접기/펼치기. 앱 안 ☰ 버튼은 펼치기.
@@ -344,6 +347,22 @@ export default function NavMenu({
                   <span className="nav-menu__switch-thumb" />
                 </span>
               </button>
+              <div className="nav-menu__choice">
+                <span className="nav-menu__switch-title">반환 방식(습득자)</span>
+                <div className="nav-menu__choice-group">
+                  {deliveryMethodOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={`nav-menu__choice-btn${deliveryMethodPick === option.id ? ' nav-menu__choice-btn--on' : ''}`}
+                      aria-pressed={deliveryMethodPick === option.id}
+                      onClick={() => onSelectDeliveryMethod?.(option.id)}
+                    >
+                      {option.label.replace(/(로)? 전달$/, '')}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <p className="nav-menu__settings-hint">아래 스위치는 분실자 플로우에서 사용해요.</p>
               <button
                 type="button"

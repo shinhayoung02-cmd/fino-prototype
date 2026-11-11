@@ -326,3 +326,38 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+/* 반환 방식 선택 (습득자) */
+.nav-menu__choice {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.nav-menu__choice-group {
+  display: flex;
+  gap: 6px;
+}
+
+.nav-menu__choice-btn {
+  flex: 1;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid #dcdee3;
+  border-radius: 8px;
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: #555d6d;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nav-menu__choice-btn--on {
+  border-color: #ff6600;
+  background: #fff2ec;
+  color: #e14d00;
+  font-weight: 700;
+}

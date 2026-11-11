@@ -393,8 +393,8 @@ function App() {
   const [isMultiClaimantResultDialogOpen, setMultiClaimantResultDialogOpen] = useState(false)
   const [isAwaitingMultiClaimantResultNotification, setAwaitingMultiClaimantResultNotification] = useState(false)
   const [isReturnProposalDialogOpen, setReturnProposalDialogOpen] = useState(false)
-  const [isDeliveryMethodPickDialogOpen, setDeliveryMethodPickDialogOpen] = useState(false)
-  const [deliveryMethodPick, setDeliveryMethodPick] = useState('in-person')
+  // 반환 방식은 플로우 설정에서 고름 (시트 없음)
+  const [deliveryMethodPick, setDeliveryMethodPick] = useState(() => savedFlowSettings.deliveryMethodPick ?? 'in-person')
   const [isAwaitingReturnProposalNotification, setAwaitingReturnProposalNotification] = useState(false)
   const [isAwaitingRetryReturnProposalNotification, setAwaitingRetryReturnProposalNotification] = useState(false)
   const [isOwnershipRequested, setOwnershipRequested] = useState(false)
@@ -695,7 +695,6 @@ function App() {
 
   const handleChooseReturnDeliveryMethod = (method) => {
     setReturnDeliveryMethod(method)
-    setDeliveryMethodPickDialogOpen(false)
     navigate('/found/match-result/quiz/claimants/return-prep/review')
   }
 
@@ -764,8 +763,6 @@ function App() {
     setMultiClaimantResultDialogOpen(false)
     setAwaitingMultiClaimantResultNotification(false)
     setReturnProposalDialogOpen(false)
-    setDeliveryMethodPickDialogOpen(false)
-    setDeliveryMethodPick('in-person')
     setAwaitingReturnProposalNotification(false)
     setAwaitingRetryReturnProposalNotification(false)
     setAwaitingParcelNotification(false)
@@ -885,12 +882,12 @@ function App() {
     try {
       localStorage.setItem(
         'fino-flow-settings',
-        JSON.stringify({ hasStorageItems, isMultipleClaimantsFlow, isQuizFailFlow, isFoundRestrictedFlow, isFoundMultipleClaimantsFlow }),
+        JSON.stringify({ hasStorageItems, isMultipleClaimantsFlow, isQuizFailFlow, isFoundRestrictedFlow, isFoundMultipleClaimantsFlow, deliveryMethodPick }),
       )
     } catch {
       // 저장 불가 환경이면 무시
     }
-  }, [hasStorageItems, isMultipleClaimantsFlow, isQuizFailFlow, isFoundRestrictedFlow, isFoundMultipleClaimantsFlow])
+  }, [hasStorageItems, isMultipleClaimantsFlow, isQuizFailFlow, isFoundRestrictedFlow, isFoundMultipleClaimantsFlow, deliveryMethodPick])
 
   // 다시 시작: 진행 상태만 초기화, 플로우 설정은 그대로
   const handleRestartDemo = () => {
@@ -3093,7 +3090,7 @@ function App() {
               className="match-dialog__action match-dialog__action--primary"
               onClick={() => {
                 setReturnProposalDialogOpen(false)
-                setDeliveryMethodPickDialogOpen(true)
+                handleChooseReturnDeliveryMethod(deliveryMethodPick)
               }}
             >
               확인
@@ -3110,51 +3107,6 @@ function App() {
       >
         확인을 눌러 확인해주세요
       </Modal>
-
-      <BottomSheet
-        isOpen={isDeliveryMethodPickDialogOpen}
-        onClose={() => setDeliveryMethodPickDialogOpen(false)}
-        title={
-          <>
-            <h2 className="delivery-pick-sheet__title">
-              프로토타입에서 확인할
-              <br />
-              반환 방식을 선택해주세요.
-            </h2>
-            <p className="delivery-pick-sheet__subtitle">
-              실제 서비스에서는
-              <br />
-              분실자가 선택한 방식으로 자동 진행돼요.
-            </p>
-          </>
-        }
-      >
-        <div className="delivery-pick-sheet__options">
-          {DELIVERY_METHOD_PICK_OPTIONS.map((option) => {
-            const isSelected = deliveryMethodPick === option.id
-            return (
-              <button
-                key={option.id}
-                type="button"
-                className={`delivery-pick-sheet__option${isSelected ? ' delivery-pick-sheet__option--selected' : ''}`}
-                onClick={() => setDeliveryMethodPick(option.id)}
-              >
-                <span className="delivery-pick-sheet__option-label">{option.label}</span>
-                {isSelected && (
-                  <img src={iconCheckNeutral} alt="" className="delivery-pick-sheet__option-check" />
-                )}
-              </button>
-            )
-          })}
-        </div>
-        <button
-          type="button"
-          className="delivery-pick-sheet__confirm"
-          onClick={() => handleChooseReturnDeliveryMethod(deliveryMethodPick)}
-        >
-          이 방식으로 체험하기
-        </button>
-      </BottomSheet>
 
       <Modal
         isOpen={isVerificationDialogOpen}
@@ -3314,6 +3266,9 @@ function App() {
         hasStorageItems={hasStorageItems}
         onToggleHasStorageItems={() => setHasStorageItems((prev) => !prev)}
         onRestart={handleRestartDemo}
+        deliveryMethodOptions={DELIVERY_METHOD_PICK_OPTIONS}
+        deliveryMethodPick={deliveryMethodPick}
+        onSelectDeliveryMethod={setDeliveryMethodPick}
       />
 
       {splash && <Splash key={splash.id} withProgress={splash.withProgress} onDone={() => setSplash(null)} />}
