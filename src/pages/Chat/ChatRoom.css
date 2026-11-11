@@ -7,9 +7,13 @@
 }
 
 /* Figma 1389:53102 — 채팅방 배경·상단 네비 #f7f8f9 (이 화면만) */
-.chat-room-shell,
-.chat-room-shell .header {
+.chat-room-shell {
   background: #f7f8f9;
+}
+
+/* 상단 헤더는 상태바와 같은 흰색 (사용자 지정), 구분선 아래는 #f7f8f9 유지 */
+.chat-room-shell .header {
+  background: #ffffff;
 }
 
 .chat-room-shell .bottom-nav-area {
