@@ -49,8 +49,8 @@ import { EMPTY_EVIDENCE_FILES } from './pages/AiMatching/evidenceSteps'
 import FinderReviewing from './pages/AiMatching/FinderReviewing'
 import FoundMatchResult from './pages/AiMatching/FoundMatchResult'
 import OwnerQuizBuilding from './pages/AiMatching/OwnerQuizBuilding'
-import OwnerQuizEditor from './pages/AiMatching/OwnerQuizEditor'
-import OwnerQuizSolve from './pages/AiMatching/OwnerQuizSolve'
+import QuizSteps from './pages/AiMatching/QuizSteps'
+import QuizStepsReview from './pages/AiMatching/QuizStepsReview'
 import { getOwnerQuiz } from './data/ownerQuiz'
 import OwnershipQuizSubmitted from './pages/AiMatching/OwnershipQuizSubmitted'
 import OwnershipQuizWaiting from './pages/AiMatching/OwnershipQuizWaiting'
@@ -400,6 +400,7 @@ function App() {
   const [ownershipQuizAnswers, setOwnershipQuizAnswers] = useState([null, null, null])
   // 습득자가 등록한 주관식 퀴즈 (분실자가 풂)
   const [ownerQuiz, setOwnerQuiz] = useState(null)
+  const [ownerQuizAnswers, setOwnerQuizAnswers] = useState(['', '', ''])
   const [secondaryVerificationAnswers, setSecondaryVerificationAnswers] = useState([null, null, null])
   const [isQuizFailFlow, setQuizFailFlow] = useState(() => savedFlowSettings.isQuizFailFlow ?? false)
   const [isFoundRestrictedFlow, setFoundRestrictedFlow] = useState(() => savedFlowSettings.isFoundRestrictedFlow ?? false)
@@ -645,6 +646,8 @@ function App() {
   }
 
   const foundItemProfile = getItemProfile(completedFoundItem?.itemKey)
+  // 습득자가 등록 중인 퀴즈 (AI 초안 → 정답 수정)
+  const finderQuiz = ownerQuiz ?? getOwnerQuiz(completedFoundItem?.itemKey)
   const lostItemProfile = getItemProfile(completedItem?.itemKey)
 
   const handleGoHomeAfterFoundSubmit = () => {
@@ -778,6 +781,8 @@ function App() {
   }
 
   const resetFlowState = () => {
+    setOwnerQuiz(null)
+    setOwnerQuizAnswers(['', '', ''])
     setCompletedItem(null)
     setLostDraft(INITIAL_LOST_DRAFT)
     setOwnershipRequested(false)
@@ -1083,9 +1088,16 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <OwnerQuizSolve
-                quiz={ownerQuiz ?? getOwnerQuiz(completedItem?.itemKey)}
-                onSubmit={() => {
+              <QuizSteps
+                steps={(ownerQuiz ?? getOwnerQuiz(completedItem?.itemKey)).map((item) => ({
+                  title: item.question,
+                  hint: '습득자가 낸 질문이에요. 기억나는 대로 적어주세요',
+                }))}
+                answers={ownerQuizAnswers}
+                onChangeAnswers={setOwnerQuizAnswers}
+                callout="AI가 습득자의 정답과 비교해 주인을 확인해요."
+                lastLabel="답변 보내기"
+                onDone={() => {
                   setOwnershipRequested(true)
                   navigate('/matching/result/ownership')
                 }}
@@ -2070,10 +2082,35 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <OwnerQuizEditor
-                initialQuiz={ownerQuiz ?? getOwnerQuiz(completedFoundItem?.itemKey)}
-                onSubmit={(quiz) => {
-                  setOwnerQuiz(quiz)
+              <QuizSteps
+                steps={finderQuiz.map((item) => ({ title: item.question, hint: `AI가 찾은 특징: ${item.feature}` }))}
+                answers={finderQuiz.map((item) => item.answer)}
+                onChangeAnswers={(answers) => setOwnerQuiz(finderQuiz.map((item, i) => ({ ...item, answer: answers[i] })))}
+                callout="AI가 사진에서 찾은 정답이에요. 다르면 고쳐주세요."
+                placeholder="정답을 입력해주세요"
+                onDone={() => navigate('/found/match-result/quiz/review')}
+              />
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/found/match-result/quiz/review"
+          element={
+            <SubStepScreen
+              title="소유권 확인 퀴즈"
+              backTo="/found/match-result/quiz/1"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+              activeTab="/"
+              onSelectTab={setActiveTab}
+            >
+              <QuizStepsReview
+                title="소유권 확인 퀴즈"
+                desc="분실자에게 낼 질문과 정답을 최종 확인해주세요"
+                callout="AI가 사진을 바탕으로 퀴즈를 만들었어요."
+                items={finderQuiz}
+                onEdit={() => navigate('/found/match-result/quiz/1')}
+                onSubmit={() => {
+                  setOwnerQuiz(finderQuiz)
                   navigate('/found/match-result/quiz/submitted')
                 }}
               />
@@ -2085,7 +2122,7 @@ function App() {
           element={
             <SubStepScreen
               title="등록 완료"
-              backTo="/found/match-result/quiz/1"
+              backTo="/found/match-result/quiz/review"
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
               activeTab="/"
               onSelectTab={setActiveTab}
