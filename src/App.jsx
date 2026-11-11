@@ -894,6 +894,11 @@ function App() {
     setNavMenuOpen(false)
     resetFlowState()
     resetFoundFlowState()
+    // 진행 초기화 함수가 스위치도 끄므로 고른 플로우 설정을 다시 적용
+    setMultipleClaimantsFlow(isMultipleClaimantsFlow)
+    setQuizFailFlow(isQuizFailFlow)
+    setFoundRestrictedFlow(isFoundRestrictedFlow)
+    setFoundMultipleClaimantsFlow(isFoundMultipleClaimantsFlow)
     navigate('/')
     setSplash({ id: Date.now(), withProgress: false })
   }
