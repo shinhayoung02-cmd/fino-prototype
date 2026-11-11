@@ -21,11 +21,14 @@ export default function ScanningCard({
   statusText,
   onItemClick,
 }) {
-  const { name, description, location, timeRange } = item?.name ? item : DEFAULT_ITEM
+  const { name, description, location, timeRange, locationUnknown, timeUnknown } = item?.name ? item : DEFAULT_ITEM
 
+  // Figma 1392:27913: 맨 위 '위치 · 반경 · 시간' 한 줄 (입력 안 했으면 '모름'으로라도 표시)
   const metaParts = []
   if (location) metaParts.push(location.address, `반경 ${location.radius}`)
+  else metaParts.push(locationUnknown ? '위치 모름' : '위치 미입력')
   if (timeRange) metaParts.push(`${timeRange.month} ${timeRange.day} ${timeRange.hour} ${timeRange.minute}`)
+  else metaParts.push(timeUnknown ? '시간 모름' : '시간 미입력')
 
   return (
     <div className="scanning-card">
@@ -50,7 +53,7 @@ export default function ScanningCard({
         role={onItemClick ? 'button' : undefined}
         tabIndex={onItemClick ? 0 : undefined}
       >
-        {metaParts.length > 0 && <p className="scanning-card__item-meta">{metaParts.join(' · ')}</p>}
+        <p className="scanning-card__item-meta">{metaParts.join(' · ')}</p>
         <p className="scanning-card__item-title">{name} {itemVerb}</p>
         {description && <p className="scanning-card__item-note">{description}</p>}
       </div>

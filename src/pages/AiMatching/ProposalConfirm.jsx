@@ -23,13 +23,15 @@ const DELIVERY_SUMMARY = {
   },
 }
 
-export default function ProposalConfirm({ thanksMethod = 'coffee', thanksMessage = '' }) {
+export default function ProposalConfirm({ thanksMethod = ['coffee'], thanksMessage = '' }) {
   const navigate = useNavigate()
   const location = useLocation()
   const [isDeliveryOpen, setDeliveryOpen] = useState(false)
   const deliveryMethod = DELIVERY_SUMMARY[location.state?.deliveryMethod] ? location.state.deliveryMethod : 'meetup'
   const delivery = DELIVERY_SUMMARY[deliveryMethod]
-  const thanks = THANKS_OPTIONS.find((option) => option.id === thanksMethod) ?? THANKS_OPTIONS[0]
+  // 복수 선택: 고른 감사 방식을 ' · '로 이어서 표시
+  const selectedThanks = THANKS_OPTIONS.filter((option) => [].concat(thanksMethod).includes(option.id))
+  const thanks = { title: (selectedThanks.length ? selectedThanks : [THANKS_OPTIONS[0]]).map((o) => o.title).join(' · ') }
 
   return (
     <div className="proposal-confirm">

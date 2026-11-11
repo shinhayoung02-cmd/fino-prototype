@@ -166,3 +166,17 @@
   color: #d1d3d8;
   cursor: not-allowed;
 }
+
+/* SEED Checkbox.Root를 옵션 카드로 사용 (라벨 전체 클릭) */
+.thanks-method__option {
+  justify-content: space-between;
+}
+
+.thanks-method__option .thanks-method__option-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.thanks-method__subtitle {
+  word-break: keep-all;
+}

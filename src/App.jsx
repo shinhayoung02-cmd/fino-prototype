@@ -107,6 +107,8 @@ import FoundRegisterComplete from './pages/FoundItemRegister/FoundRegisterComple
 import LostItemRegister from './pages/LostItemRegister/LostItemRegister'
 import LocationPicker from './pages/LostItemRegister/LocationPicker'
 import MyStorage from './pages/MyStorage/MyStorage'
+import ActivityPage from './pages/Home/RecentActivity'
+import './pages/Home/Home.css'
 import StorageAddComplete from './pages/MyStorage/StorageAddComplete'
 import { INITIAL_STORAGE_ITEMS, toStorageItem, toPhotoEntries } from './data/myStorage'
 import RegisterComplete from './pages/LostItemRegister/RegisterComplete'
@@ -117,6 +119,7 @@ import Notifications from './pages/Notifications/Notifications'
 import Modal from './components/common/Modal/Modal'
 import BottomSheet from './components/common/BottomSheet/BottomSheet'
 import FlowChangeModal from './components/common/FlowChangeModal/FlowChangeModal'
+import Splash from './components/common/Splash/Splash'
 import iconCheckNeutral from './assets/ai-matching/icon-check-neutral.svg'
 import NavMenu, { FLOW_LABELS } from './components/common/NavMenu/NavMenu'
 
@@ -270,9 +273,11 @@ function ChatRoomScreen({ activeTab, onSelectTab, onReadRoom, onOpenNavMenu }) {
   return (
     <AppShell
       key={roomId}
+      className="chat-room-shell"
       header={
         <Header title="채팅" showBack onBack={goToChatList} rightSlot={<MenuButton onClick={onOpenNavMenu} />} />
       }
+      bottomNav={<BottomNav items={NAV_ITEMS} activeTab="/chat" onSelect={onSelectTab} />}
     >
       <ChatRoom roomId={roomId} />
     </AppShell>
@@ -354,6 +359,8 @@ const INITIAL_FOUND_STATION_DRAFT = {
 
 function App() {
   const [activeTab, setActiveTab] = useState(null)
+  // 첫 진입: 스플래시, 플로우 초기화: 스플래시 + 하단 로딩 바
+  const [splash, setSplash] = useState({ id: 0, withProgress: false })
   const [readRoomIds, setReadRoomIds] = useState(() => new Set())
   const [lostDraft, setLostDraft] = useState(INITIAL_LOST_DRAFT)
   const [foundDraft, setFoundDraft] = useState(INITIAL_FOUND_DRAFT)
@@ -361,6 +368,9 @@ function App() {
   const [foundStationDraft, setFoundStationDraft] = useState(INITIAL_FOUND_STATION_DRAFT)
   const [completedItem, setCompletedItem] = useState(null)
   const [storageItems, setStorageItems] = useState(INITIAL_STORAGE_ITEMS)
+  // 플로우 설정 '보관함 물건 있음' — 끄면 보관함이 빈 상태로 보임
+  const [hasStorageItems, setHasStorageItems] = useState(true)
+  const visibleStorageItems = hasStorageItems ? storageItems : []
   const [storageDraft, setStorageDraft] = useState(INITIAL_LOST_DRAFT)
   const [addedStorageItem, setAddedStorageItem] = useState(null)
   const [completedFoundItem, setCompletedFoundItem] = useState(null)
@@ -414,7 +424,7 @@ function App() {
   const [meetupLocations, setMeetupLocations] = useState([])
   const [meetupDates, setMeetupDates] = useState([])
   const [meetupSlotTimes, setMeetupSlotTimes] = useState({})
-  const [thanksMethod, setThanksMethod] = useState('coffee')
+  const [thanksMethod, setThanksMethod] = useState(['coffee'])
   const [thanksMessage, setThanksMessage] = useState('')
   const [parcelStore, setParcelStore] = useState(null)
   const [parcelAddress, setParcelAddress] = useState(null)
@@ -436,7 +446,7 @@ function App() {
   })
   useEffect(() => {
     const path = location.pathname
-    if (path === '/') return undefined
+    if (path === '/' || path === '/activity') return undefined
     const timer = setTimeout(() => {
       const title = document.querySelector('.header__title, .header h1')?.textContent?.trim()
       const label = FLOW_LABELS[path] ?? title
@@ -704,6 +714,13 @@ function App() {
     navigate('/found/match-result')
   }
 
+  // 보관함 물건 → 분실물 등록 폼에 불러오기 (보관함 화면·홈 시트 공용)
+  const loadStorageItemIntoLostDraft = async (item) => {
+    const photos = await toPhotoEntries(item)
+    setLostDraft({ ...INITIAL_LOST_DRAFT, photos, name: item.name, description: item.description, featureAnswers: [item.feature ?? '', '', ''], fromStorage: true })
+    navigate('/lost/new')
+  }
+
   const handleStartNewRegistration = () => {
     setLostDraft(INITIAL_LOST_DRAFT)
     setOwnershipRequested(false)
@@ -763,7 +780,7 @@ function App() {
     setReturnDeliveryMethod('in-person')
     setReturnRetryCount(0)
     setFoundMultipleClaimantsFlow(false)
-    setThanksMethod('coffee')
+    setThanksMethod(['coffee'])
     setParcelStore(null)
     setParcelAddress(null)
     setFoundParcelStore(null)
@@ -797,7 +814,7 @@ function App() {
     setMeetupLocations([])
     setMeetupDates([])
     setMeetupSlotTimes({})
-    setThanksMethod('coffee')
+    setThanksMethod(['coffee'])
     setParcelStore(null)
     setParcelAddress(null)
     setCompletedFoundItem(null)
@@ -873,6 +890,7 @@ function App() {
     setFlowChangeDialogOpen(false)
     resetFlowState()
     navigate('/')
+    setSplash({ id: Date.now(), withProgress: true })
   }
 
   const verificationResultPath = isMultipleClaimantsFlow
@@ -947,6 +965,7 @@ function App() {
                 completedItem={completedItem}
                 onEditItem={handleEditCompletedItem}
                 onRegisterNew={handleStartNewRegistration}
+                storageItems={visibleStorageItems}
                 completedFoundItem={completedFoundItem}
                 onEditFoundItem={handleEditCompletedFoundItem}
                 onRegisterNewFound={handleRegisterNewFound}
@@ -2734,17 +2753,21 @@ function App() {
           }
         />
         <Route
+          path="/activity"
+          element={
+            <SubStepScreen title="최근 활동" backTo="/">
+              <ActivityPage flowHistory={flowHistory} />
+            </SubStepScreen>
+          }
+        />
+        <Route
           path="/my/storage"
           element={
             <SubStepScreen title="내 물건 보관함" backTo="/my">
               <MyStorage
-                items={storageItems}
+                items={visibleStorageItems}
                 onDeleteItem={(id) => setStorageItems((prev) => prev.filter((item) => item.id !== id))}
-                onSelectItem={async (item) => {
-                  const photos = await toPhotoEntries(item)
-                  setLostDraft({ ...INITIAL_LOST_DRAFT, photos, name: item.name, description: item.description, fromStorage: true })
-                  navigate('/lost/new')
-                }}
+                onSelectItem={loadStorageItemIntoLostDraft}
               />
             </SubStepScreen>
           }
@@ -3325,7 +3348,11 @@ function App() {
         onToggleFoundRestrictedFlow={requestEnterFoundRestrictedFlow}
         isFoundMultipleClaimantsFlow={isFoundMultipleClaimantsFlow}
         onToggleFoundMultipleClaimantsFlow={() => setFoundMultipleClaimantsFlow((prev) => !prev)}
+        hasStorageItems={hasStorageItems}
+        onToggleHasStorageItems={() => setHasStorageItems((prev) => !prev)}
       />
+
+      {splash && <Splash key={splash.id} withProgress={splash.withProgress} onDone={() => setSplash(null)} />}
       </PreviewStage>
     </>
   )

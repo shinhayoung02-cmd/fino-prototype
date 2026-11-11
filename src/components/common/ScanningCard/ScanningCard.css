@@ -131,3 +131,43 @@
 .scanning-card__item--clickable {
   cursor: pointer;
 }
+
+/* Figma 1392:27913 안쪽 카드: 메타 → 제목 → 설명 (8px 간격) */
+.scanning-card__item {
+  gap: 8px;
+  min-height: 93.6px;
+  padding: 11px 22px 11px 11px;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 12px;
+  box-shadow: 0 0.9px 0.9px rgba(0, 0, 0, 0.05);
+}
+
+.scanning-card__item-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.scanning-card__item-title {
+  color: #262626;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.5px;
+}
+
+.scanning-card__item-meta {
+  color: #a3a3a3;
+  font-size: 11px;
+  line-height: 14.7px;
+  letter-spacing: -0.46px;
+}
+
+.scanning-card__item-note {
+  color: #737373;
+  font-size: 14px;
+  line-height: 14.7px;
+  letter-spacing: -0.46px;
+}

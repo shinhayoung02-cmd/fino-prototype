@@ -208,6 +208,8 @@ export default function NavMenu({
   isFoundRestrictedFlow,
   onToggleFoundRestrictedFlow,
   isFoundMultipleClaimantsFlow,
+  hasStorageItems,
+  onToggleHasStorageItems,
   onToggleFoundMultipleClaimantsFlow,
 }) {
   // 폰 프레임 밖에 떠 있는 접이식 패널. 헤더를 끌면 이동, 짧게 누르면 접기/펼치기. 앱 안 ☰ 버튼은 펼치기.
@@ -336,6 +338,22 @@ export default function NavMenu({
                 <span className="nav-menu__switch-label">
                   <span className="nav-menu__switch-title">다중 분실자 플로우(습득자)</span>
                   <span className="nav-menu__switch-desc">같은 물건을 찾는 사람이 여러 명일 때</span>
+                </span>
+                <span className="nav-menu__switch-track">
+                  <span className="nav-menu__switch-thumb" />
+                </span>
+              </button>
+              <p className="nav-menu__settings-hint">아래 스위치는 분실자 플로우에서 사용해요.</p>
+              <button
+                type="button"
+                className={`nav-menu__switch-row${hasStorageItems ? ' nav-menu__switch-row--on' : ''}`}
+                role="switch"
+                aria-checked={hasStorageItems}
+                onClick={() => onToggleHasStorageItems?.()}
+              >
+                <span className="nav-menu__switch-label">
+                  <span className="nav-menu__switch-title">보관함 물건 있음</span>
+                  <span className="nav-menu__switch-desc">켜면 분실물 등록 시 보관함 팝업이 떠요</span>
                 </span>
                 <span className="nav-menu__switch-track">
                   <span className="nav-menu__switch-thumb" />

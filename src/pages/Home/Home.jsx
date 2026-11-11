@@ -10,17 +10,15 @@ import iconPayment from '../../assets/home/icon-payment.svg'
 import iconClock from '../../assets/home/icon-clock.svg'
 import ScanningCard from '../../components/common/ScanningCard/ScanningCard'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
+import Modal from '../../components/common/Modal/Modal'
 import iconCheck from '../../assets/ai-matching/icon-parcel-check.svg'
 import scrollHintButton from '../../assets/home/scroll-hint-button.png'
 import { useKakaoMap } from '../../lib/kakaoMaps'
-import { fetchRecentItems } from '../../lib/supabase'
+import { ActivityTimeline, useRecentActivity } from './RecentActivity'
 import './Home.css'
 
-const RECENT_ACTIVITY = [
-  { id: 1, text: '새로운 습득물 6건을 비교했어요', time: '오후 3:20', active: true },
-  { id: 2, text: '매칭 후보 1건이 추가됐어요', time: '오후 1:05', active: false },
-  { id: 3, text: '분실물 정보를 수정했어요', time: '어제', active: false },
-]
+// Figma 711:27964: 기본 3개 + 더보기
+const ACTIVITY_LIMIT = 3
 
 const FOUND_REPORT_OPTIONS = [
   { id: 'has-it', title: '네, 제가 보관 중이에요', desc: '사진과 위치만으로 빠르게 등록할 수 있어요.' },
@@ -31,13 +29,6 @@ const LEFT_ITEM_OPTIONS = [
   { id: 'street', title: '길에서 보고 두고 왔어요' },
   { id: 'station', title: '지구대 등에 맡겼어요' },
 ]
-
-const toActivity = (row, i) => ({
-  id: `db-${row.id}`,
-  text: `${row.kind === 'lost' ? '분실물' : '습득물'} '${row.name}'을 등록했어요`,
-  time: new Date(row.created_at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
-  active: i === 0,
-})
 
 function QuickActionCard({ title, description, onClick }) {
   const Tag = onClick ? 'button' : 'div'
@@ -56,6 +47,7 @@ export default function Home({
   completedItem,
   onEditItem,
   onRegisterNew,
+  storageItems = [],
   completedFoundItem,
   onEditFoundItem,
   onRegisterNewFound,
@@ -64,13 +56,12 @@ export default function Home({
   flowHistory = [],
 }) {
   const [query, setQuery] = useState('')
-  const [recentActivity, setRecentActivity] = useState(RECENT_ACTIVITY)
-  useEffect(() => {
-    fetchRecentItems().then((rows) => rows.length && setRecentActivity(rows.map(toActivity)))
-  }, [])
+  const activityItems = useRecentActivity(flowHistory)
   const [isScanPaused, setIsScanPaused] = useState(false)
   const [isFoundScanPaused, setIsFoundScanPaused] = useState(false)
   const [isFoundSheetOpen, setFoundSheetOpen] = useState(false)
+  // 보관함에 물건이 있으면 분실물 등록 전에 불러올지 묻는 팝업
+  const [isStorageDialogOpen, setStorageDialogOpen] = useState(false)
   const [foundOption, setFoundOption] = useState('has-it')
   const [isLeftItemSheetOpen, setLeftItemSheetOpen] = useState(false)
   const [leftItemOption, setLeftItemOption] = useState('street')
@@ -114,7 +105,7 @@ export default function Home({
         <h2 className="home-hero__title">
           잃어버린 순간부터,
           <br />
-          FINO가 함께 찾아요!
+          <span className="home-hero__brand">FINO</span>가 함께 찾아요!
         </h2>
         <p className="home-hero__subtitle">분실물 등록하고 찾아보세요</p>
       </section>
@@ -144,6 +135,10 @@ export default function Home({
             title="분실물 등록"
             description="잃어버린 물건을 등록하고 찾기 시작해요"
             onClick={() => {
+              if (storageItems.length > 0) {
+                setStorageDialogOpen(true)
+                return
+              }
               onRegisterNew?.()
               navigate('/lost/new')
             }}
@@ -238,36 +233,13 @@ export default function Home({
       <div className="home__section">
         <div className="home-section-head">
           <h3 className="home-section-head__title">최근 활동</h3>
-        </div>
-        <div className="home-activity-card">
-          {flowHistory.map((h, i) => (
-            <button
-              type="button"
-              className="home-activity-item home-activity-item--flow"
-              key={h.path}
-              onClick={() => navigate(h.path)}
-            >
-              <span className={`home-activity-item__dot${i === 0 ? ' home-activity-item__dot--active' : ''}`} />
-              <div className="home-activity-item__body">
-                <p className="home-activity-item__text">
-                  {h.flow ? `[${h.flow}] ` : ''}'{h.label}'까지 진행했어요
-                </p>
-                <p className="home-activity-item__time">
-                  {new Date(h.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' })} · 눌러서 이어하기
-                </p>
-              </div>
+          {activityItems.length > ACTIVITY_LIMIT && (
+            <button type="button" className="home-section-head__link" onClick={() => navigate('/activity')}>
+              더보기
             </button>
-          ))}
-          {recentActivity.map((item) => (
-            <div className="home-activity-item" key={item.id}>
-              <span className={`home-activity-item__dot${item.active && !flowHistory.length ? ' home-activity-item__dot--active' : ''}`} />
-              <div className="home-activity-item__body">
-                <p className="home-activity-item__text">{item.text}</p>
-                <p className="home-activity-item__time">{item.time}</p>
-              </div>
-            </div>
-          ))}
+          )}
         </div>
+        <ActivityTimeline items={activityItems.slice(0, ACTIVITY_LIMIT)} />
       </div>
 
       {!isScrolledToEnd && (
@@ -283,6 +255,48 @@ export default function Home({
           </button>
         </div>
       )}
+
+      <Modal
+        isOpen={isStorageDialogOpen}
+        onClose={() => setStorageDialogOpen(false)}
+        title={
+          <>
+            보관함에서 물건을
+            <br />
+            불러올까요?
+          </>
+        }
+        footer={
+          <div className="match-dialog__actions">
+            <button
+              type="button"
+              className="match-dialog__action match-dialog__action--primary"
+              onClick={() => {
+                setStorageDialogOpen(false)
+                onRegisterNew?.()
+                navigate('/my/storage')
+              }}
+            >
+              보관함에서 불러오기
+            </button>
+            <button
+              type="button"
+              className="match-dialog__action match-dialog__action--secondary"
+              onClick={() => {
+                setStorageDialogOpen(false)
+                onRegisterNew?.()
+                navigate('/lost/new')
+              }}
+            >
+              새로 등록하기
+            </button>
+          </div>
+        }
+      >
+        보관함에 등록해 둔 물건이라면
+        <br />
+        정보를 바로 불러올 수 있어요.
+      </Modal>
 
       <BottomSheet isOpen={isFoundSheetOpen} onClose={() => setFoundSheetOpen(false)}>
         <div className="found-report-sheet__header">

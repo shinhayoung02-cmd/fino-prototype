@@ -1,29 +1,29 @@
-import Modal from '../../components/common/Modal/Modal'
+import '../../components/common/Modal/Modal.css'
+import './RestrictedRecommendModal.css'
 
-// 신분증·금융카드 등 감지 시: 강제 이동 대신 안전 인계를 추천하는 팝업
+// 신분증·금융카드 등 감지 시: 강제 이동 대신 안전 인계를 추천하는 팝업 (Figma 1389:53049)
 export default function RestrictedRecommendModal({ isOpen, onHandover, onKeep }) {
+  if (!isOpen) return null
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onKeep}
-      dismissible={false}
-      title="안전 인계를 추천해요"
-      footer={
-        <div className="match-dialog__actions">
-          <button type="button" className="match-dialog__action match-dialog__action--brand" onClick={onHandover}>
-            인계 방법 보기
+    <div className="modal-overlay">
+      <div className="restricted-recommend" role="dialog" aria-modal="true">
+        <div className="restricted-recommend__text">
+          <p className="restricted-recommend__title">안전 인계를 추천해요</p>
+          <p className="restricted-recommend__desc">
+            신분증·금융카드가 감지됐어요.
+            <br />
+            2차 피해 예방을 위해 지구대·우체통 인계를 추천해요.
+          </p>
+        </div>
+        <div className="restricted-recommend__actions">
+          <button type="button" className="restricted-recommend__btn restricted-recommend__btn--primary" onClick={onHandover}>
+            안전 인계하기
           </button>
-          <button type="button" className="match-dialog__action match-dialog__action--secondary" onClick={onKeep}>
+          <button type="button" className="restricted-recommend__btn" onClick={onKeep}>
             직접 보관하며 등록하기
           </button>
         </div>
-      }
-    >
-      신분증·금융카드가 감지됐어요.
-      <br />
-      2차 피해 예방을 위해
-      <br />
-      지구대·우체통 인계를 추천해요.
-    </Modal>
+      </div>
+    </div>
   )
 }

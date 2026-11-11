@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import iconClose from '../../assets/my-storage/icon-close.svg'
 import SuccessGraphic from '../../components/common/SuccessGraphic/SuccessGraphic'
 import './RegisterComplete.css'
 
@@ -71,14 +70,6 @@ export default function RegisterComplete({ item, onNext, onRemember }) {
           <div className="register-complete__remember">
             <div className="register-complete__remember-head">
               <p className="register-complete__remember-text">이 물건을 내 물건 보관함에 기억해둘까요?</p>
-              <button
-                type="button"
-                className="register-complete__remember-close"
-                aria-label="닫기"
-                onClick={() => setRememberOpen(false)}
-              >
-                <img src={iconClose} alt="" />
-              </button>
             </div>
             <div className="register-complete__remember-actions">
               <button

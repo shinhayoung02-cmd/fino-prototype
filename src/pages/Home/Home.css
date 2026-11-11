@@ -52,10 +52,18 @@
   color: #ffffff;
 }
 
+/* Figma 1395:59091 — 'FINO'만 MuseoModerno Bold */
+.home-hero__brand {
+  font-family: 'MuseoModerno', sans-serif;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
 .home-hero__subtitle {
   position: relative;
-  margin: 8px 0 0;
+  margin: 3.8px 0 0; /* Figma: 배너 위에서 92px */
   font-size: 12px;
+  line-height: 15px;
   color: var(--color-brand-100);
   letter-spacing: -0.5px;
 }
@@ -346,13 +354,25 @@ button.home-quick-card:active {
 }
 
 .home-activity-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
-  background: var(--color-bg);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
+  padding: 16px 45px 16px 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1));
+}
+
+/* 점을 잇는 세로 타임라인 (Figma 711:27989) */
+.home-activity-card::before {
+  content: '';
+  position: absolute;
+  left: 21px;
+  top: 24px;
+  bottom: 16px;
+  width: 2px;
+  background: #f3f4f6;
 }
 
 .home-activity-item {
@@ -614,4 +634,21 @@ button.home-quick-card:active {
   font-family: inherit;
   text-align: left;
   cursor: pointer;
+}
+
+/* Figma 711:27964 문구 줄높이 */
+.home-activity-item__text {
+  margin: 0 0 2px;
+  padding: 2px 0;
+  line-height: 22px;
+}
+
+.home-activity-item__time {
+  padding: 1px 0;
+  line-height: 14px;
+}
+
+/* 전체 활동 페이지 */
+.activity-page {
+  padding: 20px 16px;
 }

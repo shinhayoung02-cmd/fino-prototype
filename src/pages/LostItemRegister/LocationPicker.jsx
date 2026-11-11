@@ -260,7 +260,7 @@ export default function LocationPicker({ value, onConfirm, onUnknown, backTo = '
               </button>
             ))}
           </div>
-          <p className="location-picker__radius-hint">{radiusHint}</p>
+          {type !== 'lost' && <p className="location-picker__radius-hint">{radiusHint}</p>}
         </div>
 
         {onUnknown && (

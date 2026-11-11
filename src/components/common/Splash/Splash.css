@@ -1,0 +1,205 @@
+/* Figma 1390:61515 스플래시 — 모바일 프레임 안쪽 전체를 덮음 */
+.splash {
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  overflow: hidden;
+  animation: splash-exit 0.55s cubic-bezier(0.7, 0, 0.84, 0) 2.05s forwards;
+}
+
+/* 로고+FINO 묶음 188×256, 안쪽 화면(386×855) 기준 x99 · y265 */
+.splash__brand {
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 162.5px);
+  width: 188px;
+  height: 256px;
+  transform: translateX(-50%);
+  animation: splash-brand-zoom 0.55s cubic-bezier(0.7, 0, 0.84, 0) 2.05s forwards;
+}
+
+.splash__logo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 188px;
+  height: 187px;
+  overflow: hidden;
+  border-radius: 34px;
+  animation: splash-logo-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.splash__logo img {
+  display: block;
+}
+
+.splash__logo-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.splash__logo-vector {
+  position: absolute;
+  top: 18.3%;
+  right: 12.51%;
+  bottom: 17.7%;
+  left: 13.42%;
+  width: 74.07%;
+  height: 64%;
+}
+
+.splash__logo-masked {
+  position: absolute;
+  top: 17.07%;
+  right: 12.2%;
+  bottom: 17.07%;
+  left: 13.41%;
+  mask-position: 0.001px 2.284px, -0.281px 2.382px;
+  mask-size: 139.261px 119.688px, 139.394px 119.96px;
+  mask-repeat: no-repeat;
+  mask-composite: intersect;
+  -webkit-mask-position: 0.001px 2.284px, -0.281px 2.382px;
+  -webkit-mask-size: 139.261px 119.688px, 139.394px 119.96px;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-composite: source-in;
+}
+
+.splash__logo-masked img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 로고 위를 지나가는 빛 (주황 위에서만 보이도록 soft-light) */
+.splash__logo-shine {
+  position: absolute;
+  top: -20%;
+  left: 0;
+  width: 45%;
+  height: 140%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0) 100%);
+  mix-blend-mode: soft-light;
+  transform: translateX(-160%) skewX(-20deg);
+  animation: splash-shine 0.8s ease-in-out 1.05s forwards;
+  pointer-events: none;
+}
+
+.splash__wordmark {
+  position: absolute;
+  left: 0;
+  top: 173px;
+  width: 188px;
+  height: 83px;
+  margin: 0;
+  overflow: hidden;
+  font-family: 'MuseoModerno', sans-serif;
+  font-size: 52.254px;
+  font-weight: 800;
+  line-height: normal;
+  text-align: center;
+  color: #ff6600;
+  color: color(display-p3 1 0.4 0); /* 로고 SVG와 같은 P3 주황 */
+}
+
+.splash__wordmark span {
+  display: inline-block;
+  animation: splash-letter-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 리셋 시 하단 로딩 바 */
+.splash__progress {
+  position: absolute;
+  left: 50%;
+  bottom: 80px;
+  width: 160px;
+  height: 4px;
+  border-radius: 100px;
+  background: #f3f4f5;
+  overflow: hidden;
+  transform: translateX(-50%);
+}
+
+.splash__progress-fill {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: #ff6600;
+  transform-origin: left center;
+  animation: splash-progress 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.15s both;
+}
+
+.splash__indicator-area {
+  margin-top: auto;
+}
+
+@keyframes splash-logo-in {
+  from {
+    opacity: 0;
+    transform: scale(1.4);
+    filter: blur(14px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes splash-letter-in {
+  from {
+    opacity: 0;
+    transform: translateY(70%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes splash-shine {
+  to {
+    transform: translateX(320%) skewX(-20deg);
+  }
+}
+
+@keyframes splash-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* 마지막: 로고 쪽으로 빨려 들어가듯 확대되며 본 화면 등장 */
+@keyframes splash-brand-zoom {
+  to {
+    transform: translateX(-50%) scale(6);
+    opacity: 0;
+  }
+}
+
+@keyframes splash-exit {
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash,
+  .splash__brand,
+  .splash__logo,
+  .splash__logo-shine,
+  .splash__wordmark span {
+    animation-duration: 0.01s;
+  }
+}

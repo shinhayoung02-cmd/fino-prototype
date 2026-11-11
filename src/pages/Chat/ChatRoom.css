@@ -1,14 +1,35 @@
 .chat-room {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
+  background: #f7f8f9;
+}
+
+/* Figma 1389:53102 — 채팅방 배경·상단 네비 #f7f8f9 (이 화면만) */
+.chat-room-shell,
+.chat-room-shell .header {
+  background: #f7f8f9;
+}
+
+.chat-room-shell .bottom-nav-area {
+  background: #ffffff;
 }
 
 .chat-room__item-card {
+  /* Figma: 헤더 바로 아래 369×107, 메시지 위에 겹쳐 떠 있음 */
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
   display: flex;
-  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 369px;
+  max-width: calc(100% - 16px);
+  height: 107px;
   gap: 12px;
-  padding: 8px;
+  padding: 13px 8px;
   border: 1px solid var(--color-gray-100);
   border-radius: 0 0 8px 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -38,6 +59,11 @@
   min-width: 0;
 }
 
+.chat-room__item-info .chat-room__item-title {
+  height: 16px;
+  margin-bottom: 4px;
+}
+
 .chat-room__item-title {
   display: flex;
   align-items: center;
@@ -45,6 +71,7 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+  line-height: 16px;
   letter-spacing: -0.5px;
   color: #262626;
 }
@@ -71,6 +98,7 @@
   gap: 4px;
   margin: 0;
   font-size: 13px;
+  line-height: 14px;
   letter-spacing: -0.5px;
   color: #868b94;
 }
@@ -83,6 +111,7 @@
 .chat-room__item-location {
   margin: 0;
   font-size: 12px;
+  line-height: 12px;
   letter-spacing: -0.5px;
   color: #a3a3a3;
 }
@@ -94,6 +123,10 @@
   padding: 16px 16px 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+
+.chat-room--has-item .chat-room__messages {
+  padding-top: 119px;
 }
 
 .chat-room__messages::-webkit-scrollbar {
@@ -114,6 +147,7 @@
   background: rgba(0, 0, 0, 0.05);
   font-size: 14px;
   font-weight: 500;
+  line-height: 19px;
   color: var(--color-gray-1000);
 }
 
@@ -121,7 +155,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-bottom: 16px;
+  padding-bottom: 24px;
 }
 
 .chat-room__row {
@@ -162,10 +196,13 @@
   line-height: 20px;
   letter-spacing: -0.5px;
   word-break: break-word;
+  white-space: pre-line;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
 .chat-room__bubble--fino {
+  box-sizing: border-box;
+  width: 240px;
   background: var(--color-bg);
   border: 1px solid #e9ecef;
   color: #1a1c1e;
@@ -189,8 +226,9 @@
 
 .chat-room__input-bar-wrap {
   flex-shrink: 0;
-  padding: 13px 24px calc(13px + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(180deg, rgba(247, 248, 249, 0) 0%, #f7f8f9 55%);
+  /* Figma: 흰 영역, 입력창 위 13px · 아래 네비까지 35px, 폭 355 */
+  padding: 13px 23.5px 35px;
+  background: #ffffff;
 }
 
 .chat-room__input-bar {
@@ -252,4 +290,208 @@
   max-width: 24px;
   max-height: 24px;
   flex-shrink: 0;
+}
+
+/* Figma 1395:53676 — 메시지 + 전달 방식 카드 묶음 (gap 12) */
+.chat-room__delivery-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Figma 1395:53641 전달 방식 카드 */
+.chat-room__delivery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 23px;
+  box-sizing: border-box;
+  width: 343px;
+  max-width: 100%;
+  padding: 20px 16px;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.chat-room__delivery-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.chat-room__delivery-title {
+  margin: 0;
+  padding: 0.918px 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 14.687px;
+  letter-spacing: -0.459px;
+  color: #1a1c20;
+  white-space: nowrap;
+}
+
+.chat-room__delivery-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  max-width: 120px;
+  box-sizing: border-box;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #fff2ec;
+  color: #e14d00;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 15px;
+  white-space: nowrap;
+}
+
+.chat-room__delivery-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 8px 0;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+}
+
+.chat-room__delivery-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chat-room__delivery-row img {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.chat-room__delivery-label {
+  margin-right: 12px; /* gap 4 + 12 = Figma 라벨-값 간격 16 */
+  font-size: 16px;
+  line-height: 14px;
+  letter-spacing: -0.5px;
+  color: #868b94;
+  white-space: nowrap;
+}
+
+.chat-room__delivery-value {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: -0.5px;
+  color: #1a1c20;
+  text-align: right;
+}
+
+.chat-room__delivery-divider {
+  width: 100%;
+  height: 1px;
+  background: #dcdee3;
+}
+
+.chat-room__delivery-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  padding: 0 18.358px;
+  border: none;
+  border-radius: 7.343px;
+  background: #f3f4f5;
+  box-shadow: 0 1.836px 4.59px rgba(0, 0, 0, 0.1);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16.522px;
+  color: #1a1c20;
+  cursor: pointer;
+}
+
+/* Figma 1403:63218 — 입력창 위 빠른 질문 칩 줄 (흰 배경, 10px 여백, 칩 간격 8) */
+.chat-room__quick {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  padding: 10px;
+  background: #ffffff;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chat-room__quick::-webkit-scrollbar {
+  display: none;
+}
+
+/* Figma 1404:63850 — FINO 안내 채팅방의 내 말풍선 좌우 20 */
+.chat-room:not(.chat-room--has-item) .chat-room__bubble--me {
+  padding: 12px 20px;
+}
+
+.chat-room__quick-chip {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 8px 16px;
+  border: 1px solid #f3f4f5;
+  border-radius: 9999px;
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: -0.84px;
+  color: #1a1c20;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Figma 1404:63917 — 내 말풍선 아래 8px, 오른쪽 정렬 선택지 카드 (오른쪽 위 모서리만 각짐) */
+.chat-room__menu {
+  align-self: flex-end;
+  box-sizing: border-box;
+  width: 197px;
+  margin-top: -8px;
+  padding: 4px 10px;
+  border-radius: 16px 0 16px 16px;
+  background: #ffffff;
+}
+
+.chat-room__menu--wide {
+  width: 260px;
+}
+
+.chat-room__menu-divider {
+  height: 1px;
+  background: #f7f8f9;
+}
+
+.chat-room__menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9999px;
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: -0.84px;
+  color: #1a1c20;
+  text-align: center;
+  word-break: keep-all;
+  cursor: pointer;
 }

@@ -9,10 +9,14 @@
   background: var(--color-bg);
 }
 
+/* 상단 로고: MuseoModerno Bold 18, 색은 0 페이지(스플래시)와 같은 #FF6600 (사용자 지정) */
 .main-top-bar__title {
+  font-family: 'MuseoModerno', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: var(--color-gray-1000);
+  line-height: 1.35;
+  color: #ff6600;
+  color: color(display-p3 1 0.4 0); /* 로고 SVG와 같은 P3 주황 */
 }
 
 .main-top-bar__actions {

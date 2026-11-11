@@ -1,0 +1,68 @@
+/* Figma 1389:53049 */
+.restricted-recommend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 337px;
+  height: 222px;
+  max-width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  background: #ffffff;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.16));
+  animation: modal-pop 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.restricted-recommend__text {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.restricted-recommend__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 27px;
+  text-align: center;
+  color: #1a1c20;
+}
+
+.restricted-recommend__desc {
+  margin: 0;
+  padding-top: 6px;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+  color: #1a1c20;
+  white-space: nowrap;
+}
+
+.restricted-recommend__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.restricted-recommend__btn {
+  height: 40px;
+  padding: 1px 6px;
+  border: none;
+  border-radius: 9999px;
+  background: #f3f4f5;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 19px;
+  color: #1a1c20;
+  cursor: pointer;
+}
+
+.restricted-recommend__btn--primary {
+  background: #ed702d;
+  color: #ffffff;
+}
