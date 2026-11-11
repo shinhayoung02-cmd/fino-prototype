@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import iconClose from '../../assets/lost-register/icon-close.svg'
 import iconClock from '../../assets/lost-register/icon-clock.svg'
 import iconChevronRight from '../../assets/lost-register/icon-chevron-right.svg'
+import iconRemoveCircle from '../../assets/my-storage/icon-remove-circle.svg'
 import { AttachmentField, AttachmentInputPreset } from '../../../seed-design/ui/attachment-field'
 import { ProgressCircle } from '../../../seed-design/ui/progress-circle'
 import { ITEM_PROFILES } from '../../data/itemProfiles'
 import TimeRangeSheet from './TimeRangeSheet'
-import FeatureSheet from './FeatureSheet'
 import './LostItemRegister.css'
 
 function buildPhotoOption(itemKey) {
@@ -46,13 +46,14 @@ async function toJpegBase64(file, max = 1024) {
 const MAX_PHOTOS = 10
 const AI_RECOGNITION_DELAY = 1200
 
-export default function LostItemRegister({ draft, onDraftChange }) {
+// mode='storage' → ② 분실물 추가(보관함): 시간·위치 없이 '저장'
+export default function LostItemRegister({ draft, onDraftChange, mode = 'lost', onSave, onRegister }) {
   const navigate = useNavigate()
 
-  const { photos, name, description, timeRange, location } = draft
+  const { photos, name, description, timeRange, location, timeUnknown, locationUnknown, fromStorage } = draft
+  const isStorageMode = mode === 'storage'
 
   const [isTimeSheetOpen, setTimeSheetOpen] = useState(false)
-  const [isFeatureSheetOpen, setFeatureSheetOpen] = useState(false)
   const [isRecognizing, setIsRecognizing] = useState(false)
   const [pickedPhotoOption, setPickedPhotoOption] = useState(null)
   const [isAiOff, setAiOff] = useState(() => localStorage.getItem(AI_OFF_KEY) === today())
@@ -84,6 +85,8 @@ export default function LostItemRegister({ draft, onDraftChange }) {
 
   const setName = (value) => onDraftChange({ ...draft, name: value })
   const setDescription = (value) => onDraftChange({ ...draft, description: value })
+  const feature = draft.featureAnswers?.[0] ?? ''
+  const setFeature = (value) => onDraftChange({ ...draft, featureAnswers: [value, '', ''] })
 
   const handlePhotosChange = (nextPhotos) => {
     onDraftChange({ ...draft, photos: nextPhotos })
@@ -108,18 +111,24 @@ export default function LostItemRegister({ draft, onDraftChange }) {
   }, [pickedPhotoOption])
 
   const handleConfirmTime = (range) => {
-    onDraftChange({ ...draft, timeRange: range })
+    onDraftChange({ ...draft, timeRange: range, timeUnknown: false })
   }
 
-  const handleConfirmFeatures = () => {
-    navigate('/lost/new/next')
+  const handleUnknownTime = () => {
+    onDraftChange({ ...draft, timeRange: null, timeUnknown: true })
   }
 
-  const isNextEnabled = name.trim().length > 0 && description.trim().length > 0 && timeRange !== null
+  const hasItemInfo = name.trim().length > 0 && description.trim().length > 0
+  const isNextEnabled = isStorageMode ? hasItemInfo : hasItemInfo && (timeRange !== null || timeUnknown)
 
   const handleNext = () => {
     if (!isNextEnabled) return
-    setFeatureSheetOpen(true)
+    if (isStorageMode) {
+      onSave?.()
+      return
+    }
+    onRegister?.()
+    navigate('/lost/new/done')
   }
 
   return (
@@ -188,26 +197,78 @@ export default function LostItemRegister({ draft, onDraftChange }) {
               )}
             </div>
           </div>
-          <p className="lost-register__hint">등록된 사진 바탕으로 AI가 자동으로 인식한 물건이에요</p>
+          <p className="lost-register__hint">
+            {fromStorage ? '내 물건 보관함에서 불러온 정보예요' : '등록된 사진 바탕으로 AI가 자동으로 인식한 물건이에요'}
+          </p>
+        </section>
+
+        {!isStorageMode && (
+        <>
+        <section className="lost-register__section">
+          <h2 className="lost-register__section-title">세부 특징을 입력해주세요</h2>
+          <div className="lost-register__field">
+            <input
+              type="text"
+              className="lost-register__field-input"
+              value={feature}
+              onChange={(event) => setFeature(event.target.value)}
+              placeholder="주인만 아는 특징 (예: 안쪽 카드칸에 학생증)"
+            />
+            {feature && (
+              <button
+                type="button"
+                className="lost-register__field-clear"
+                aria-label="지우기"
+                onClick={() => setFeature('')}
+              >
+                <img src={iconClose} alt="" />
+              </button>
+            )}
+          </div>
+          <p className="lost-register__hint">주인 확인에 사용되고, 다른 사람에게는 보이지 않아요</p>
         </section>
 
         <section className="lost-register__section">
           <h2 className="lost-register__section-title">분실 시각은 언제인가요?</h2>
-          <button type="button" className="lost-register__field" onClick={() => setTimeSheetOpen(true)}>
+          <button
+            type="button"
+            className={`lost-register__field${timeUnknown ? ' lost-register__field--unknown' : ''}`}
+            onClick={() => setTimeSheetOpen(true)}
+          >
             <img src={iconClock} alt="" className="lost-register__field-prefix-icon" />
             <span
               className={`lost-register__field-text${timeRange ? '' : ' lost-register__field-text--placeholder'}`}
             >
               {timeRange
                 ? `${timeRange.month} ${timeRange.day} · ${timeRange.hour} ${timeRange.minute}`
-                : '시간을 선택해주세요'}
+                : timeUnknown
+                  ? '시간을 모르겠어요'
+                  : '시간을 선택해주세요'}
             </span>
           </button>
-          <p className="lost-register__hint">분실한 시간을 선택해 주세요</p>
+          <p className="lost-register__hint">
+            {timeUnknown ? '시간을 몰라도 AI가 넓은 범위에서 찾아볼게요' : '분실한 시간을 선택해 주세요'}
+          </p>
         </section>
 
         <section className="lost-register__section">
           <h2 className="lost-register__section-title">분실 위치는 어디인가요?</h2>
+          {locationUnknown ? (
+            <div className="lost-register__location-row lost-register__location-row--unknown">
+              <span className="lost-register__location-text">
+                <span className="lost-register__location-title">위치를 모르겠어요</span>
+                <span className="lost-register__location-desc">내 동네 전체에서 찾아볼게요</span>
+              </span>
+              <button
+                type="button"
+                className="lost-register__field-clear"
+                aria-label="지우기"
+                onClick={() => onDraftChange({ ...draft, locationUnknown: false })}
+              >
+                <img src={iconRemoveCircle} alt="" />
+              </button>
+            </div>
+          ) : (
           <button
             type="button"
             className="lost-register__location-row"
@@ -223,16 +284,19 @@ export default function LostItemRegister({ draft, onDraftChange }) {
             </span>
             <img src={iconChevronRight} alt="" className="lost-register__location-chevron" />
           </button>
+          )}
         </section>
+        </>
+        )}
 
-        <div className="lost-register__next-wrap">
+        <div className={`lost-register__next-wrap${isStorageMode ? ' lost-register__next-wrap--bottom' : ''}`}>
           <button
             type="button"
             className="lost-register__next"
             disabled={!isNextEnabled}
             onClick={handleNext}
           >
-            다음
+            {isStorageMode ? '저장' : '다음'}
           </button>
         </div>
       </div>
@@ -241,13 +305,9 @@ export default function LostItemRegister({ draft, onDraftChange }) {
         isOpen={isTimeSheetOpen}
         onClose={() => setTimeSheetOpen(false)}
         onConfirm={handleConfirmTime}
+        onUnknown={handleUnknownTime}
       />
 
-      <FeatureSheet
-        isOpen={isFeatureSheetOpen}
-        onClose={() => setFeatureSheetOpen(false)}
-        onConfirm={handleConfirmFeatures}
-      />
 
       {isRecognizing && (
         <div className="lost-register__ai-overlay">

@@ -23,7 +23,7 @@ const DELIVERY_SUMMARY = {
   },
 }
 
-export default function ProposalConfirm({ thanksMethod = 'coffee' }) {
+export default function ProposalConfirm({ thanksMethod = 'coffee', thanksMessage = '' }) {
   const navigate = useNavigate()
   const location = useLocation()
   const [isDeliveryOpen, setDeliveryOpen] = useState(false)
@@ -48,6 +48,7 @@ export default function ProposalConfirm({ thanksMethod = 'coffee' }) {
           <span className="proposal-confirm__summary-badge">감사 방식</span>
           <div className="proposal-confirm__summary-body">
             <p className="proposal-confirm__summary-title">{thanks.title}</p>
+            {thanksMessage && <p className="proposal-confirm__summary-message">“{thanksMessage}”</p>}
             <p className="proposal-confirm__summary-desc">물건 전달 후 습득자가 받을 수 있어요</p>
           </div>
         </div>

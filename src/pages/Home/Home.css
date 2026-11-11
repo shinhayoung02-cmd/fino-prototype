@@ -604,3 +604,14 @@ button.home-quick-card:active {
   cursor: pointer;
   font-family: inherit;
 }
+
+/* 최근 활동: 진행한 플로우 (누르면 그 화면으로 이동) */
+.home-activity-item--flow {
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}

@@ -1,9 +1,8 @@
-import {
-  SidePanelRoot,
-  SidePanelContent,
-  SidePanelBody,
-} from '../../../../seed-design/ui/side-panel'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import './NavMenu.css'
+
+const PANEL_WIDTH = 300
 
 const FLOW_GROUPS = [
   {
@@ -66,8 +65,6 @@ const FLOW_GROUPS = [
       { label: '소유권 확인(승인됨)', path: '/matching/result/ownership/approved' },
       { label: '분실물 등록', path: '/lost/new' },
       { label: '분실 위치 선택', path: '/lost/new/location' },
-      { label: '비공개 특징 퀴즈', path: '/lost/new/next' },
-      { label: '퀴즈 최종 검토', path: '/lost/new/review' },
       { label: '등록 완료', path: '/lost/new/done' },
       { label: '채팅 목록', path: '/chat' },
       { label: '작성글 관리', path: '/my' },
@@ -82,8 +79,6 @@ const FLOW_GROUPS = [
       { label: '분실 홈', path: '/' },
       { label: '분실물 등록', path: '/lost/new' },
       { label: '분실 위치 선택', path: '/lost/new/location' },
-      { label: '비공개 특징 퀴즈', path: '/lost/new/next' },
-      { label: '퀴즈 최종 검토', path: '/lost/new/review' },
       { label: '등록 완료', path: '/lost/new/done' },
     ],
   },
@@ -196,6 +191,12 @@ const FLOW_GROUPS = [
   },
 ]
 
+// 경로 → 화면 이름 (최근 활동의 '어디까지 진행했는지' 표시에 사용)
+export const FLOW_LABELS = FLOW_GROUPS.flatMap((g) => g.items).reduce(
+  (map, item) => (map[item.path] ? map : { ...map, [item.path]: item.label }),
+  {},
+)
+
 export default function NavMenu({
   isOpen,
   onClose,
@@ -209,21 +210,61 @@ export default function NavMenu({
   isFoundMultipleClaimantsFlow,
   onToggleFoundMultipleClaimantsFlow,
 }) {
-  return (
-    <div className="nav-menu-scope">
-      <SidePanelRoot
-        open={isOpen}
-        onOpenChange={(open) => {
-          if (!open) onClose?.()
+  // 폰 프레임 밖에 떠 있는 접이식 패널. 헤더를 끌면 이동, 짧게 누르면 접기/펼치기. 앱 안 ☰ 버튼은 펼치기.
+  const [isExpanded, setExpanded] = useState(true)
+  const [pos, setPos] = useState(() => ({
+    left: Math.max(8, Math.min(window.innerWidth / 2 + 241, window.innerWidth - PANEL_WIDTH - 8)),
+    top: 8,
+  }))
+  const dragRef = useRef(null)
+
+  const handlePointerDown = (event) => {
+    dragRef.current = { x: event.clientX, y: event.clientY, left: pos.left, top: pos.top, moved: false }
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+  const handlePointerMove = (event) => {
+    const drag = dragRef.current
+    if (!drag) return
+    const dx = event.clientX - drag.x
+    const dy = event.clientY - drag.y
+    if (!drag.moved && Math.hypot(dx, dy) < 4) return
+    drag.moved = true
+    setPos({
+      left: Math.max(0, Math.min(drag.left + dx, window.innerWidth - 60)),
+      top: Math.max(0, Math.min(drag.top + dy, window.innerHeight - 40)),
+    })
+  }
+  const handlePointerUp = () => {
+    if (dragRef.current && !dragRef.current.moved) setExpanded((v) => !v)
+    dragRef.current = null
+  }
+  useEffect(() => {
+    if (isOpen) {
+      setExpanded(true)
+      onClose?.()
+    }
+  }, [isOpen, onClose])
+
+  return createPortal(
+    <aside
+      className={`nav-menu-scope nav-menu__dock${isExpanded ? '' : ' nav-menu__dock--collapsed'}`}
+      style={{ left: pos.left, top: pos.top, width: PANEL_WIDTH }}
+    >
+      <button
+        type="button"
+        className="nav-menu__dock-head"
+        aria-expanded={isExpanded}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') setExpanded((v) => !v)
         }}
-        direction="right"
       >
-        <SidePanelContent
-          title="플로우 설정"
-          className="nav-menu__content"
-          style={{ width: '80%', maxWidth: '80%' }}
-        >
-          <SidePanelBody>
+        <span className="nav-menu__dock-title">플로우 설정</span>
+        <span className="nav-menu__dock-chevron" aria-hidden="true" />
+      </button>
+      {isExpanded && (
             <div className="nav-menu__settings">
               <button
                 type="button"
@@ -301,9 +342,8 @@ export default function NavMenu({
                 </span>
               </button>
             </div>
-          </SidePanelBody>
-        </SidePanelContent>
-      </SidePanelRoot>
-    </div>
+      )}
+    </aside>,
+    document.body,
   )
 }

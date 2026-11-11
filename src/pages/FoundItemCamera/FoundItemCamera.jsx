@@ -15,7 +15,10 @@ import iconMountainThumb from '../../assets/found-camera/icon-mountain-thumb.svg
 import iconShutter from '../../assets/found-camera/icon-shutter.svg'
 import iconCameraFlip from '../../assets/found-camera/icon-camera-flip.svg'
 import iconScanner from '../../assets/found-report/icon-scanner.svg'
+import iconInfo from '../../assets/my-storage/icon-info.svg'
+import '../FoundItemRegister/FoundItemRegister.css'
 import GalleryPickerSheet from './GalleryPickerSheet'
+import RestrictedRecommendModal from '../FoundItemRegister/RestrictedRecommendModal'
 import './FoundItemCamera.css'
 
 const CORNERS = [
@@ -45,15 +48,19 @@ export default function FoundItemCamera({
   const [isVerifyingOpen, setVerifyingOpen] = useState(false)
   const [isGalleryOpen, setGalleryOpen] = useState(false)
   const [selectedThumb, setSelectedThumb] = useState(null)
+  const [isRecommendOpen, setRecommendOpen] = useState(false)
 
   useEffect(() => {
     if (!isVerifyingOpen) return undefined
 
     const timer = setTimeout(() => {
       setVerifyingOpen(false)
-      if (selectedThumb?.restricted) onRestrictedRecognized?.(selectedThumb)
-      else if (selectedThumb) onRecognized?.(selectedThumb)
-      navigate(selectedThumb?.restricted ? restrictedPath : nextPath)
+      if (selectedThumb?.restricted) {
+        setRecommendOpen(true)
+        return
+      }
+      if (selectedThumb) onRecognized?.(selectedThumb)
+      navigate(nextPath)
     }, VERIFY_CLOSE_DELAY)
     return () => clearTimeout(timer)
   }, [isVerifyingOpen, navigate, nextPath, onRecognized, onRestrictedRecognized, restrictedPath, selectedThumb])
@@ -94,6 +101,15 @@ export default function FoundItemCamera({
           style={corner.style}
         />
       ))}
+
+      <div className="found-item-register__callout found-camera__angle-guide">
+        <img src={iconInfo} alt="" className="found-item-register__callout-icon" />
+        <p className="found-item-register__callout-text">
+          물건을 위·아래, 좌·우에서 한 장씩 찍어주세요
+          <br />
+          여러 각도 사진이 있으면 더 정확히 찾을 수 있어요
+        </p>
+      </div>
 
       <div className="found-camera__zoom-pill">
         <span className="found-camera__zoom-dot">
@@ -155,6 +171,20 @@ export default function FoundItemCamera({
           </div>
         </div>
       )}
+
+      <RestrictedRecommendModal
+        isOpen={isRecommendOpen}
+        onHandover={() => {
+          setRecommendOpen(false)
+          onRestrictedRecognized?.(selectedThumb)
+          navigate(restrictedPath)
+        }}
+        onKeep={() => {
+          setRecommendOpen(false)
+          onRecognized?.(selectedThumb)
+          navigate(nextPath)
+        }}
+      />
 
       {isGalleryOpen && (
         <GalleryPickerSheet

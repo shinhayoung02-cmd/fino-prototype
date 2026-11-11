@@ -259,3 +259,8 @@
   cursor: pointer;
   font-family: inherit;
 }
+
+/* 사진첩 다각도 안내 (Figma 1339:50010: 좌우 16, 아래 12) */
+.found-gallery-guide {
+  margin: 0 0 12px;
+}

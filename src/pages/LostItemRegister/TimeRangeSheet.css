@@ -312,3 +312,19 @@
     transform: scale(0.92);
   }
 }
+
+/* A-1 '시간을 모르겠어요' — 위치 선택의 '위치를 모르겠어요'와 같은 스타일 */
+.range-sheet__unknown {
+  display: block;
+  margin: 0 auto 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  color: #d1d3d8;
+  text-decoration: underline;
+  cursor: pointer;
+}

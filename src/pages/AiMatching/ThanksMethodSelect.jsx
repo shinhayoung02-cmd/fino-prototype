@@ -7,11 +7,14 @@ export const THANKS_OPTIONS = [
   { id: 'coffee', title: '커피 1잔', desc: '따뜻한 커피 한 잔으로 고마운 마음을 전해요' },
   { id: 'snack', title: '편의점 간식', desc: '간단한 간식으로 고마운 마음을 전해요' },
   { id: 'dessert', title: '디저트 1개', desc: '달콤한 디저트로 고마운 마음을 전해요' },
+  { id: 'message', title: '감사 메시지 보내기', desc: '따뜻한 메시지로 고마운 마음을 전해요' },
 ]
 
-export default function ThanksMethodSelect({ value = 'coffee', onConfirm }) {
+export default function ThanksMethodSelect({ value = 'coffee', message: initialMessage = '', onConfirm }) {
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState(value)
+  const [message, setMessage] = useState(initialMessage)
+  const isMessageMissing = selectedId === 'message' && !message.trim()
 
   return (
     <div className="thanks-method">
@@ -43,14 +46,25 @@ export default function ThanksMethodSelect({ value = 'coffee', onConfirm }) {
             </button>
           )
         })}
+        {selectedId === 'message' && (
+          <textarea
+            className="thanks-method__message"
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
+            placeholder="습득자에게 전할 감사 메시지를 적어주세요"
+            maxLength={200}
+            rows={4}
+          />
+        )}
       </div>
 
       <div className="thanks-method__next-wrap">
         <button
           type="button"
           className="thanks-method__next"
+          disabled={isMessageMissing}
           onClick={() => {
-            onConfirm?.(selectedId)
+            onConfirm?.(selectedId, selectedId === 'message' ? message.trim() : '')
             navigate('/matching/result/ownership/delivery')
           }}
         >

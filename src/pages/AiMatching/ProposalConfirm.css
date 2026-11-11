@@ -165,3 +165,11 @@
   cursor: pointer;
   font-family: inherit;
 }
+
+.proposal-confirm__summary-message {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: #555d6d;
+  word-break: keep-all;
+}

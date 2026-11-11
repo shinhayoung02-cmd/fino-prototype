@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import iconClose from '../../assets/my-storage/icon-close.svg'
 import SuccessGraphic from '../../components/common/SuccessGraphic/SuccessGraphic'
 import './RegisterComplete.css'
 
@@ -20,8 +22,10 @@ function getObjectParticle(value) {
   return '을'
 }
 
-export default function RegisterComplete({ item, onNext }) {
+export default function RegisterComplete({ item, onNext, onRemember }) {
   const navigate = useNavigate()
+  // ⑤ 분실물 기억 카드 (Figma 1343:53910) — 보관함에서 불러온 물건이면 안 띄움
+  const [isRememberOpen, setRememberOpen] = useState(Boolean(onRemember) && !item?.fromStorage)
 
   if (!item) return null
 
@@ -29,7 +33,9 @@ export default function RegisterComplete({ item, onNext }) {
 
   const metaParts = []
   if (location) metaParts.push(location.address, `반경 ${location.radius}`)
+  else if (item.locationUnknown) metaParts.push('위치 모름')
   if (timeRange) metaParts.push(`${timeRange.month} ${timeRange.day} ${timeRange.hour} ${timeRange.minute}`)
+  else if (item.timeUnknown) metaParts.push('시간 모름')
 
   const handleNext = () => {
     onNext?.()
@@ -61,6 +67,40 @@ export default function RegisterComplete({ item, onNext }) {
       </div>
 
       <div className="register-complete__next-wrap">
+        {isRememberOpen && (
+          <div className="register-complete__remember">
+            <div className="register-complete__remember-head">
+              <p className="register-complete__remember-text">이 물건을 내 물건 보관함에 기억해둘까요?</p>
+              <button
+                type="button"
+                className="register-complete__remember-close"
+                aria-label="닫기"
+                onClick={() => setRememberOpen(false)}
+              >
+                <img src={iconClose} alt="" />
+              </button>
+            </div>
+            <div className="register-complete__remember-actions">
+              <button
+                type="button"
+                className="register-complete__remember-btn"
+                onClick={() => setRememberOpen(false)}
+              >
+                괜찮아요
+              </button>
+              <button
+                type="button"
+                className="register-complete__remember-btn register-complete__remember-btn--primary"
+                onClick={() => {
+                  onRemember(item)
+                  setRememberOpen(false)
+                }}
+              >
+                기억하기
+              </button>
+            </div>
+          </div>
+        )}
         <button type="button" className="register-complete__next" onClick={handleNext}>
           홈으로
         </button>

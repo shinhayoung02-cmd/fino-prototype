@@ -255,7 +255,7 @@
 
 .location-picker__controls {
   position: absolute;
-  left: 16px;
+  right: 16px;
   bottom: 16px;
   z-index: 2;
   display: flex;
@@ -382,5 +382,21 @@
   font-size: 16px;
   font-weight: 700;
   font-family: inherit;
+  cursor: pointer;
+}
+
+/* A-2 '위치를 모르겠어요' (Figma 1343:54091 I283:12382) — 버튼과 12px 간격 */
+.location-picker__unknown {
+  align-self: center;
+  margin-bottom: -8px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  color: #d1d3d8;
+  text-decoration: underline;
   cursor: pointer;
 }

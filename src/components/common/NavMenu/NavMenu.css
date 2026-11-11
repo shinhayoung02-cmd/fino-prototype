@@ -259,3 +259,55 @@
 .nav-menu__item:active {
   background: var(--color-gray-200);
 }
+
+/* 폰 밖 접이식 플로우 설정 패널 */
+.nav-menu__dock {
+  position: fixed;
+  z-index: 1000;
+  border: 1px solid #eeeff1;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.nav-menu__dock-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.nav-menu__dock-head:active {
+  cursor: grabbing;
+}
+
+.nav-menu__dock-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1c20;
+}
+
+.nav-menu__dock-chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #868b94;
+  border-bottom: 2px solid #868b94;
+  transform: rotate(-135deg);
+  transition: transform 0.2s;
+}
+
+.nav-menu__dock--collapsed .nav-menu__dock-chevron {
+  transform: rotate(45deg);
+}
+
+.nav-menu__dock .nav-menu__settings {
+  padding: 0 20px 16px;
+}

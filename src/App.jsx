@@ -106,8 +106,9 @@ import FoundStationRegisterComplete from './pages/FoundItemRegister/FoundStation
 import FoundRegisterComplete from './pages/FoundItemRegister/FoundRegisterComplete'
 import LostItemRegister from './pages/LostItemRegister/LostItemRegister'
 import LocationPicker from './pages/LostItemRegister/LocationPicker'
-import FeatureQuiz from './pages/LostItemRegister/FeatureQuiz'
-import FeatureReview from './pages/LostItemRegister/FeatureReview'
+import MyStorage from './pages/MyStorage/MyStorage'
+import StorageAddComplete from './pages/MyStorage/StorageAddComplete'
+import { INITIAL_STORAGE_ITEMS, toStorageItem, toPhotoEntries } from './data/myStorage'
 import RegisterComplete from './pages/LostItemRegister/RegisterComplete'
 import Playground from './pages/Playground/Playground'
 import DetailPreview from './pages/Playground/DetailPreview'
@@ -117,7 +118,7 @@ import Modal from './components/common/Modal/Modal'
 import BottomSheet from './components/common/BottomSheet/BottomSheet'
 import FlowChangeModal from './components/common/FlowChangeModal/FlowChangeModal'
 import iconCheckNeutral from './assets/ai-matching/icon-check-neutral.svg'
-import NavMenu from './components/common/NavMenu/NavMenu'
+import NavMenu, { FLOW_LABELS } from './components/common/NavMenu/NavMenu'
 
 import iconHomeFill from './assets/home/icon-home-fill.svg'
 import iconGps from './assets/home/icon-gps.svg'
@@ -196,11 +197,13 @@ function useGoTo(path, onSelectTab) {
 function BackTabScreen({ title, children, activeTab, onSelectTab, rightSlot }) {
   const goHome = useGoTo('/', onSelectTab)
   const location = useLocation()
+  // 하단 네비 탭 목적지(AI 매칭·채팅·작성글 관리)는 뒤로가기 없이 하단 네비 표시
+  const isNavTab = NAV_ITEMS.some((item) => item.path === location.pathname)
   return (
     <AppShell
       key={location.pathname}
-      header={<Header title={title} showBack onBack={goHome} rightSlot={rightSlot} />}
-      bottomNav={<BottomNav items={NAV_ITEMS} activeTab={activeTab} onSelect={onSelectTab} />}
+      header={<Header title={title} showBack={!isNavTab} onBack={goHome} rightSlot={rightSlot} />}
+      bottomNav={isNavTab ? <BottomNav items={NAV_ITEMS} activeTab={activeTab} onSelect={onSelectTab} /> : undefined}
     >
       {children}
     </AppShell>
@@ -224,11 +227,6 @@ function SubStepScreen({ title, backTo, children, rightSlot, activeTab, onSelect
       key={location.pathname}
       header={
         <Header title={title} showBack onBack={() => navigate(backTo)} rightSlot={rightSlot} />
-      }
-      bottomNav={
-        activeTab !== undefined ? (
-          <BottomNav items={NAV_ITEMS} activeTab={activeTab} onSelect={onSelectTab} />
-        ) : undefined
       }
     >
       {children}
@@ -275,7 +273,6 @@ function ChatRoomScreen({ activeTab, onSelectTab, onReadRoom, onOpenNavMenu }) {
       header={
         <Header title="채팅" showBack onBack={goToChatList} rightSlot={<MenuButton onClick={onOpenNavMenu} />} />
       }
-      bottomNav={<BottomNav items={NAV_ITEMS} activeTab={activeTab} onSelect={onSelectTab} />}
     >
       <ChatRoom roomId={roomId} />
     </AppShell>
@@ -298,7 +295,6 @@ function SearchScreen({ activeTab, onSelectTab }) {
           }
         />
       }
-      bottomNav={<BottomNav items={NAV_ITEMS} activeTab={activeTab} onSelect={onSelectTab} />}
     >
       <SearchPage />
     </AppShell>
@@ -364,6 +360,9 @@ function App() {
   const [foundLeftDraft, setFoundLeftDraft] = useState(INITIAL_FOUND_LEFT_DRAFT)
   const [foundStationDraft, setFoundStationDraft] = useState(INITIAL_FOUND_STATION_DRAFT)
   const [completedItem, setCompletedItem] = useState(null)
+  const [storageItems, setStorageItems] = useState(INITIAL_STORAGE_ITEMS)
+  const [storageDraft, setStorageDraft] = useState(INITIAL_LOST_DRAFT)
+  const [addedStorageItem, setAddedStorageItem] = useState(null)
   const [completedFoundItem, setCompletedFoundItem] = useState(null)
   const [isMatchDialogOpen, setMatchDialogOpen] = useState(false)
   const [isAwaitingMatchNotification, setAwaitingMatchNotification] = useState(false)
@@ -416,6 +415,7 @@ function App() {
   const [meetupDates, setMeetupDates] = useState([])
   const [meetupSlotTimes, setMeetupSlotTimes] = useState({})
   const [thanksMethod, setThanksMethod] = useState('coffee')
+  const [thanksMessage, setThanksMessage] = useState('')
   const [parcelStore, setParcelStore] = useState(null)
   const [parcelAddress, setParcelAddress] = useState(null)
   const [foundParcelStore, setFoundParcelStore] = useState(null)
@@ -425,6 +425,35 @@ function App() {
   const [policeBox, setPoliceBox] = useState(null)
   const navigate = useNavigate()
   const location = useLocation()
+
+  // 최근 활동: 방문한 플로우 화면 기록 (경로별 최신 1건, 최대 5건, 새로고침해도 유지)
+  const [flowHistory, setFlowHistory] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('fino-flow-history')) ?? []
+    } catch {
+      return []
+    }
+  })
+  useEffect(() => {
+    const path = location.pathname
+    if (path === '/') return undefined
+    const timer = setTimeout(() => {
+      const title = document.querySelector('.header__title, .header h1')?.textContent?.trim()
+      const label = FLOW_LABELS[path] ?? title
+      if (!label) return
+      const flow = path.startsWith('/found') ? '습득자' : path.startsWith('/my/storage') ? '보관함' : path.startsWith('/lost') || path.startsWith('/matching') ? '분실자' : null
+      setFlowHistory((prev) => {
+        const next = [{ path, label, flow, at: Date.now() }, ...prev.filter((h) => h.path !== path)].slice(0, 5)
+        try {
+          localStorage.setItem('fino-flow-history', JSON.stringify(next))
+        } catch {
+          /* 저장 실패해도 화면 표시엔 영향 없음 */
+        }
+        return next
+      })
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [location.pathname])
 
   useEffect(() => {
     setMatchDialogOpen(false)
@@ -923,6 +952,7 @@ function App() {
                 onRegisterNewFound={handleRegisterNewFound}
                 isApprovalResultReady={isApprovalResultReady}
                 foundMatchResultPath={foundFlowResumePath}
+                flowHistory={flowHistory}
               />
             </TabScreen>
           }
@@ -1124,7 +1154,14 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ThanksMethodSelect value={thanksMethod} onConfirm={setThanksMethod} />
+              <ThanksMethodSelect
+                value={thanksMethod}
+                message={thanksMessage}
+                onConfirm={(method, message) => {
+                  setThanksMethod(method)
+                  setThanksMessage(message)
+                }}
+              />
             </SubStepScreen>
           }
         />
@@ -1278,7 +1315,7 @@ function App() {
               activeTab="/matching"
               onSelectTab={setActiveTab}
             >
-              <ProposalConfirm thanksMethod={thanksMethod} />
+              <ProposalConfirm thanksMethod={thanksMethod} thanksMessage={thanksMessage} />
             </SubStepScreen>
           }
         />
@@ -1552,7 +1589,12 @@ function App() {
           path="/found/new/restricted"
           element={
             <SubStepScreen title="습득물 등록" backTo="/found/new/camera" activeTab="/" onSelectTab={setActiveTab}>
-              <FoundItemRestricted />
+              <FoundItemRestricted
+                onKeepItem={() => {
+                  setFoundDraft((prev) => ({ ...prev, name: foundStationDraft.name, description: foundStationDraft.description, itemKey: foundStationDraft.itemKey }))
+                  navigate('/found/new/main')
+                }}
+              />
             </SubStepScreen>
           }
         />
@@ -2634,7 +2676,16 @@ function App() {
               onSelectTab={setActiveTab}
               rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
             >
-              <LostItemRegister draft={lostDraft} onDraftChange={setLostDraft} />
+              <LostItemRegister
+                draft={lostDraft}
+                onDraftChange={setLostDraft}
+                onRegister={() => {
+                  saveItem(toItemRow('lost', null, lostDraft, { featureAnswers: lostDraft.featureAnswers }))
+                  setCompletedItem(lostDraft)
+                  setLostDraft(INITIAL_LOST_DRAFT)
+                  setAwaitingMatchNotification(true)
+                }}
+              />
             </BackTabScreen>
           }
         />
@@ -2650,49 +2701,8 @@ function App() {
             >
               <LocationPicker
                 value={lostDraft.location}
-                onConfirm={(location) => setLostDraft((prev) => ({ ...prev, location }))}
-              />
-            </SubStepScreen>
-          }
-        />
-        <Route
-          path="/lost/new/next"
-          element={
-            <SubStepScreen
-              title="비공개 특징 퀴즈"
-              backTo="/lost/new"
-              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
-              activeTab={activeTab}
-              onSelectTab={setActiveTab}
-            >
-              <FeatureQuiz
-                answers={lostDraft.featureAnswers}
-                onChangeAnswers={(featureAnswers) =>
-                  setLostDraft((prev) => ({ ...prev, featureAnswers }))
-                }
-                featureHints={getItemProfile(lostDraft.itemKey).featureHints}
-              />
-            </SubStepScreen>
-          }
-        />
-        <Route
-          path="/lost/new/review"
-          element={
-            <SubStepScreen
-              title="비공개 특징 퀴즈"
-              backTo="/lost/new/next"
-              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
-              activeTab={activeTab}
-              onSelectTab={setActiveTab}
-            >
-              <FeatureReview
-                answers={lostDraft.featureAnswers}
-                onRegister={() => {
-                  saveItem(toItemRow('lost', null, lostDraft, { featureAnswers: lostDraft.featureAnswers }))
-                  setCompletedItem(lostDraft)
-                  setLostDraft(INITIAL_LOST_DRAFT)
-                  setAwaitingMatchNotification(true)
-                }}
+                onConfirm={(location) => setLostDraft((prev) => ({ ...prev, location, locationUnknown: false }))}
+                onUnknown={() => setLostDraft((prev) => ({ ...prev, location: null, locationUnknown: true }))}
               />
             </SubStepScreen>
           }
@@ -2707,7 +2717,11 @@ function App() {
               activeTab="/"
               onSelectTab={setActiveTab}
             >
-              <RegisterComplete item={completedItem} onNext={() => setActiveTab('/')} />
+              <RegisterComplete
+                item={completedItem}
+                onNext={() => setActiveTab('/')}
+                onRemember={(item) => setStorageItems((prev) => [toStorageItem(item), ...prev])}
+              />
             </SubStepScreen>
           }
         />
@@ -2717,6 +2731,59 @@ function App() {
             <BackTabScreen title="마이페이지" activeTab={activeTab} onSelectTab={setActiveTab}>
               <MyPage />
             </BackTabScreen>
+          }
+        />
+        <Route
+          path="/my/storage"
+          element={
+            <SubStepScreen title="내 물건 보관함" backTo="/my">
+              <MyStorage
+                items={storageItems}
+                onDeleteItem={(id) => setStorageItems((prev) => prev.filter((item) => item.id !== id))}
+                onSelectItem={async (item) => {
+                  const photos = await toPhotoEntries(item)
+                  setLostDraft({ ...INITIAL_LOST_DRAFT, photos, name: item.name, description: item.description, fromStorage: true })
+                  navigate('/lost/new')
+                }}
+              />
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/my/storage/new"
+          element={
+            <SubStepScreen
+              title="분실물 추가"
+              backTo="/my/storage"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+            >
+              <LostItemRegister
+                mode="storage"
+                draft={storageDraft}
+                onDraftChange={setStorageDraft}
+                onSave={() => {
+                  const item = toStorageItem(storageDraft)
+                  setStorageItems((prev) => [item, ...prev])
+                  setAddedStorageItem(item)
+                  setStorageDraft(INITIAL_LOST_DRAFT)
+                  navigate('/my/storage/done')
+                }}
+              />
+            </SubStepScreen>
+          }
+        />
+        <Route
+          path="/my/storage/done"
+          element={
+            <SubStepScreen
+              title="분실물 등록"
+              backTo="/my/storage"
+              rightSlot={<MenuButton onClick={() => setNavMenuOpen(true)} />}
+              activeTab="/"
+              onSelectTab={setActiveTab}
+            >
+              <StorageAddComplete item={addedStorageItem} />
+            </SubStepScreen>
           }
         />
         <Route

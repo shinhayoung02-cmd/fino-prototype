@@ -140,3 +140,29 @@
   cursor: pointer;
   font-family: inherit;
 }
+
+/* 감사 메시지 입력 */
+.thanks-method__message {
+  width: 100%;
+  min-height: 104px;
+  padding: 14px 16px;
+  border: 1px solid #dcdee3;
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 22px;
+  color: #1a1c20;
+  resize: none;
+  outline: none;
+}
+
+.thanks-method__message::placeholder {
+  color: #b0b3ba;
+}
+
+.thanks-method__next:disabled {
+  background: #f3f4f5;
+  color: #d1d3d8;
+  cursor: not-allowed;
+}

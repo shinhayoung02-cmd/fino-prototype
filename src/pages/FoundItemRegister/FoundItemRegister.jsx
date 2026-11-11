@@ -6,15 +6,19 @@ import iconSun from '../../assets/found-report/icon-sun.svg'
 import iconScanner from '../../assets/found-report/icon-scanner.svg'
 import iconPhoto from '../../assets/lost-register/icon-material-photo-library.svg'
 import iconCamera from '../../assets/lost-register/icon-material-photo-camera.svg'
+import iconInfoBlue from '../../assets/my-storage/icon-info.svg'
+import iconPhotoSeveral from '../../assets/my-storage/icon-photo-several.svg'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import { GalleryGrid, GalleryMismatchNotice, resolveSelectedProfile } from '../FoundItemCamera/GalleryPickerSheet'
 import '../FoundItemCamera/FoundItemCamera.css'
+import RestrictedRecommendModal from './RestrictedRecommendModal'
 import './FoundItemRegister.css'
 
 const CAMERA_TIPS = [
   { id: 'light', icon: iconSun, title: '밝은 곳에서 촬영해주세요.', desc: '밝은 곳에 배치하고 그림자를 피하세요' },
   { id: 'distance', icon: iconScanner, title: '거리를 유지해주세요.', desc: '휴대폰을 12~18인치 떨어진 곳에 고정해주세요' },
   { id: 'wait', icon: iconClock, title: '잠시만 기다려 주세요.', desc: '1-2초만 기다려주세요' },
+  { id: 'angles', icon: iconPhotoSeveral, title: '여러 각도에서 찍어주세요.', desc: '위·아래, 좌·우에서 한 장씩 찍어주세요' },
 ]
 
 const VERIFY_CLOSE_DELAY = 3000
@@ -27,6 +31,7 @@ export default function FoundItemRegister({ onRecognized, onRestrictedRecognized
   const [isVerifyingOpen, setVerifyingOpen] = useState(false)
   const [selectedPhoto, setSelectedPhoto] = useState(null)
   const [selectedIds, setSelectedIds] = useState([])
+  const [isRecommendOpen, setRecommendOpen] = useState(false)
 
   const toggleGalleryTile = (id) => {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -60,9 +65,12 @@ export default function FoundItemRegister({ onRecognized, onRestrictedRecognized
 
     const timer = setTimeout(() => {
       setVerifyingOpen(false)
-      if (selectedPhoto?.restricted) onRestrictedRecognized?.(selectedPhoto)
-      else if (selectedPhoto) onRecognized?.(selectedPhoto)
-      navigate(selectedPhoto?.restricted ? '/found/new/restricted' : '/found/new/main')
+      if (selectedPhoto?.restricted) {
+        setRecommendOpen(true)
+        return
+      }
+      if (selectedPhoto) onRecognized?.(selectedPhoto)
+      navigate('/found/new/main')
     }, VERIFY_CLOSE_DELAY)
     return () => clearTimeout(timer)
   }, [isVerifyingOpen, navigate, onRecognized, onRestrictedRecognized, selectedPhoto])
@@ -133,6 +141,14 @@ export default function FoundItemRegister({ onRecognized, onRestrictedRecognized
           </div>
         ) : sourcePickerStep === 'gallery' ? (
           <>
+            <div className="found-item-register__callout found-gallery-guide">
+              <img src={iconInfoBlue} alt="" className="found-item-register__callout-icon" />
+              <p className="found-item-register__callout-text">
+                물건을 위·아래, 좌·우에서 찍은 사진을 넣어주세요
+                <br />
+                여러 각도 사진이 있으면 더 정확히 찾을 수 있어요
+              </p>
+            </div>
             <GalleryGrid selectedIds={selectedIds} onToggle={toggleGalleryTile} />
             {selectedIds.length > 0 && (
               <button type="button" className="found-camera__gallery-confirm" onClick={handleGalleryConfirm}>
@@ -174,6 +190,20 @@ export default function FoundItemRegister({ onRecognized, onRestrictedRecognized
           </button>
         </div>
       </BottomSheet>
+
+      <RestrictedRecommendModal
+        isOpen={isRecommendOpen}
+        onHandover={() => {
+          setRecommendOpen(false)
+          onRestrictedRecognized?.(selectedPhoto)
+          navigate('/found/new/restricted')
+        }}
+        onKeep={() => {
+          setRecommendOpen(false)
+          onRecognized?.(selectedPhoto)
+          navigate('/found/new/main')
+        }}
+      />
 
       {isVerifyingOpen && (
         <div className="found-camera__verify-overlay" onClick={() => setVerifyingOpen(false)}>

@@ -128,3 +128,71 @@
   cursor: pointer;
   font-family: inherit;
 }
+
+/* ⑤ 분실물 기억 카드 (Figma 1343:53910) */
+.register-complete__remember {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 27px 16px;
+  border-radius: 12px;
+  background: #f7f8f9;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
+}
+
+.register-complete__remember-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.register-complete__remember-text {
+  margin: 0;
+  padding: 1px 0;
+  font-size: 14px;
+  line-height: 14.7px;
+  letter-spacing: -0.46px;
+  color: #868b94;
+}
+
+.register-complete__remember-close {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.register-complete__remember-close img {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.register-complete__remember-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.register-complete__remember-btn {
+  flex: 1;
+  height: 47.7px;
+  border: 0.9px solid rgba(0, 0, 0, 0.06);
+  border-radius: 7.3px;
+  background: #f7f8f9;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16.5px;
+  color: #1a1c20;
+  cursor: pointer;
+}
+
+.register-complete__remember-btn--primary {
+  border: none;
+  background: #2a3038;
+  color: #ffffff;
+  box-shadow: 0 1.8px 4.6px rgba(0, 0, 0, 0.1);
+}

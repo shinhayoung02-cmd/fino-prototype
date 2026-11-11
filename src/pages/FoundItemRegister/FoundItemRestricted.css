@@ -272,3 +272,27 @@
   line-height: 19px;
   color: #921708;
 }
+
+/* 인계 방법 시트: 직접 보관 선택지 (강제 아님) */
+.handover-sheet__keep {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #868b94;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* 추천(강제 아님) 안내: 경고 대신 정보 스타일 */
+.found-item-restricted__callout--info {
+  background: #eff6ff;
+}
+
+.found-item-restricted__callout--info .found-item-restricted__callout-text {
+  color: #0b4596;
+}

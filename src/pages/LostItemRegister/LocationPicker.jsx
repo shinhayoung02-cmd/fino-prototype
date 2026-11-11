@@ -34,7 +34,7 @@ function SearchIcon() {
   )
 }
 
-export default function LocationPicker({ value, onConfirm, backTo = '/lost/new', type = 'lost' }) {
+export default function LocationPicker({ value, onConfirm, onUnknown, backTo = '/lost/new', type = 'lost' }) {
   const navigate = useNavigate()
   const [searchMode, setSearchMode] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -263,6 +263,18 @@ export default function LocationPicker({ value, onConfirm, backTo = '/lost/new',
           <p className="location-picker__radius-hint">{radiusHint}</p>
         </div>
 
+        {onUnknown && (
+          <button
+            type="button"
+            className="location-picker__unknown"
+            onClick={() => {
+              onUnknown()
+              navigate(backTo)
+            }}
+          >
+            위치를 모르겠어요
+          </button>
+        )}
         <button type="button" className="location-picker__confirm" onClick={handleConfirm}>
           선택 완료
         </button>

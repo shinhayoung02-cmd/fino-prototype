@@ -41,3 +41,63 @@
   width: 0;
   height: 0;
 }
+
+/* 하단 네비 없는 화면: 하단 34px(인디케이터 포함) 영역, 인디케이터 위 21px에 버튼 */
+.app-shell__indicator-area {
+  position: relative;
+  flex-shrink: 0;
+  height: 34px;
+}
+
+.app-shell__indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 139px;
+  height: 5px;
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.25);
+  transform: translateX(-50%);
+}
+
+@media (max-width: 430px) {
+  .app-shell__indicator {
+    display: none;
+  }
+}
+
+/* 네비 없는 화면: 페이지 루트의 하단 여백 제거 → 하단 버튼이 화면 끝에서 34px(인디케이터 위 21px) */
+.app-shell--no-nav .app-shell__content > * {
+  padding-bottom: 0 !important;
+}
+
+/* 하단 버튼을 감싼 시트·래퍼의 하단 여백도 제거 (같은 34px 규칙) */
+.app-shell--no-nav :is(
+    .location-picker__sheet,
+    .meetup-location-picker__sheet,
+    .station-picker__sheet,
+    .nearby-map__sheet,
+    .found-main__next-wrap,
+    .parcel-address__next-wrap,
+    .match-detail__actions,
+    .waiting-screen,
+    .lost-register__scroll,
+    .found-left__scroll,
+    .station-report__actions
+  ) {
+  padding-bottom: 0 !important;
+}
+
+/* 지도 화면: 시트가 남은 높이를 채우고 확인 버튼을 하단에 고정 */
+.app-shell--no-nav .nearby-map__sheet {
+  flex: 1 0 auto;
+}
+
+.app-shell--no-nav .nearby-map__confirm {
+  margin-top: auto;
+}
+
+/* 내용이 짧은 등록 화면: 다음 버튼을 하단에 고정 */
+.app-shell--no-nav .found-left__next-wrap {
+  margin-top: auto;
+}

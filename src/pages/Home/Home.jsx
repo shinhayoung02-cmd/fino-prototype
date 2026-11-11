@@ -61,6 +61,7 @@ export default function Home({
   onRegisterNewFound,
   isApprovalResultReady = false,
   foundMatchResultPath = '/found/match-result',
+  flowHistory = [],
 }) {
   const [query, setQuery] = useState('')
   const [recentActivity, setRecentActivity] = useState(RECENT_ACTIVITY)
@@ -239,9 +240,27 @@ export default function Home({
           <h3 className="home-section-head__title">최근 활동</h3>
         </div>
         <div className="home-activity-card">
+          {flowHistory.map((h, i) => (
+            <button
+              type="button"
+              className="home-activity-item home-activity-item--flow"
+              key={h.path}
+              onClick={() => navigate(h.path)}
+            >
+              <span className={`home-activity-item__dot${i === 0 ? ' home-activity-item__dot--active' : ''}`} />
+              <div className="home-activity-item__body">
+                <p className="home-activity-item__text">
+                  {h.flow ? `[${h.flow}] ` : ''}'{h.label}'까지 진행했어요
+                </p>
+                <p className="home-activity-item__time">
+                  {new Date(h.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' })} · 눌러서 이어하기
+                </p>
+              </div>
+            </button>
+          ))}
           {recentActivity.map((item) => (
             <div className="home-activity-item" key={item.id}>
-              <span className={`home-activity-item__dot${item.active ? ' home-activity-item__dot--active' : ''}`} />
+              <span className={`home-activity-item__dot${item.active && !flowHistory.length ? ' home-activity-item__dot--active' : ''}`} />
               <div className="home-activity-item__body">
                 <p className="home-activity-item__text">{item.text}</p>
                 <p className="home-activity-item__time">{item.time}</p>

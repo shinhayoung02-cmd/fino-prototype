@@ -188,7 +188,7 @@
 
 .nearby-map__controls {
   position: absolute;
-  left: 16px;
+  right: 16px;
   bottom: 16px;
   z-index: 2;
   display: flex;

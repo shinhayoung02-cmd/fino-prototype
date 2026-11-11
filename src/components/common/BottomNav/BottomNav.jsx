@@ -5,7 +5,6 @@ export default function BottomNav({ items = [], activeTab, onSelect }) {
   return (
     <div className="bottom-nav-area">
       <nav className="bottom-nav">
-        <div className="bottom-nav__divider" />
         {items.map((item) => {
           const isSelected = item.path === activeTab
           const maskValue = `url("${item.icon}")`

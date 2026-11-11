@@ -517,3 +517,12 @@
   cursor: pointer;
   font-family: inherit;
 }
+
+/* 카메라 다각도 안내 (Figma 1343:56240: x=11, w=380) */
+.found-camera__angle-guide {
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  top: 77px;
+  z-index: 2;
+}

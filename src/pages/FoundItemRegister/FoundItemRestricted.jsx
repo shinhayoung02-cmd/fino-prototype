@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import iconChevronRight from '../../assets/home/icon-chevron-right.svg'
 import iconChevronDown from '../../assets/ai-matching/icon-chevron-down.svg'
-import iconProhibition from '../../assets/found-report/icon-prohibition.svg'
-import iconInfoCritical from '../../assets/found-report/icon-info-critical.svg'
+import iconInfo from '../../assets/my-storage/icon-info.svg'
 import iconCheck from '../../assets/ai-matching/icon-parcel-check.svg'
 import BottomSheet from '../../components/common/BottomSheet/BottomSheet'
 import './FoundItemRestricted.css'
@@ -24,8 +23,8 @@ const HANDOVER_OPTIONS = [
 const FAQ_ITEMS = [
   {
     id: 'why-restricted',
-    question: '왜 직접 보관할 수 없나요?',
-    answer: '신분증이나 금융카드는 개인정보 보호와 2차 피해 예방을 위해 개인 보관을 제한해요.',
+    question: '왜 안전 인계를 추천하나요?',
+    answer: '신분증이나 금융카드는 개인정보 보호와 2차 피해 예방을 위해 안전 인계를 추천해요. 직접 보관하며 등록할 수도 있어요.',
   },
   {
     id: 'what-to-do',
@@ -34,8 +33,8 @@ const FAQ_ITEMS = [
   },
   {
     id: 'direct-transfer',
-    question: '분실자에게 직접 전달하면 안 되나요?',
-    answer: '네. 해당 물건은 일반 등록이나 개인 간 직접 전달 대신 안전 인계 절차로 진행해요.',
+    question: '분실자에게 직접 전달해도 되나요?',
+    answer: '직접 전달도 가능하지만, 개인정보 보호를 위해 안전 인계 절차를 추천해요.',
   },
   {
     id: 'after-transfer',
@@ -44,7 +43,7 @@ const FAQ_ITEMS = [
   },
 ]
 
-export default function FoundItemRestricted() {
+export default function FoundItemRestricted({ onKeepItem }) {
   const navigate = useNavigate()
   const [isFaqOpen, setFaqOpen] = useState(false)
   const [openFaqId, setOpenFaqId] = useState(null)
@@ -61,20 +60,20 @@ export default function FoundItemRestricted() {
         <span className="found-item-restricted__badge">습득물 확인중</span>
         <div className="found-item-restricted__heading">
           <h2 className="found-item-restricted__title">
-            개인 보관이
+            안전 인계를
             <br />
-            어려운 물건이에요
+            추천하는 물건이에요
           </h2>
           <p className="found-item-restricted__subtitle">
             신분증 및 금융 카드는 2차 피해 방지를 위해
             <br />
-            개인 보관이 불가합니다.
+            지구대·우체통 인계를 추천해요.
           </p>
         </div>
 
-        <div className="found-item-restricted__callout">
-          <img src={iconProhibition} alt="" className="found-item-restricted__callout-icon" />
-          <p className="found-item-restricted__callout-text">일반 등록 및 직거래 진행이 불가합니다.</p>
+        <div className="found-item-restricted__callout found-item-restricted__callout--info">
+          <img src={iconInfo} alt="" className="found-item-restricted__callout-icon" />
+          <p className="found-item-restricted__callout-text">원하면 직접 보관하며 일반 등록할 수도 있어요.</p>
         </div>
 
         <div className="found-item-restricted__detected">
@@ -111,7 +110,7 @@ export default function FoundItemRestricted() {
       <BottomSheet isOpen={isHandoverSheetOpen} onClose={() => setHandoverSheetOpen(false)}>
         <div className="handover-sheet__header">
           <p className="handover-sheet__title">안전한 인계 방법을 선택해주세요</p>
-          <p className="handover-sheet__desc">위험 물품은 반드시 아래 방법 중 하나로 인계해야 해요</p>
+          <p className="handover-sheet__desc">아래 방법으로 인계하면 더 안전해요</p>
         </div>
         <div className="handover-sheet__list">
           {HANDOVER_OPTIONS.map((option) => {
@@ -143,10 +142,16 @@ export default function FoundItemRestricted() {
             )
           })}
         </div>
-        <div className="handover-sheet__callout">
-          <img src={iconInfoCritical} alt="" className="handover-sheet__callout-icon" />
-          <p className="handover-sheet__callout-text">일반 보관형 등록은 이용할 수 없어요.</p>
-        </div>
+        <button
+          type="button"
+          className="handover-sheet__keep"
+          onClick={() => {
+            setHandoverSheetOpen(false)
+            onKeepItem?.()
+          }}
+        >
+          직접 보관하며 등록하기
+        </button>
       </BottomSheet>
 
       <BottomSheet isOpen={isFaqOpen} onClose={() => setFaqOpen(false)} title="자주 묻는 질문">

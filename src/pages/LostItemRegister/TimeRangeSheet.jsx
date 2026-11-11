@@ -62,6 +62,7 @@ function RangeSheet({
   onSelectDay,
   onSelectTime,
   onConfirm,
+  onUnknown,
   onBackdrop,
   closing,
 }) {
@@ -87,6 +88,11 @@ function RangeSheet({
             </span>
           </button>
         </div>
+        {onUnknown && (
+          <button type="button" className="range-sheet__unknown" onClick={onUnknown}>
+            시간을 모르겠어요
+          </button>
+        )}
         <button type="button" className="range-sheet__confirm" onClick={onConfirm}>
           확인
         </button>
@@ -99,6 +105,7 @@ export default function TimeRangeSheet({
   isOpen,
   onClose,
   onConfirm,
+  onUnknown,
   title = '분실 시각은 언제인가요?',
   description = '분실 시간을 선택해주세요',
   dayRowLabel = '분실 날짜',
@@ -156,6 +163,13 @@ export default function TimeRangeSheet({
         onSelectDay={() => swapTo('day')}
         onSelectTime={() => swapTo('time')}
         onConfirm={handleConfirmRange}
+        onUnknown={
+          onUnknown &&
+          (() => {
+            onUnknown()
+            closeAll()
+          })
+        }
       />
     )
   }

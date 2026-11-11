@@ -316,6 +316,7 @@
 }
 
 .lost-register__next-wrap {
+  margin-top: auto;
   padding: 32px 16px 0;
 }
 
@@ -339,4 +340,37 @@
   background: var(--color-gray-200);
   color: #d1d3d8;
   cursor: not-allowed;
+}
+
+/* A-3 시간·위치 모름 상태 (Figma 1339:50157) */
+.lost-register__field--unknown {
+  background: #f3f4f5;
+}
+
+.lost-register__field--unknown .lost-register__field-text {
+  color: #d1d3d8;
+}
+
+.lost-register__location-row--unknown {
+  cursor: default;
+}
+
+.lost-register__location-row--unknown .lost-register__location-title {
+  font-weight: 700;
+  color: #1a1c20;
+}
+
+.lost-register__location-row--unknown .lost-register__location-desc {
+  font-size: 12px;
+  color: #868b94;
+}
+
+.lost-register__location-row--unknown .lost-register__field-clear {
+  width: 18px;
+  height: 18px;
+}
+
+/* ② 분실물 추가(보관함) — 저장 버튼 하단 고정 (Figma 1339:49842, y=770) */
+.lost-register__next-wrap--bottom {
+  margin-top: auto;
 }

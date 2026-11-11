@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import iconPlus from '../../assets/chat/icon-plus.svg'
 import iconEmoticon from '../../assets/chat/icon-emoticon.svg'
 import iconSend from '../../assets/chat/icon-chatting-send.svg'
-import heroIllustration from '../../assets/home/hero-illustration.png'
+import finoAvatar from '../../assets/chat/fino-avatar-kkulddong.jpg'
 import iconPayment from '../../assets/home/icon-payment.svg'
 import iconClock from '../../assets/home/icon-clock.svg'
 import { MATCH_CANDIDATES } from '../AiMatching/matchCandidates'
@@ -49,7 +49,7 @@ function MessageRow({ sender, text, timeLabel }) {
   return sender === 'fino' ? (
     <div className="chat-room__row chat-room__row--fino">
       <span className="chat-room__avatar">
-        <img src={heroIllustration} alt="" className="chat-room__avatar-illustration" />
+        <img src={finoAvatar} alt="" className="chat-room__avatar-illustration" />
       </span>
       <div className="chat-room__bubble chat-room__bubble--fino">{text}</div>
       <span className="chat-room__time">{timeLabel}</span>

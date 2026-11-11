@@ -1,0 +1,282 @@
+/* ① 내 물건 보관함 - 목록 (Figma 1339:49713) */
+.my-storage {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.my-storage__head {
+  display: flex;
+  flex-direction: column;
+  padding: 21px 16px 0;
+  height: 133px;
+  box-sizing: content-box;
+}
+
+.my-storage__title-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  height: 30px;
+}
+
+.my-storage__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+  letter-spacing: -0.44px;
+  color: #1a1c20;
+}
+
+.my-storage__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  box-sizing: border-box;
+  border: 1px solid #ffd5c0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  color: #ff6600;
+}
+
+.my-storage__chips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.my-storage__retry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #eeeff1;
+  border-radius: 9999px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.my-storage__retry img {
+  width: 24px;
+  height: 24px;
+}
+
+.my-storage__chip-group {
+  display: flex;
+  gap: 8px;
+}
+
+.my-storage__chip {
+  height: 36px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  border: 1px solid #f3f4f5;
+  border-radius: 9999px;
+  background: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: -0.84px;
+  color: #1a1c20;
+  cursor: pointer;
+}
+
+.my-storage__chip--selected {
+  border-color: #2a3038;
+  background: #eeeff1;
+}
+
+.my-storage__check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.my-storage__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22.6px;
+  height: 22.6px;
+  box-sizing: border-box;
+  border: 1px solid #dcdee3;
+  border-radius: 5px;
+  background: #ffffff;
+}
+
+.my-storage__check--on {
+  border: none;
+  background: #b0b3ba;
+}
+
+.my-storage__check img {
+  width: 15px;
+  height: 15px;
+}
+
+.my-storage__check-label {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.96px;
+  color: #1a1c20;
+}
+
+.my-storage__list {
+  margin: 0;
+  padding: 0 16px 0 4px;
+  list-style: none;
+}
+
+.my-storage__list li {
+  border-bottom: 1px solid #eeeff1;
+}
+
+.my-storage__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  height: 118px;
+  padding: 21px 0 0 13px;
+  box-sizing: border-box;
+  border: none;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.my-storage__thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  background: #e5e5e5;
+  overflow: hidden;
+}
+
+.my-storage__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.my-storage__info {
+  display: flex;
+  flex-direction: column;
+  width: 237px;
+  letter-spacing: -0.5px;
+}
+
+.my-storage__item-title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px;
+  color: #262626;
+  white-space: nowrap;
+  margin-bottom: 10px;
+}
+
+.my-storage__meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  line-height: 14px;
+  color: #868b94;
+  white-space: nowrap;
+}
+
+.my-storage__meta img {
+  width: 14px;
+  height: 14px;
+}
+
+.my-storage__feature {
+  font-size: 12px;
+  line-height: 12px;
+  color: #a3a3a3;
+  white-space: nowrap;
+}
+
+.my-storage__cta-wrap {
+  margin-top: auto;
+  padding: 24px 16px 0 17px;
+}
+
+.my-storage__cta {
+  width: 369px;
+  max-width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 12px;
+  background: #555d6d;
+  font-family: Pretendard, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 19px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+/* ③ 보관함 추가 완료 (Figma 1343:53699) — 버튼 2개 세로 6px 간격 */
+.storage-complete__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.storage-complete__home {
+  height: 52px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  font-family: Pretendard, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19px;
+  color: #1a1c20;
+  cursor: pointer;
+}
+
+/* 보관함 물건 삭제 버튼 (행 오른쪽 위) */
+.my-storage__item {
+  position: relative;
+}
+
+.my-storage__delete {
+  position: absolute;
+  top: 18px;
+  right: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.my-storage__delete img {
+  width: 18px;
+  height: 18px;
+}
