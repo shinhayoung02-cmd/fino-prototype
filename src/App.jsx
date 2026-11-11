@@ -145,12 +145,6 @@ const DELIVERY_METHOD_PICK_OPTIONS = [
   { id: 'parcel-store', label: '편의점 택배로 전달' },
 ]
 
-const VERIFICATION_RESULT_PICK_OPTIONS = [
-  { id: 'single', label: '단독 소유자로 확인' },
-  { id: 'multiple', label: '여러 명이 소유권을 주장' },
-  { id: 'quiz-fail', label: '특징이 일치하지 않음' },
-]
-
 const OWNERSHIP_QUIZ_FAQ_ITEMS = [
   {
     id: 'why-check',
@@ -359,6 +353,14 @@ const INITIAL_FOUND_STATION_DRAFT = {
 
 function App() {
   const [activeTab, setActiveTab] = useState(null)
+  // 플로우 설정은 새로고침·다시 시작해도 유지 (시연용)
+  const [savedFlowSettings] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('fino-flow-settings')) ?? {}
+    } catch {
+      return {}
+    }
+  })
   // 첫 진입: 스플래시, 플로우 초기화: 스플래시 + 하단 로딩 바
   const [splash, setSplash] = useState({ id: 0, withProgress: false })
   const [readRoomIds, setReadRoomIds] = useState(() => new Set())
@@ -369,7 +371,7 @@ function App() {
   const [completedItem, setCompletedItem] = useState(null)
   const [storageItems, setStorageItems] = useState(INITIAL_STORAGE_ITEMS)
   // 플로우 설정 '보관함 물건 있음' — 끄면 보관함이 빈 상태로 보임
-  const [hasStorageItems, setHasStorageItems] = useState(false)
+  const [hasStorageItems, setHasStorageItems] = useState(() => savedFlowSettings.hasStorageItems ?? false)
   const visibleStorageItems = hasStorageItems ? storageItems : []
   const [storageDraft, setStorageDraft] = useState(INITIAL_LOST_DRAFT)
   const [addedStorageItem, setAddedStorageItem] = useState(null)
@@ -397,8 +399,6 @@ function App() {
   const [isAwaitingRetryReturnProposalNotification, setAwaitingRetryReturnProposalNotification] = useState(false)
   const [isOwnershipRequested, setOwnershipRequested] = useState(false)
   const [isVerificationDialogOpen, setVerificationDialogOpen] = useState(false)
-  const [isVerificationResultPickOpen, setVerificationResultPickOpen] = useState(false)
-  const [verificationResultPick, setVerificationResultPick] = useState('single')
   const [isVerificationReady, setVerificationReady] = useState(false)
   const [evidenceFiles, setEvidenceFiles] = useState(EMPTY_EVIDENCE_FILES)
   const [isApprovalDialogOpen, setApprovalDialogOpen] = useState(false)
@@ -413,14 +413,14 @@ function App() {
   const [isFlowChangeDialogOpen, setFlowChangeDialogOpen] = useState(false)
   const [pendingFlowToggle, setPendingFlowToggle] = useState(null)
   const [isNavMenuOpen, setNavMenuOpen] = useState(false)
-  const [isMultipleClaimantsFlow, setMultipleClaimantsFlow] = useState(false)
+  const [isMultipleClaimantsFlow, setMultipleClaimantsFlow] = useState(() => savedFlowSettings.isMultipleClaimantsFlow ?? false)
   const [ownershipQuizAnswers, setOwnershipQuizAnswers] = useState([null, null, null])
   const [secondaryVerificationAnswers, setSecondaryVerificationAnswers] = useState([null, null, null])
-  const [isQuizFailFlow, setQuizFailFlow] = useState(false)
-  const [isFoundRestrictedFlow, setFoundRestrictedFlow] = useState(false)
+  const [isQuizFailFlow, setQuizFailFlow] = useState(() => savedFlowSettings.isQuizFailFlow ?? false)
+  const [isFoundRestrictedFlow, setFoundRestrictedFlow] = useState(() => savedFlowSettings.isFoundRestrictedFlow ?? false)
   const [returnDeliveryMethod, setReturnDeliveryMethod] = useState('in-person')
   const [returnRetryCount, setReturnRetryCount] = useState(0)
-  const [isFoundMultipleClaimantsFlow, setFoundMultipleClaimantsFlow] = useState(false)
+  const [isFoundMultipleClaimantsFlow, setFoundMultipleClaimantsFlow] = useState(() => savedFlowSettings.isFoundMultipleClaimantsFlow ?? false)
   const [meetupLocations, setMeetupLocations] = useState([])
   const [meetupDates, setMeetupDates] = useState([])
   const [meetupSlotTimes, setMeetupSlotTimes] = useState({})
@@ -881,6 +881,26 @@ function App() {
     setFlowChangeDialogOpen(false)
   }
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        'fino-flow-settings',
+        JSON.stringify({ hasStorageItems, isMultipleClaimantsFlow, isQuizFailFlow, isFoundRestrictedFlow, isFoundMultipleClaimantsFlow }),
+      )
+    } catch {
+      // 저장 불가 환경이면 무시
+    }
+  }, [hasStorageItems, isMultipleClaimantsFlow, isQuizFailFlow, isFoundRestrictedFlow, isFoundMultipleClaimantsFlow])
+
+  // 다시 시작: 진행 상태만 초기화, 플로우 설정은 그대로
+  const handleRestartDemo = () => {
+    setNavMenuOpen(false)
+    resetFlowState()
+    resetFoundFlowState()
+    navigate('/')
+    setSplash({ id: Date.now(), withProgress: true })
+  }
+
   const handleConfirmFlowChange = () => {
     const toggle = pendingFlowToggle
     if (toggle === 'claimants') handleToggleMultipleClaimantsFlow()
@@ -899,22 +919,10 @@ function App() {
       ? '/matching/result/ownership/quiz-failed'
       : '/matching/result/ownership/verified'
 
+  // 소유권 확인 결과는 플로우 설정 스위치(다중 분실자·퀴즈 실패)를 따라감
   const handleViewVerificationResult = () => {
     setVerificationDialogOpen(false)
-    setVerificationResultPickOpen(true)
-  }
-
-  const handleConfirmVerificationResultPick = () => {
-    setMultipleClaimantsFlow(verificationResultPick === 'multiple')
-    setQuizFailFlow(verificationResultPick === 'quiz-fail')
-    setVerificationResultPickOpen(false)
-    navigate(
-      verificationResultPick === 'multiple'
-        ? '/matching/result/ownership/claimants'
-        : verificationResultPick === 'quiz-fail'
-          ? '/matching/result/ownership/quiz-failed'
-          : '/matching/result/ownership/verified',
-    )
+    navigate(verificationResultPath)
   }
 
   const handleViewApprovalResult = () => {
@@ -3175,51 +3183,6 @@ function App() {
         확인을 눌러 결과를 확인해주세요
       </Modal>
 
-      <BottomSheet
-        isOpen={isVerificationResultPickOpen}
-        onClose={() => setVerificationResultPickOpen(false)}
-        title={
-          <>
-            <h2 className="delivery-pick-sheet__title">
-              프로토타입에서 확인할
-              <br />
-              소유권 확인 결과를 선택해주세요.
-            </h2>
-            <p className="delivery-pick-sheet__subtitle">
-              실제 서비스에서는
-              <br />
-              AI가 판단한 결과로 자동 진행돼요.
-            </p>
-          </>
-        }
-      >
-        <div className="delivery-pick-sheet__options">
-          {VERIFICATION_RESULT_PICK_OPTIONS.map((option) => {
-            const isSelected = verificationResultPick === option.id
-            return (
-              <button
-                key={option.id}
-                type="button"
-                className={`delivery-pick-sheet__option${isSelected ? ' delivery-pick-sheet__option--selected' : ''}`}
-                onClick={() => setVerificationResultPick(option.id)}
-              >
-                <span className="delivery-pick-sheet__option-label">{option.label}</span>
-                {isSelected && (
-                  <img src={iconCheckNeutral} alt="" className="delivery-pick-sheet__option-check" />
-                )}
-              </button>
-            )
-          })}
-        </div>
-        <button
-          type="button"
-          className="delivery-pick-sheet__confirm"
-          onClick={handleConfirmVerificationResultPick}
-        >
-          이 결과로 체험하기
-        </button>
-      </BottomSheet>
-
       <Modal
         isOpen={isApprovalDialogOpen}
         onClose={() => setApprovalDialogOpen(false)}
@@ -3350,6 +3313,7 @@ function App() {
         onToggleFoundMultipleClaimantsFlow={() => setFoundMultipleClaimantsFlow((prev) => !prev)}
         hasStorageItems={hasStorageItems}
         onToggleHasStorageItems={() => setHasStorageItems((prev) => !prev)}
+        onRestart={handleRestartDemo}
       />
 
       {splash && <Splash key={splash.id} withProgress={splash.withProgress} onDone={() => setSplash(null)} />}

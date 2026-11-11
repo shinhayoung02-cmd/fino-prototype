@@ -210,6 +210,7 @@ export default function NavMenu({
   isFoundMultipleClaimantsFlow,
   hasStorageItems,
   onToggleHasStorageItems,
+  onRestart,
   onToggleFoundMultipleClaimantsFlow,
 }) {
   // 폰 프레임 밖에 떠 있는 접이식 패널. 헤더를 끌면 이동, 짧게 누르면 접기/펼치기. 앱 안 ☰ 버튼은 펼치기.
@@ -359,6 +360,10 @@ export default function NavMenu({
                   <span className="nav-menu__switch-thumb" />
                 </span>
               </button>
+              <button type="button" className="nav-menu__restart" onClick={() => onRestart?.()}>
+                처음부터 다시 시작
+              </button>
+              <p className="nav-menu__settings-hint">설정은 그대로 두고 진행 상태만 초기화해요.</p>
             </div>
       )}
     </aside>,

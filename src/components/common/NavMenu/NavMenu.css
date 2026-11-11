@@ -311,3 +311,18 @@
 .nav-menu__dock .nav-menu__settings {
   padding: 0 20px 16px;
 }
+
+/* 시연용: 플로우 설정 유지한 채 처음부터 다시 시작 */
+.nav-menu__restart {
+  width: 100%;
+  height: 40px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #1a1c20;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
