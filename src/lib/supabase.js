@@ -22,6 +22,45 @@ export function toTimestamp(t) {
   return Number.isNaN(d.getTime()) ? null : d.toISOString()
 }
 
+// 사진 → 긴 변 1024px JPEG base64 (AI 인식 전송용)
+export async function toJpegBase64(file, max = 1024) {
+  const bitmap = await createImageBitmap(file)
+  const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height))
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(bitmap.width * scale)
+  canvas.height = Math.round(bitmap.height * scale)
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+  return canvas.toDataURL('image/jpeg', 0.85).split(',')[1]
+}
+
+// AI 특징 뽑기(서버 함수 recognize). { image } 또는 { text } → { category, color, brand, material, form, features, name, description }
+// 한도 초과면 { quota: true }, 그 외 실패는 throw
+export async function recognize(input) {
+  const { data, error } = await supabase.functions.invoke('recognize', { body: input })
+  if (error) {
+    if (error.context?.status === 429) return { quota: true }
+    throw error
+  }
+  return data
+}
+
+const ATTR_KEYS = ['color', 'brand', 'material', 'form', 'features']
+const pickAttrs = (r) => (r && !r.quota ? Object.fromEntries(ATTR_KEYS.map((k) => [k, r[k] ?? null])) : null)
+
+// 매칭용 특징: 등록 화면에서 이미 뽑았으면 그대로, 아니면 첫 사진 → 없으면 설명 글로 뽑음. 실패해도 저장은 진행(매칭은 글자 비교로 대체)
+async function ensureAttrs(draft) {
+  if (draft.attrs) return draft.attrs
+  try {
+    const file = (draft.photos ?? []).map(toFile).find(Boolean)
+    const text = [draft.name, draft.description, ...(draft.featureAnswers ?? [])].filter((v) => v?.trim()).join(' / ')
+    if (file) return pickAttrs(await recognize({ image: await toJpegBase64(file) }))
+    if (text) return pickAttrs(await recognize({ text }))
+  } catch (err) {
+    console.error('[attrs]', err)
+  }
+  return null
+}
+
 // AttachmentField 항목 → File (데모 샘플 사진은 File이 아니라서 건너뜀)
 const toFile = (entry) => (entry instanceof File ? entry : entry?.file instanceof File ? entry.file : null)
 
@@ -42,8 +81,8 @@ function toRow(kind, draft, extra) {
   const features = (draft.featureAnswers ?? []).filter((v) => v?.trim())
   const base = { category: draft.name || '기타', name: draft.description || draft.name || '이름 없음', description: draft.description || null }
   if (kind === 'storage') return { ...base, private_features: features }
-  // ponytail: 좌표(lat/lng)는 아직 안 받음 — 매칭(B)에서 거리 계산 필요해지면 LocationPicker 지도 중심 좌표 추가
-  const place = draft.location ? { area: draft.location.address ?? null, address: draft.location.detail ?? null } : {}
+  const loc = draft.location
+  const place = loc ? { area: loc.address ?? null, address: loc.detail ?? null, lat: loc.lat ?? null, lng: loc.lng ?? null } : {}
   if (kind === 'lost') {
     return { ...base, ...place, private_features: features, lost_from: toTimestamp(draft.timeRange), radius_m: num(draft.location?.radius) || null }
   }
@@ -54,7 +93,8 @@ function toRow(kind, draft, extra) {
 export async function saveItem(kind, draft, extra) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('로그인이 필요해요')
-  const { data, error } = await supabase.from(TABLE[kind]).insert(toRow(kind, draft, extra)).select('id').single()
+  const row = { ...toRow(kind, draft, extra), attrs: await ensureAttrs(draft) }
+  const { data, error } = await supabase.from(TABLE[kind]).insert(row).select('id').single()
   if (error) throw error
   await uploadPhotos(user.id, kind, data.id, draft.photos)
   return data.id

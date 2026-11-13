@@ -63,6 +63,8 @@ export default function LocationPicker({ value, onConfirm, onUnknown, backTo = '
             .filter(Boolean)
             .join(' '),
           detail: roadAddress ? roadAddress.address_name : address.address_name,
+          lat: center.getLat(), // 매칭 거리(m) 계산용
+          lng: center.getLng(),
         })
       })
     }
@@ -80,7 +82,7 @@ export default function LocationPicker({ value, onConfirm, onUnknown, backTo = '
         : '습득 위치가 정확할수록 매칭에 도움이 돼요.'
 
   const handleConfirm = () => {
-    onConfirm({ address: addressInfo.title, detail: addressInfo.detail, radius })
+    onConfirm({ address: addressInfo.title, detail: addressInfo.detail, radius, lat: addressInfo.lat ?? null, lng: addressInfo.lng ?? null })
     navigate(backTo)
   }
 
