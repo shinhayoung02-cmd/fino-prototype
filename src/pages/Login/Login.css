@@ -1,9 +1,11 @@
+/* Figma 당근밭 1471:29054 실측 */
 .login {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  padding: 0 16px 34px;
+  padding: 12px 16px 12px;
+  box-sizing: border-box;
 }
 
 .login__brand {
@@ -12,25 +14,90 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 6px;
 }
 
+.login__logo-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 100×100, 모서리 16, 그림자 0 1 4 rgba(0,0,0,.078) — 내부는 스플래시 188px 로고를 100/188로 축소 */
 .login__logo {
-  width: 88px;
-  height: 88px;
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.078);
+}
+
+.login__logo-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 188px;
+  height: 187px;
+  transform: scale(0.5319);
+  transform-origin: 0 0;
+}
+
+.login__logo-inner img {
+  display: block;
+}
+
+.login__logo-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.login__logo-vector {
+  position: absolute;
+  top: 18.3%;
+  left: 13.42%;
+  width: 74.07%;
+  height: 64%;
+}
+
+.login__logo-masked {
+  position: absolute;
+  top: 17.07%;
+  right: 12.2%;
+  bottom: 17.07%;
+  left: 13.41%;
+  mask-position: 0.001px 2.284px, -0.281px 2.382px;
+  mask-size: 139.261px 119.688px, 139.394px 119.96px;
+  mask-repeat: no-repeat;
+  mask-composite: intersect;
+  -webkit-mask-position: 0.001px 2.284px, -0.281px 2.382px;
+  -webkit-mask-size: 139.261px 119.688px, 139.394px 119.96px;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-composite: source-in;
+}
+
+.login__logo-masked img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .login__wordmark {
+  margin: 0;
   font-family: 'MuseoModerno', sans-serif;
   font-weight: 700;
   font-size: 32px;
-  margin: 0;
+  color: #ff6600;
 }
 
 .login__tagline {
   margin: 0;
   font-size: 16px;
-  color: var(--seed-color-fg-neutral-muted, #6b6e76);
+  color: #565d6c;
 }
 
 .login__actions {
@@ -52,20 +119,18 @@
   opacity: 0.6;
 }
 
-/* 카카오 로그인 디자인 가이드: 배경 #FEE500, 글자 85% 검정 */
 .login__button--kakao {
-  background: #fee500;
+  background: #fae64d;
   color: rgba(0, 0, 0, 0.85);
 }
 
-/* 네이버 로그인 가이드: 배경 #03C75A, 흰 글자 */
 .login__button--naver {
-  background: #03c75a;
-  color: #fff;
+  background: #00de5a;
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .login__button--google {
-  background: #fff;
+  background: #ffffff;
   color: #1f1f1f;
   border: 1px solid #dcdee3;
 }

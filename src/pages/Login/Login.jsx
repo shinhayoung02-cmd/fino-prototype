@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
 import AppShell from '../../layout/AppShell/AppShell'
+import logoBg from '../../assets/splash/logo-bg.svg'
+import logoVector from '../../assets/splash/logo-vector.svg'
+import logoMaskShape from '../../assets/splash/logo-mask-shape.svg'
+import logoMaskDots from '../../assets/splash/logo-mask-dots.svg'
 import logoGradient from '../../assets/splash/logo-gradient.svg'
 import { signIn } from '../../lib/supabase'
 import './Login.css'
 
-// Figma 디자인 없음(사용자 결정: 코드로 바로) — 스플래시 로고 + 소셜 로그인 버튼(카카오·네이버·구글)
+// Figma 당근밭 1471:29054 (로그인 출시판). 로고는 스플래시와 같은 SVG 부품을 100px로 축소
 const PROVIDERS = [
   { id: 'kakao', label: '카카오로 시작하기' },
   { id: 'naver', label: '네이버로 시작하기' },
@@ -35,9 +39,22 @@ export default function Login() {
     <AppShell>
       <div className="login">
         <div className="login__brand">
-          <img src={logoGradient} alt="" className="login__logo" />
-          <p className="login__wordmark">FINO</p>
-          <p className="login__tagline">잃어버린 물건, 주인에게 돌려줘요</p>
+          <div className="login__logo-group">
+            <div className="login__logo">
+              <div className="login__logo-inner">
+                <img src={logoBg} alt="" className="login__logo-bg" />
+                <img src={logoVector} alt="" className="login__logo-vector" />
+                <div
+                  className="login__logo-masked"
+                  style={{ maskImage: `url("${logoMaskShape}"), url("${logoMaskDots}")`, WebkitMaskImage: `url("${logoMaskShape}"), url("${logoMaskDots}")` }}
+                >
+                  <img src={logoGradient} alt="" />
+                </div>
+              </div>
+            </div>
+            <p className="login__wordmark">FINO</p>
+          </div>
+          <p className="login__tagline">잃어버린 순간부터, FINO가 함께 찾아요!</p>
         </div>
         <div className="login__actions">
           {PROVIDERS.map((p) => (
