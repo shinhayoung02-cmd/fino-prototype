@@ -12,6 +12,7 @@ export default function MatchDetail({
   isVerificationReady,
   verificationResultPath,
   candidate = MATCH_CANDIDATES[0],
+  onExclude, // 출시판: '내 물건이 아니에요' 확인 시 DB에서 후보 제외
 }) {
   const [isExcludeSheetOpen, setExcludeSheetOpen] = useState(false)
   const navigate = useNavigate()
@@ -103,7 +104,10 @@ export default function MatchDetail({
             <button
               type="button"
               className="match-exclude-sheet__action match-exclude-sheet__action--primary"
-              onClick={() => setExcludeSheetOpen(false)}
+              onClick={() => {
+                setExcludeSheetOpen(false)
+                onExclude?.()
+              }}
             >
               확인
             </button>

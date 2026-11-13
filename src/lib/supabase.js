@@ -128,3 +128,47 @@ export async function fetchRecentItems(limit = 3) {
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .slice(0, limit)
 }
+
+// '11월 14일 오후 3시 20분'
+const formatFoundAt = (iso) =>
+  iso ? new Date(iso).toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '시간 모름'
+
+// 분실자 화면의 매칭 후보 (점수 높은 순) — 카드/상세 화면이 쓰는 모양으로 변환. 습득물 사진은 서명 URL(1시간)
+export async function fetchMyLostMatches() {
+  const { data: rows, error } = await supabase
+    .from('match_items')
+    .select('*')
+    .eq('is_lost_owner', true)
+    .eq('status', 'candidate')
+    .order('score', { ascending: false })
+  if (error) throw error
+  const foundIds = rows.map((r) => r.found_item_id)
+  const { data: photos } = foundIds.length
+    ? await supabase.from('item_photos').select('item_id, path').eq('item_kind', 'found').in('item_id', foundIds)
+    : { data: [] }
+  const paths = (photos ?? []).map((p) => p.path)
+  const { data: signed } = paths.length ? await supabase.storage.from('item-photos').createSignedUrls(paths, 3600) : { data: [] }
+  const urlByPath = Object.fromEntries((signed ?? []).map((s) => [s.path, s.signedUrl]))
+  const { data: excludedCount } = await supabase.rpc('my_dismissed_count')
+  const candidates = rows.map((r) => {
+    const gallery = (photos ?? []).filter((p) => p.item_id === r.found_item_id).map((p) => urlByPath[p.path]).filter(Boolean)
+    return {
+      id: r.match_id,
+      similarity: Math.round(r.score * 100),
+      photo: gallery[0] ?? null,
+      gallery,
+      title: `${r.found_category} 습득`, // 짧게(예: '지갑 습득') — 자세한 설명은 feature 줄에
+      feature: r.found_description ?? r.found_name,
+      time: formatFoundAt(r.found_at),
+      location: r.found_area ?? '위치 모름',
+      matchReasons: r.reasons ?? [],
+    }
+  })
+  return { candidates, excludedCount: excludedCount ?? 0 }
+}
+
+// '내 물건이 아니에요' — 같은 습득물은 다시 추천되지 않음
+export async function dismissMatch(matchId) {
+  const { error } = await supabase.rpc('dismiss_match', { m: matchId })
+  if (error) throw error
+}

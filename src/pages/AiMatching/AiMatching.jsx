@@ -66,6 +66,8 @@ export default function AiMatching({
   onEditFoundItem,
   foundMatchResultPath = '/found/match-result',
   lostItemResumePath,
+  liveMatches = null, // 출시판: { candidates, excludedCount } — DB 매칭 후보(분실자). null이면 데모 데이터
+  onSelectCandidate,
 }) {
   const [chips, setChips] = useState(INITIAL_CHIPS)
   const [isScanPaused, setIsScanPaused] = useState(false)
@@ -83,8 +85,10 @@ export default function AiMatching({
         const override = lostProfile.lostMatchCandidates?.[index]
         return override ? { ...candidate, ...override } : candidate
       })
+  const isLive = liveMatches !== null && !isFoundFlow
+  const shownCandidates = isLive ? liveMatches.candidates : candidates
   const scanItem = isFoundFlow ? completedFoundItem : completedItem
-  const hasCandidates = Boolean(scanItem) && candidates.length > 0
+  const hasCandidates = isLive ? shownCandidates.length > 0 : Boolean(scanItem) && candidates.length > 0
 
   const toggleChip = (id) => {
     setChips((prev) =>
@@ -123,19 +127,21 @@ export default function AiMatching({
           <span className="ai-matching__excluded-check">
             <img src={iconCheck} alt="" />
           </span>
-          <span className="ai-matching__excluded-label">제외된 후보 (1건)</span>
+          <span className="ai-matching__excluded-label">제외된 후보 ({isLive ? liveMatches.excludedCount : 1}건)</span>
         </div>
       </div>
 
       {hasCandidates ? (
         <>
           <div className="ai-matching__list">
-            {candidates.map((candidate) => (
+            {shownCandidates.map((candidate) => (
               <MatchCandidateCard
                 key={candidate.id}
                 candidate={candidate}
                 onClick={
-                  candidate.id === 'match-1'
+                  isLive
+                    ? () => onSelectCandidate?.(candidate)
+                    : candidate.id === 'match-1'
                     ? () =>
                         navigate(
                           isApprovalResultReady
@@ -150,7 +156,7 @@ export default function AiMatching({
             ))}
           </div>
 
-          {!isScanCardDismissed && (
+          {!isScanCardDismissed && scanItem && (
             <div className="ai-matching__scan-wrap">
               <ScanningCard
                 item={scanItem}

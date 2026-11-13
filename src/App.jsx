@@ -10,7 +10,7 @@ import NearbyMapView from './pages/Home/NearbyMapView'
 import SearchPage from './pages/Home/SearchPage'
 import iconSettingsGear from './assets/my-page/icon-settings-gear.svg'
 import AiMatching from './pages/AiMatching/AiMatching'
-import { supabase, saveItem, deleteStorageItem, fetchMyStorageItems } from './lib/supabase'
+import { supabase, saveItem, deleteStorageItem, fetchMyStorageItems, fetchMyLostMatches, dismissMatch } from './lib/supabase'
 import Login from './pages/Login/Login'
 import { ITEM_PROFILES, getItemProfile } from './data/itemProfiles'
 import { withObjectParticle } from './utils/korean'
@@ -354,6 +354,8 @@ function App() {
   const [completedItem, setCompletedItem] = useState(null)
   const [storageItems, setStorageItems] = useState([])
   const [session, setSession] = useState(undefined) // undefined = 확인 중
+  const [liveMatches, setLiveMatches] = useState(null) // 출시판 매칭 후보 { candidates, excludedCount }
+  const [selectedMatch, setSelectedMatch] = useState(null)
   // 플로우 설정 '보관함 물건 있음' — 끄면 보관함이 빈 상태로 보임
   const [hasStorageItems, setHasStorageItems] = useState(() => savedFlowSettings.hasStorageItems ?? false)
   const visibleStorageItems = storageItems // 출시판: 보관함은 DB 기준(플로우 스위치 무시)
@@ -370,6 +372,15 @@ function App() {
       .then((rows) => setStorageItems(rows.map(fromStorageRow)))
       .catch((err) => console.error('[storage]', err))
   }, [session])
+
+  // AI 매칭 탭에 들어올 때마다 DB 후보를 새로 불러옴(새 습득물이 등록됐을 수 있음)
+  const { pathname } = useLocation()
+  useEffect(() => {
+    if (!session || pathname !== '/matching') return
+    fetchMyLostMatches()
+      .then(setLiveMatches)
+      .catch((err) => console.error('[matches]', err))
+  }, [session, pathname])
   const [storageDraft, setStorageDraft] = useState(INITIAL_LOST_DRAFT)
   const [addedStorageItem, setAddedStorageItem] = useState(null)
   const [completedFoundItem, setCompletedFoundItem] = useState(null)
@@ -1019,6 +1030,11 @@ function App() {
                 onEditFoundItem={handleEditCompletedFoundItem}
                 foundMatchResultPath={foundFlowResumePath}
                 lostItemResumePath={isQuizFailFlow ? '/matching/result/ownership/quiz-failed' : undefined}
+                liveMatches={liveMatches}
+                onSelectCandidate={(candidate) => {
+                  setSelectedMatch(candidate)
+                  navigate('/matching/result')
+                }}
               />
             </BackTabScreen>
           }
@@ -1037,11 +1053,27 @@ function App() {
                 isOwnershipRequested={isOwnershipRequested}
                 isVerificationReady={isVerificationReady}
                 verificationResultPath={verificationResultPath}
-                candidate={{
-                  ...MATCH_CANDIDATES[0],
-                  ...lostItemProfile.lostMatchCandidates?.[0],
-                  gallery: [lostItemProfile.photo, lostItemProfile.photoBack],
-                }}
+                candidate={
+                  selectedMatch ?? {
+                    ...MATCH_CANDIDATES[0],
+                    ...lostItemProfile.lostMatchCandidates?.[0],
+                    gallery: [lostItemProfile.photo, lostItemProfile.photoBack],
+                  }
+                }
+                onExclude={
+                  selectedMatch
+                    ? async () => {
+                        try {
+                          await dismissMatch(selectedMatch.id)
+                          setSelectedMatch(null)
+                          navigate('/matching')
+                        } catch (err) {
+                          console.error('[dismiss]', err)
+                          alert('제외하지 못했어요. 다시 시도해주세요.')
+                        }
+                      }
+                    : undefined
+                }
               />
             </SubStepScreen>
           }
