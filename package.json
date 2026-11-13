@@ -7,12 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:launch": "vite --mode launch",
+    "build:launch": "vite build --mode launch"
   },
   "dependencies": {
     "@karrotmarket/react-monochrome-icon": "^1.25.0",
     "@seed-design/css": "^2.5.0",
     "@seed-design/react": "^2.3.0",
+    "@supabase/supabase-js": "^2.119.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2"

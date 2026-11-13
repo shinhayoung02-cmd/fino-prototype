@@ -10,7 +10,8 @@ import NearbyMapView from './pages/Home/NearbyMapView'
 import SearchPage from './pages/Home/SearchPage'
 import iconSettingsGear from './assets/my-page/icon-settings-gear.svg'
 import AiMatching from './pages/AiMatching/AiMatching'
-import { saveItem } from './lib/supabase'
+import { supabase, saveItem, deleteStorageItem, fetchMyStorageItems } from './lib/supabase'
+import Login from './pages/Login/Login'
 import { ITEM_PROFILES, getItemProfile } from './data/itemProfiles'
 import { withObjectParticle } from './utils/korean'
 import { MATCH_CANDIDATES } from './pages/AiMatching/matchCandidates'
@@ -111,7 +112,7 @@ import MyStorage from './pages/MyStorage/MyStorage'
 import ActivityPage from './pages/Home/RecentActivity'
 import './pages/Home/Home.css'
 import StorageAddComplete from './pages/MyStorage/StorageAddComplete'
-import { INITIAL_STORAGE_ITEMS, toStorageItem, toPhotoEntries } from './data/myStorage'
+import { toStorageItem, toPhotoEntries, fromStorageRow } from './data/myStorage'
 import RegisterComplete from './pages/LostItemRegister/RegisterComplete'
 import Playground from './pages/Playground/Playground'
 import DetailPreview from './pages/Playground/DetailPreview'
@@ -291,17 +292,16 @@ function DetailScreen() {
   )
 }
 
-// 등록 draft → Supabase items 행 (사진은 아직 저장 안 함)
-const toItemRow = (kind, flow, d, extra = null) => ({
-  kind,
-  flow,
-  name: d.name,
-  description: d.description,
-  item_key: d.itemKey ?? null,
-  time_range: d.timeRange,
-  location: d.location,
-  extra,
-})
+// 저장 실패 시 사용자에게 알리고 false — 화면은 그대로 둔다(입력 유실 방지)
+async function trySave(...args) {
+  try {
+    return await saveItem(...args)
+  } catch (err) {
+    console.error('[save]', err)
+    alert('저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해주세요.')
+    return false
+  }
+}
 
 const INITIAL_LOST_DRAFT = {
   photos: [],
@@ -352,10 +352,24 @@ function App() {
   const [foundLeftDraft, setFoundLeftDraft] = useState(INITIAL_FOUND_LEFT_DRAFT)
   const [foundStationDraft, setFoundStationDraft] = useState(INITIAL_FOUND_STATION_DRAFT)
   const [completedItem, setCompletedItem] = useState(null)
-  const [storageItems, setStorageItems] = useState(INITIAL_STORAGE_ITEMS)
+  const [storageItems, setStorageItems] = useState([])
+  const [session, setSession] = useState(undefined) // undefined = 확인 중
   // 플로우 설정 '보관함 물건 있음' — 끄면 보관함이 빈 상태로 보임
   const [hasStorageItems, setHasStorageItems] = useState(() => savedFlowSettings.hasStorageItems ?? false)
-  const visibleStorageItems = hasStorageItems ? storageItems : []
+  const visibleStorageItems = storageItems // 출시판: 보관함은 DB 기준(플로우 스위치 무시)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+    const { data } = supabase.auth.onAuthStateChange((_event, next) => setSession(next))
+    return () => data.subscription.unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    if (!session) return
+    fetchMyStorageItems()
+      .then((rows) => setStorageItems(rows.map(fromStorageRow)))
+      .catch((err) => console.error('[storage]', err))
+  }, [session])
   const [storageDraft, setStorageDraft] = useState(INITIAL_LOST_DRAFT)
   const [addedStorageItem, setAddedStorageItem] = useState(null)
   const [completedFoundItem, setCompletedFoundItem] = useState(null)
@@ -618,15 +632,15 @@ function App() {
     setCompletedFoundItem(null)
   }
 
-  const handleRegisterFoundItem = () => {
-    saveItem(toItemRow('found', 'keep', foundDraft))
+  const handleRegisterFoundItem = async () => {
+    if (!(await trySave('found', foundDraft, { custody: 'keep' }))) return
     setCompletedFoundItem(foundDraft)
     setFoundDraft(INITIAL_FOUND_DRAFT)
     navigate('/found/new/done')
   }
 
-  const handleRegisterFoundLeftItem = () => {
-    saveItem(toItemRow('found', 'left', foundLeftDraft))
+  const handleRegisterFoundLeftItem = async () => {
+    if (!(await trySave('found', foundLeftDraft, { custody: 'left' }))) return
     setCompletedFoundItem(foundLeftDraft)
     setFoundLeftDraft(INITIAL_FOUND_LEFT_DRAFT)
     navigate('/found/new/left/done')
@@ -956,6 +970,9 @@ function App() {
         isFoundMultipleClaimantsFlow={isFoundMultipleClaimantsFlow}
         onSelectFoundMultipleClaimants={() => setFoundMultipleClaimantsFlow((prev) => !prev)}
       >
+      {session === null ? (
+        <Login />
+      ) : session === undefined ? null : (
       <Routes>
         <Route
           path="/"
@@ -1882,8 +1899,8 @@ function App() {
                 draft={foundStationDraft}
                 onDraftChange={setFoundStationDraft}
                 onPrev={() => navigate('/found/new/station')}
-                onRegister={() => {
-                  saveItem(toItemRow('found', 'station', foundStationDraft, { lost112Number: foundStationDraft.lost112Number }))
+                onRegister={async () => {
+                  if (!(await trySave('found', foundStationDraft, { custody: 'station', lost112Number: foundStationDraft.lost112Number }))) return
                   navigate('/found/new/station/done')
                 }}
               />
@@ -2725,8 +2742,8 @@ function App() {
               <LostItemRegister
                 draft={lostDraft}
                 onDraftChange={setLostDraft}
-                onRegister={() => {
-                  saveItem(toItemRow('lost', null, lostDraft, { featureAnswers: lostDraft.featureAnswers }))
+                onRegister={async () => {
+                  if (!(await trySave('lost', lostDraft))) return
                   setCompletedItem(lostDraft)
                   setLostDraft(INITIAL_LOST_DRAFT)
                   setAwaitingMatchNotification(true)
@@ -2766,7 +2783,10 @@ function App() {
               <RegisterComplete
                 item={completedItem}
                 onNext={() => setActiveTab('/')}
-                onRemember={(item) => setStorageItems((prev) => [toStorageItem(item), ...prev])}
+                onRemember={async (item) => {
+                  const id = await trySave('storage', item)
+                  if (id) setStorageItems((prev) => [{ ...toStorageItem(item), id }, ...prev])
+                }}
               />
             </SubStepScreen>
           }
@@ -2793,7 +2813,15 @@ function App() {
             <SubStepScreen title="내 물건 보관함" backTo="/my">
               <MyStorage
                 items={visibleStorageItems}
-                onDeleteItem={(id) => setStorageItems((prev) => prev.filter((item) => item.id !== id))}
+                onDeleteItem={async (id) => {
+                  try {
+                    await deleteStorageItem(id)
+                    setStorageItems((prev) => prev.filter((item) => item.id !== id))
+                  } catch (err) {
+                    console.error('[storage delete]', err)
+                    alert('삭제하지 못했어요. 다시 시도해주세요.')
+                  }
+                }}
                 onSelectItem={loadStorageItemIntoLostDraft}
               />
             </SubStepScreen>
@@ -2811,8 +2839,10 @@ function App() {
                 mode="storage"
                 draft={storageDraft}
                 onDraftChange={setStorageDraft}
-                onSave={() => {
-                  const item = toStorageItem(storageDraft)
+                onSave={async () => {
+                  const id = await trySave('storage', storageDraft)
+                  if (!id) return
+                  const item = { ...toStorageItem(storageDraft), id }
                   setStorageItems((prev) => [item, ...prev])
                   setAddedStorageItem(item)
                   setStorageDraft(INITIAL_LOST_DRAFT)
@@ -2847,6 +2877,7 @@ function App() {
         <Route path="/playground" element={<TabScreen><Playground /></TabScreen>} />
         <Route path="/detail" element={<DetailScreen />} />
       </Routes>
+      )}
 
       <Modal
         isOpen={isSearchCompleteDialogOpen}

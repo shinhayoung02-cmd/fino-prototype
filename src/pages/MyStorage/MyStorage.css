@@ -189,6 +189,8 @@
   line-height: 16px;
   color: #262626;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 긴 제목이 삭제(X) 버튼 밑으로 넘치지 않게 — info 너비(237px) 안에서 말줄임 */
   margin-bottom: 10px;
 }
 
@@ -213,6 +215,8 @@
   line-height: 12px;
   color: #a3a3a3;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .my-storage__cta-wrap {

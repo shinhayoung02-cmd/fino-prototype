@@ -63,6 +63,23 @@ export function toStorageItem(draft) {
   }
 }
 
+// DB storage_items 행(+photoUrls) → 보관함 항목
+export function fromStorageRow(row) {
+  const d = new Date(row.created_at)
+  return {
+    id: row.id,
+    title: row.name,
+    name: row.category,
+    description: row.description ?? '',
+    meta: row.category,
+    category: row.category,
+    registeredAt: `${d.getMonth() + 1}월 ${d.getDate()}일 등록`,
+    feature: (row.private_features ?? []).join(', '),
+    featureCount: (row.private_features ?? []).length,
+    photoUrls: row.photoUrls ?? [],
+  }
+}
+
 // 보관함 항목 → 분실물 등록 draft의 사진 엔트리 (AttachmentField 형식)
 export async function toPhotoEntries(item) {
   if (item.photoEntries?.length) return item.photoEntries
