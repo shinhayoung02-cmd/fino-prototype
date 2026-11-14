@@ -11,7 +11,7 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const admin = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
 // 오픈 리다이렉트 방지: 이 주소들로만 돌려보냄 (Supabase Auth URL 허용 목록과 맞출 것)
-const ALLOWED_ORIGINS = ['https://fino-v2.vercel.app', 'http://localhost:5173']
+const ALLOWED_ORIGINS = ['https://withfino.com', 'https://www.withfino.com', 'https://fino-v2.vercel.app', 'http://localhost:5173']
 const CALLBACK = `${SUPABASE_URL}/functions/v1/naver-auth/callback`
 
 const redirect = (to: string, headers: Record<string, string> = {}) => new Response(null, { status: 302, headers: { Location: to, ...headers } })
