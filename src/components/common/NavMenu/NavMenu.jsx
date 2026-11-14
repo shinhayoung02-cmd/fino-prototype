@@ -200,7 +200,6 @@ export const FLOW_LABELS = FLOW_GROUPS.flatMap((g) => g.items).reduce(
 export default function NavMenu({
   isOpen,
   onClose,
-  onNavigate,
   isMultipleClaimantsFlow,
   onToggleMultipleClaimantsFlow,
   isQuizFailFlow,
