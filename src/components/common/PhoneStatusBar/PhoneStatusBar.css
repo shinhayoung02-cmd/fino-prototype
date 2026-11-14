@@ -42,3 +42,7 @@
     display: none;
   }
 }
+
+.is-live .phone-status-bar {
+  display: none;
+}

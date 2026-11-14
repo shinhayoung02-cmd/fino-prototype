@@ -14,3 +14,6 @@ export const DELIVERY_METHOD_PICK_OPTIONS = [
   { id: 'parcel', label: '일반 택배로 전달' },
   { id: 'parcel-store', label: '편의점 택배로 전달' },
 ]
+
+// 실서비스 도메인 — 시연용 UI(폰 테두리·상태바·플로우 설정)를 숨긴다. dev 미리보기·fino-v2에선 그대로
+export const IS_LIVE = ['withfino.com', 'www.withfino.com'].includes(window.location.hostname)

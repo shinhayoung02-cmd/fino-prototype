@@ -4,6 +4,9 @@ import { BrowserRouter } from 'react-router-dom'
 import '@seed-design/css/base.css'
 import './index.css'
 import App from './App.jsx'
+import { IS_LIVE } from './app/constants'
+
+document.documentElement.classList.toggle('is-live', IS_LIVE)
 
 // GA4: Vercel 환경변수 VITE_GA_ID(G-XXXX)가 있을 때만 로드.
 // 화면 이동(SPA)은 GA4 향상된 측정의 '방문 기록 이벤트 기반 페이지 변경'이 자동으로 page_view 기록.

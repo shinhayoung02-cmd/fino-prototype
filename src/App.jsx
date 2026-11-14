@@ -5,7 +5,7 @@ import Splash from './components/common/Splash/Splash'
 import AppStateProvider from './app/AppStateProvider'
 import AppDialogs from './app/AppDialogs'
 import useAppState from './app/useAppState'
-import { DELIVERY_METHOD_PICK_OPTIONS } from './app/constants'
+import { DELIVERY_METHOD_PICK_OPTIONS, IS_LIVE } from './app/constants'
 import AppRoutes from './routes/AppRoutes'
 import './App.css'
 
@@ -40,7 +40,7 @@ function AppContent() {
     <PreviewStage>
       {session === null ? <Login /> : session === undefined ? null : <AppRoutes />}
       <AppDialogs />
-      <DemoNavMenu />
+      {!IS_LIVE && <DemoNavMenu />}
       {splash && <Splash key={splash.id} withProgress={splash.withProgress} onDone={() => setSplash(null)} />}
     </PreviewStage>
   )

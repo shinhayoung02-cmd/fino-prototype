@@ -39,3 +39,8 @@
     min-width: 0;
   }
 }
+
+.is-live .preview-stage {
+  padding: 0;
+  background: #f2f3f6;
+}
