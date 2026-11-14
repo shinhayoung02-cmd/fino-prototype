@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchMyProfile, signOut } from '../../lib/supabase'
+import { signOut } from '../../lib/supabase'
+import useMyProfile from '../../app/hooks/useMyProfile'
 import { IS_LIVE } from '../../app/constants'
 import avatarSample from '../../assets/my-page/avatar-sample.png'
 import iconConfirmationBadge from '../../assets/my-page/icon-confirmation-badge.svg'
@@ -44,13 +44,7 @@ function MyPageListRow({ icon, label, onClick }) {
 
 export default function MyPage() {
   const navigate = useNavigate()
-  const [profile, setProfile] = useState(null)
-
-  useEffect(() => {
-    fetchMyProfile()
-      .then(setProfile)
-      .catch((err) => console.error('[profile]', err))
-  }, [])
+  const profile = useMyProfile()
 
   return (
     <div className="my-page">

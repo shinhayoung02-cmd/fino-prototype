@@ -1,44 +1,24 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchMyProfile, updateMyProfile } from '../../lib/supabase'
-import iconClose from '../../assets/lost-register/icon-close.svg'
+import { updateMyProfile } from '../../lib/supabase'
+import useMyProfile from '../../app/hooks/useMyProfile'
+import TextField from '../../components/common/TextField/TextField'
 import '../LostItemRegister/LostItemRegister.css'
 
 // 프로필 수정 — 분실물 등록 폼(LostItemRegister) 레이아웃 재사용
-function TextField({ value, onChange, placeholder, maxLength }) {
-  return (
-    <div className="lost-register__field">
-      <input
-        type="text"
-        className="lost-register__field-input"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        maxLength={maxLength}
-      />
-      {value && (
-        <button type="button" className="lost-register__field-clear" aria-label="지우기" onClick={() => onChange('')}>
-          <img src={iconClose} alt="" />
-        </button>
-      )}
-    </div>
-  )
-}
-
 export default function ProfileEdit() {
   const navigate = useNavigate()
+  const profile = useMyProfile()
   const [nickname, setNickname] = useState('')
   const [region, setRegion] = useState('')
   const [isSaving, setSaving] = useState(false)
 
+  // 불러온 프로필로 입력칸 채우기
   useEffect(() => {
-    fetchMyProfile()
-      .then((profile) => {
-        setNickname(profile?.nickname ?? '')
-        setRegion(profile?.region ?? '')
-      })
-      .catch((err) => console.error('[profile]', err))
-  }, [])
+    if (!profile) return
+    setNickname(profile.nickname ?? '')
+    setRegion(profile.region ?? '')
+  }, [profile])
 
   const handleSave = async () => {
     setSaving(true)
