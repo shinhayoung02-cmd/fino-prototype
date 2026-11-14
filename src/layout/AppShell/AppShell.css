@@ -101,3 +101,7 @@
 .app-shell--no-nav .found-left__next-wrap {
   margin-top: auto;
 }
+
+.is-live .app-shell__indicator {
+  display: none;
+}
