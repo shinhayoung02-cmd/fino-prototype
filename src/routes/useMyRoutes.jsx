@@ -3,6 +3,7 @@ import BackTabScreen from '../layout/Screens/BackTabScreen'
 import MyPage from '../pages/MyPage/MyPage'
 import ActivityPage from '../pages/Home/RecentActivity'
 import MyStorage from '../pages/MyStorage/MyStorage'
+import ProfileEdit from '../pages/ProfileEdit/ProfileEdit'
 import StorageAddComplete from '../pages/MyStorage/StorageAddComplete'
 import LostItemRegister from '../pages/LostItemRegister/LostItemRegister'
 import { toStorageItem, toPhotoEntries } from '../data/myStorage'
@@ -55,6 +56,7 @@ export default function useMyRoutes() {
         </BackTabScreen>
       }
     />,
+    stepRoute('/my/profile', { title: '프로필 수정', backTo: '/my', hasMenu: false }, <ProfileEdit />),
     stepRoute('/activity', { title: '최근 활동', backTo: '/', hasMenu: false }, <ActivityPage flowHistory={flowHistory} />),
     stepRoute(
       '/my/storage',
