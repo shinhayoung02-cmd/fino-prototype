@@ -22,15 +22,29 @@ export function toTimestamp(t) {
   return Number.isNaN(d.getTime()) ? null : d.toISOString()
 }
 
-// 사진 → 긴 변 1024px JPEG base64 (AI 인식 전송용)
-export async function toJpegBase64(file, max = 1024) {
+// 사진을 캔버스에 다시 그려 긴 변 max px로 줄인다. 다시 그리면 EXIF(GPS 촬영 위치 등)가 전부 빠진다.
+async function redraw(file, max) {
   const bitmap = await createImageBitmap(file)
   const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height))
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(bitmap.width * scale)
   canvas.height = Math.round(bitmap.height * scale)
   canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height)
-  return canvas.toDataURL('image/jpeg', 0.85).split(',')[1]
+  bitmap.close()
+  return canvas
+}
+
+// AI 인식 전송용: 긴 변 1024px JPEG base64
+export async function toJpegBase64(file, max = 1024) {
+  return (await redraw(file, max)).toDataURL('image/jpeg', 0.85).split(',')[1]
+}
+
+// Storage 업로드용: 긴 변 2048px JPEG 파일(확대·영수증 글씨 읽기용), GPS 제거됨
+async function toUploadJpeg(file, max = 2048) {
+  const canvas = await redraw(file, max)
+  return new Promise((resolve, reject) =>
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('사진 변환 실패'))), 'image/jpeg', 0.9),
+  )
 }
 
 // AI 특징 뽑기(서버 함수 recognize). { image } 또는 { text } → { category, color, brand, material, form, features, name, description }
@@ -64,15 +78,24 @@ async function ensureAttrs(draft) {
 // AttachmentField 항목 → File (데모 샘플 사진은 File이 아니라서 건너뜀)
 const toFile = (entry) => (entry instanceof File ? entry : entry?.file instanceof File ? entry.file : null)
 
-async function uploadPhotos(userId, kind, itemId, photos = []) {
-  for (const file of photos.map(toFile).filter(Boolean)) {
-    const path = `${userId}/${kind}/${itemId}/${crypto.randomUUID()}.${file.name.split('.').pop() || 'jpg'}`
-    const { error } = await supabase.storage.from('item-photos').upload(path, file, { contentType: file.type })
-    if (error) throw error
-    const { error: rowError } = await supabase.from('item_photos').insert({ item_kind: kind, item_id: itemId, path })
-    if (rowError) throw rowError
+// 사진 파일만 먼저 올리고 경로 목록을 돌려준다. 하나라도 실패하면 이미 올린 파일을 지우고 throw
+async function uploadPhotoFiles(userId, kind, itemId, photos = []) {
+  const paths = []
+  try {
+    for (const file of photos.map(toFile).filter(Boolean)) {
+      const path = `${userId}/${kind}/${itemId}/${crypto.randomUUID()}.jpg`
+      const { error } = await supabase.storage.from('item-photos').upload(path, await toUploadJpeg(file), { contentType: 'image/jpeg' })
+      if (error) throw error
+      paths.push(path)
+    }
+    return paths
+  } catch (err) {
+    await removePhotoFiles(paths)
+    throw err
   }
 }
+
+const removePhotoFiles = (paths) => (paths.length ? supabase.storage.from('item-photos').remove(paths) : null)
 
 const TABLE = { lost: 'lost_items', found: 'found_items', storage: 'storage_items' }
 
@@ -93,11 +116,20 @@ function toRow(kind, draft, extra) {
 export async function saveItem(kind, draft, extra) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('로그인이 필요해요')
-  const row = { ...toRow(kind, draft, extra), attrs: await ensureAttrs(draft) }
-  const { data, error } = await supabase.from(TABLE[kind]).insert(row).select('id').single()
-  if (error) throw error
-  await uploadPhotos(user.id, kind, data.id, draft.photos)
-  return data.id
+  // 순서: id 미리 생성 → 사진 업로드 → 물건 저장(여기서 매칭 트리거) → 사진 기록. 사진 실패 시 물건은 저장 안 됨
+  const id = crypto.randomUUID()
+  const row = { id, ...toRow(kind, draft, extra), attrs: await ensureAttrs(draft) }
+  const paths = await uploadPhotoFiles(user.id, kind, id, draft.photos)
+  const { error } = await supabase.from(TABLE[kind]).insert(row)
+  if (error) {
+    await removePhotoFiles(paths)
+    throw error
+  }
+  if (paths.length) {
+    const { error: rowError } = await supabase.from('item_photos').insert(paths.map((path) => ({ item_kind: kind, item_id: id, path })))
+    if (rowError) console.error('[item_photos]', rowError) // 물건은 이미 저장됨 — 재시도하면 중복이라 throw 안 함
+  }
+  return id
 }
 
 export async function deleteStorageItem(id) {
