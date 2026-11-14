@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { fetchMyProfile, signOut } from '../../lib/supabase'
+import { IS_LIVE } from '../../app/constants'
 import avatarSample from '../../assets/my-page/avatar-sample.png'
 import iconConfirmationBadge from '../../assets/my-page/icon-confirmation-badge.svg'
 import iconChevronRightSm from '../../assets/my-page/icon-chevron-right-sm.svg'
@@ -26,7 +29,7 @@ const SETTINGS_ITEMS = [
   { icon: iconNotification, label: '알림 설정' },
   { icon: iconLock, label: '개인정보 처리방침' },
   { icon: iconHelpcenter, label: '고객센터' },
-  { icon: iconPostManage, label: '로그아웃' },
+  { icon: iconPostManage, label: '로그아웃', onClick: signOut },
 ]
 
 function MyPageListRow({ icon, label, onClick }) {
@@ -41,26 +44,36 @@ function MyPageListRow({ icon, label, onClick }) {
 
 export default function MyPage() {
   const navigate = useNavigate()
+  const [profile, setProfile] = useState(null)
+
+  useEffect(() => {
+    fetchMyProfile()
+      .then(setProfile)
+      .catch((err) => console.error('[profile]', err))
+  }, [])
+
   return (
     <div className="my-page">
       <div className="my-page__profile">
-        <div className="my-page__profile-row">
-          <img src={avatarSample} alt="" className="my-page__avatar" />
+        <button type="button" className="my-page__profile-row" onClick={() => navigate('/my/profile')}>
+          <img src={profile?.avatar_url || avatarSample} alt="" className="my-page__avatar" />
           <div className="my-page__identity">
             <p className="my-page__name">
-              홍길동
+              {profile?.nickname ?? ''}
               <img src={iconConfirmationBadge} alt="" className="my-page__verified" />
             </p>
-            <p className="my-page__handle">일상2동 #12345678</p>
+            <p className="my-page__handle">{profile?.region || '동네 미설정'}</p>
           </div>
-        </div>
-        <div className="my-page__badges">
+          <img src={iconChevronRightSm} alt="" className="my-page__row-chevron" />
+        </button>
+        {/* 배지는 아직 실데이터 없음 — 시연 화면에서만 표시 */}
+        {!IS_LIVE && <div className="my-page__badges">
           {BADGES.map((badge) => (
             <span className="my-page__badge" key={badge}>
               {badge}
             </span>
           ))}
-        </div>
+        </div>}
       </div>
 
       <div className="my-page__divider" />
@@ -82,7 +95,7 @@ export default function MyPage() {
       <div className="my-page__section">
         <p className="my-page__section-title">설정</p>
         {SETTINGS_ITEMS.map((item) => (
-          <MyPageListRow key={item.label} icon={item.icon} label={item.label} />
+          <MyPageListRow key={item.label} icon={item.icon} label={item.label} onClick={item.onClick} />
         ))}
       </div>
     </div>

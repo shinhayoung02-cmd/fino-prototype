@@ -161,6 +161,22 @@ export async function fetchRecentItems(limit = 3) {
     .slice(0, limit)
 }
 
+// 내 프로필(가입 시 소셜 계정 닉네임·사진으로 자동 생성). 동네(region)는 비어 있을 수 있음
+export async function fetchMyProfile() {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+  const { data, error } = await supabase.from('profiles').select('nickname, avatar_url, region').eq('id', user.id).single()
+  if (error) throw error
+  return data
+}
+
+export async function updateMyProfile(fields) {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('로그인이 필요해요')
+  const { error } = await supabase.from('profiles').update(fields).eq('id', user.id)
+  if (error) throw error
+}
+
 // '11월 14일 오후 3시 20분'
 const formatFoundAt = (iso) =>
   iso ? new Date(iso).toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '시간 모름'
