@@ -42,6 +42,10 @@
 
 ```
 api/recognize.js        Gemini 사진 인식 (Vercel 서버 함수)
+src/App.jsx             로그인 확인 + 라우트·알림 팝업·시연 메뉴 배치
+src/app/                앱 공유 상태 (AppStateProvider, 영역별 훅 hooks/, 알림 팝업 AppDialogs, 경로 paths.js)
+src/routes/             플로우별 라우트 (useMatchingRoutes, useFoundRegisterRoutes, useFoundMatchRoutes …)
+src/layout/Screens/     화면 껍데기 (TabScreen, BackTabScreen, SubStepScreen)
 src/pages/              화면 (LostItemRegister, FoundItemRegister, AiMatching, Home, Chat …)
 src/lib/supabase.js     Supabase 저장·조회
 src/lib/kakaoMaps.js    카카오맵 로더
